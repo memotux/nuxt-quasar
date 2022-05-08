@@ -1,6 +1,6 @@
 {
-  "name": "my-module",
-  "version": "1.0.0",
+  "name": "quasar-nuxt",
+  "version": "0.1.0",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -27,6 +27,6 @@
     "@nuxt/module-builder": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "eslint": "latest",
-    "nuxt": "^3.0.0-rc.1"
+    "nuxt": "^3.0.0-rc.2"
   }
 }
