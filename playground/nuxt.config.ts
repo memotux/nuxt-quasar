@@ -1,11 +1,13 @@
 import { defineNuxtConfig } from 'nuxt'
-import MyModule from '..'
+import QuasarNuxt from '..'
 
 export default defineNuxtConfig({
-  modules: [
-    MyModule
-  ],
-  myModule: {
-    addPlugin: true
+  modules: [QuasarNuxt],
+  build: {
+    transpile: ['quasar']
+  },
+  quasar: {
+    sassVariables: false,
+    css: ['@quasar/extras/material-icons/material-icons.css']
   }
 })
