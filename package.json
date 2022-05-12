@@ -1,6 +1,7 @@
 {
   "name": "nuxt-quasar-vite",
-  "version": "0.1.4",
+  "version": "0.1.5",
+  "description": "Quasar Framework UI for Nuxt",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -31,5 +32,22 @@
     "nuxt": "^3.0.0-rc.2",
     "quasar": "^2.6.6",
     "sass": "1.32.0"
-  }
+  },
+  "author": {
+    "email": "romeo@mendezfuentes.net",
+    "name": "Romeo Mendez Fuentes",
+    "url": "https://romeo.mendezfuentes.net"
+  },
+  "homepage": "https://github.com/memotux/nuxt-quasar",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/memotux/nuxt-quasar.git"
+  },
+  "keywords": [
+    "nuxt",
+    "quasar",
+    "module",
+    "vite",
+    "ui"
+  ]
 }
