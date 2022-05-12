@@ -29,12 +29,10 @@ defineNuxtConfig({
   quasar: {
     sassVariables: 'assets/quasar.variables.scss', // Optional string | boolean
     css: ['quasar/src/css/index.sass'] // Optional string[]
-    vue: {
-      plugins: ['Notify'], // List of extra Quasar Plugins
-      // This Object accepts all options of framework.config on quasar.config.ts
-      config: {
-        dark: true
-      }
+    plugins: ['Notify'], // List of extra Quasar Plugins
+    // This Object accepts all options of framework.config on quasar.config.ts
+    config: {
+      dark: true
     } 
   }
 })

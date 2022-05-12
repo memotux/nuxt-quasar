@@ -2,7 +2,6 @@
   <LayoutMain>
     <QBtn label="Quasar + Nuxt3" icon="bookmark" size="xl" color="primary" @click="playNotify" />
     <div
-      v-ripple
       class="relative-position container flex flex-center text-white"
       :class="classes"
     >

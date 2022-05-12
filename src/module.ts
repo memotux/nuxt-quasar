@@ -111,8 +111,7 @@ export default defineNuxtModule<ModuleOptions>({
         const config = genObjectFromRawEntries(Object.entries(opts.config), '\t\t')
         const plugins = opts.plugins.join(',')
 
-        return `
-import Quasar from "quasar/src/vue-plugin"
+        return `import Quasar from "quasar/src/vue-plugin"
 import { ${plugins} } from "quasar/src/plugins"
 
 export default defineNuxtPlugin((nuxtApp) => {
