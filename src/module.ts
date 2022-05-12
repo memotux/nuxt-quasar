@@ -18,7 +18,7 @@ interface ModuleOptions {
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     // Usually  npm package name of your module
-    name: 'quasar-nuxt',
+    name: 'quasar-nuxt-vite',
     // The key in `nuxt.config` that holds your module options
     configKey: 'quasar',
     // Compatibility constraints
