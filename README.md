@@ -84,7 +84,7 @@ defineNuxtConfig({
     // Optional string | boolean default true
     sassVariables: 'assets/quasar.variables.scss',
     // Optional string[]
-    css: ['@quasar/extras/material-icons/material-icons.css'] 
+    css: ['@quasar/extras/material-icons/material-icons.css'],
     // List of extra Quasar Plugins
     plugins: ['Dialog'],
     /* Quasar UI config -- you'll notice in Quasar docs when you need it */
@@ -96,11 +96,12 @@ defineNuxtConfig({
 })
 ```
 
-For more information, you can read the Quasar Vite Plugin docs, and `quasar.config.ts` framework docs.
+For more information, you can read the [Quasar Vite Plugin docs](https://quasar.dev/start/vite-plugin), and `quasar.config.ts` [framework](https://quasar.dev/quasar-cli-vite/quasar-config-js#framework) docs.
 
 ## TODO
 
 [x] Directive `v-ripple` doesn't work. There is an [issue](https://github.com/quasarframework/quasar/issues/13154) with `vue ^3.2.33`. I propose a [PR](https://github.com/quasarframework/quasar/pull/13402) to a temporary fix. The current [best solution](https://github.com/quasarframework/quasar/issues/13154#issuecomment-1113273509) is `defineExpose({$q})` on `<script setup>` on components using `v-ripple`.
+
 [ ] Stop using `ClientOnly` component.
 [ ] Test animations.
 [ ] Add optional Utils.
