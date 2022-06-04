@@ -37,7 +37,7 @@ defineNuxtConfig({
   //...
   // Add quasar to build.transpile
   build: {
-    transplie: ['quasar']
+    transpile: ['quasar']
   },
   // Add nuxt-quasar-vite to modules
   modules: ['nuxt-quasar-vite'],
