@@ -5,19 +5,20 @@ This is done by using `quasar-vite-plugin`. For this reason this module only can
 
 ## Pros
 
+- Quasar SSR on Nuxt.
 - Quasar components that are auto imported by Nuxt.
 - Quasar composables that are auto imported by Nuxt.
-- Quasar utils that are auto imported by Nuxt.
 - Quasar optional plugins, opt-in imported.
 - Quasar variables on SFC styles and SASS/SCSS files.
+- Some Quasar utils that are auto imported by Nuxt.
 - Nuxt modern and universal, develop and production Nitro server (with API and Middlewares).
 - Nuxt SSG static site generate.
 
 ## Cons
 
 - Not all directives have been tested. There is an issue with `v-ripple` (more related to `vue` than quasar or nuxt), you can read about it in the TODO section.
-- The use of `ClientOnly` Nuxt component on your Layout.
 - No Quasar Develop Modes (Electron, Capcitor, BEX, etc.)
+- ~~The use of `ClientOnly` Nuxt component on your Layout~~.
 
 ## Setup
 
@@ -29,30 +30,32 @@ yarn add -D quasar nuxt-quasar-vite @quasar/extras
 ```
 `@quasar/extras` is optional.
 
-Add module name at `nuxt.config.ts`:
+At `nuxt.config.ts` add module name and `quasar` to `build.transpile`:
 
 ```ts
 defineNuxtConfig({
   //...
+  // Add quasar to build.transpile
+  build: {
+    transplie: ['quasar']
+  },
   // Add nuxt-quasar-vite to modules
   modules: ['nuxt-quasar-vite'],
   //...
 })
 ```
 
-Add `<ClientOnly>` Nuxt component to your main layout (component or layout folder):
+Add Quasar components to your vue files:
 
 ```vue
 <template>
-  <ClientOnly>
-    <QLayout view="hHh lpR fFf">
-      <QPageContainer>
-        <QPage padding class="column flex-center q-gutter-xl">
-          <slot />
-        </QPage>
-      </QPageContainer>
-    </QLayout>
-  </ClientOnly>
+  <QLayout view="hHh lpR fFf">
+    <QPageContainer>
+      <QPage padding class="column flex-center q-gutter-xl">
+        <slot />
+      </QPage>
+    </QPageContainer>
+  </QLayout>
 </template>
 ```
 
@@ -78,14 +81,17 @@ At `nuxt.config.ts` you can add a `quasar` configKey object:
 ```ts
 defineNuxtConfig({
   // Optionaly use 'quasar' configKey
-  // This are the defaults
   // ...
   quasar: {
-    // Optional string | boolean default true
+    // Optional string | boolean
     sassVariables: 'assets/quasar.variables.scss',
     // Optional string[]
+    // If you use animations, add Quasar Extra CSS animation URL here.
     css: ['@quasar/extras/material-icons/material-icons.css'],
     // List of extra Quasar Plugins
+    // auto-instaled: [Platform, Body, Dark, Screen, History, Lang, IconSet]
+    // optional: [AddressbarColor, AppFullscreen, AppVisibility, BottomSheet, Dialog,
+    //            LoadingBar, Loading, Notify, LocalStorage, SessionStorage]
     plugins: ['Dialog'],
     /* Quasar UI config -- you'll notice in Quasar docs when you need it */
     config: { 
@@ -100,11 +106,10 @@ For more information, you can read the [Quasar Vite Plugin docs](https://quasar.
 
 ## TODO
 
-[x] Directive `v-ripple` doesn't work. There is an [issue](https://github.com/quasarframework/quasar/issues/13154) with `vue ^3.2.33`. I propose a [PR](https://github.com/quasarframework/quasar/pull/13402) to a temporary fix. The current [best solution](https://github.com/quasarframework/quasar/issues/13154#issuecomment-1113273509) is `defineExpose({$q})` on `<script setup>` on components using `v-ripple`.
-
-[ ] Stop using `ClientOnly` component.
-[ ] Test animations.
-[ ] Add optional Utils.
+- Directive `v-ripple` doesn't work. There is an [issue](https://github.com/quasarframework/quasar/issues/13154) with `vue ^3.2.33`. I propose a [PR](https://github.com/quasarframework/quasar/pull/13402) to a temporary fix. The current [best solution](https://github.com/quasarframework/quasar/issues/13154#issuecomment-1113273509) is `defineExpose({$q})` on `<script setup>` on components using `v-ripple`. Example at: `./playgraound/app.vue`.
+- Test animations.
+- Add Quasar Utils.
+- ~~Stop using `ClientOnly` component~~.
 
 ## Development
 

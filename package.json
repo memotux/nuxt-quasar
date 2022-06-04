@@ -1,6 +1,6 @@
 {
   "name": "nuxt-quasar-vite",
-  "version": "0.1.7",
+  "version": "1.0.0",
   "description": "Quasar Framework UI for Nuxt",
   "license": "MIT",
   "type": "module",
