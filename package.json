@@ -19,6 +19,7 @@
     "prepack": "nuxt-module-build",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
+    "dev:generate": "nuxi generate playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground"
   },
   "dependencies": {
@@ -29,7 +30,7 @@
     "@nuxt/module-builder": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "eslint": "latest",
-    "nuxt": "^3.0.0-rc.2",
+    "nuxt": "^3.0.0-rc.3",
     "quasar": "^2.6.6",
     "sass": "1.32.0"
   },
