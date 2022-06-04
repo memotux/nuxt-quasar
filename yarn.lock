@@ -4683,7 +4683,7 @@ qs@^6.9.4:
   dependencies:
     side-channel "^1.0.4"
 
-quasar@^2.6.6:
+quasar@^2.7.1:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.7.1.tgz#a599978ce2f1f6327e6686a01923ccacd9a75ddd"
   integrity sha512-V2FcD04nHE07p4p0YEeC3ZIA9kodyZ5wdZ+eXRZhUZ3cFugAneJ1D2WCyKoqwM4OReFCk/1jlqQxCCUaTU4X3g==

@@ -1,6 +1,6 @@
 {
   "name": "nuxt-quasar-vite",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Quasar Framework UI for Nuxt",
   "license": "MIT",
   "type": "module",
@@ -29,9 +29,7 @@
     "@nuxt/module-builder": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "eslint": "latest",
-    "nuxt": "^3.0.0-rc.3",
-    "quasar": "^2.6.6",
-    "sass": "1.32.0"
+    "nuxt": "^3.0.0-rc.3"
   },
   "author": {
     "email": "romeo@mendezfuentes.net",
@@ -49,5 +47,9 @@
     "module",
     "vite",
     "ui"
-  ]
+  ],
+  "peerDependencies": {
+    "quasar": "^2.7.1",
+    "sass": "1.32.0"
+  }
 }

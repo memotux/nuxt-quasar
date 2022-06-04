@@ -3,7 +3,6 @@ import {
   addPluginTemplate,
   resolvePath
 } from '@nuxt/kit'
-import { version as qVersion } from 'quasar/package.json'
 import { genObjectFromRawEntries } from 'knitwork'
 import { getScssTransformPlugin } from './scssTransform'
 
@@ -15,6 +14,9 @@ interface ModuleOptions {
     dark: boolean
   }
 }
+
+// eslint-disable-next-line quotes
+const __QUASAR_VERSION__ = `'2.7.1'`
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -95,7 +97,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.hook('vite:extendConfig', async (config, { isServer }) => {
       const define = {
-        __QUASAR_VERSION__: `'${qVersion}'`,
+        __QUASAR_VERSION__: `${__QUASAR_VERSION__}`,
         __QUASAR_SSR__: isServer,
         __QUASAR_SSR_SERVER__: isServer,
         __QUASAR_SSR_CLIENT__: isServer,
@@ -128,21 +130,23 @@ import iconSet from 'quasar/src/icon-set'
 import * as directives from 'quasar/src/directives'
 
 export default defineNuxtPlugin((nuxtApp) => {
+  const opts = {
+    directives,
+    plugins: { ${plugins} },
+    config: ${config},
+  }
+  
   nuxtApp.vueApp.use({
-    version: '${qVersion}',
-    install(app,opts) {
+    version: ${__QUASAR_VERSION__},
+    install(app) {
       if(process.server) {
-        installQ(app, {...opts}, nuxtApp.ssrContext)
+        installQ(app, opts, nuxtApp.ssrContext)
       } else {
-        installQ(app, {...opts})
+        installQ(app, opts)
       }
     },
     lang,
     iconSet
-  }, {
-    directives,
-    plugins: { ${plugins} },
-    config: ${config},
   })
 })
 `
