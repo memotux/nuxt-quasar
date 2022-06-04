@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "my-module-playground",
+  "name": "quasar-nuxt-playground",
   "dependencies": {
     "@quasar/extras": "^1.13.6",
     "quasar": "^2.6.6"

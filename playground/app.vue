@@ -2,6 +2,7 @@
   <LayoutMain>
     <QBtn label="Quasar + Nuxt3" icon="bookmark" size="xl" color="primary" @click="playNotify" />
     <div
+      v-ripple
       class="relative-position container flex flex-center text-white"
       :class="classes"
     >
@@ -16,6 +17,7 @@ const playNotify = () => {
   console.log('Playing Notify')
   $q.notify('Congrats! you have: Quasar + Nuxt3')
 }
+defineExpose({ $q })
 const colors = [
   'primary',
   'amber',
@@ -48,11 +50,5 @@ const classes = computed(() => `bg-${color.value}`)
 
 <style lang="sass">
 .container
-  border-radius: 3px
-  cursor: pointer
-  transition: background 1.5s
-  height: 150px
-  width: 80%
-  max-width: 500px
-  font-size: 2rem
+  border: 1rem solid $secondary
 </style>

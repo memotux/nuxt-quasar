@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     transpile: ['quasar']
   },
   quasar: {
-    sassVariables: false,
-    css: ['@quasar/extras/material-icons/material-icons.css']
+    sassVariables: 'assets/styles/quasar.variables.scss',
+    css: ['@quasar/extras/material-icons/material-icons.css', 'assets/styles/main.scss']
   }
 })
