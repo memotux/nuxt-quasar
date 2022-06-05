@@ -76,19 +76,8 @@ export default defineNuxtModule<ModuleOptions>({
         path: '@/node_modules/quasar/src/components',
         transpile: true,
         watch: false,
-        pattern: '**/Q**.js',
-        extendComponent: (component) => {
-          return {
-            ...component,
-            export: 'default',
-            pascalName: component.pascalName.slice(
-              component.pascalName.indexOf('Q')
-            ),
-            kebabName: component.kebabName.slice(
-              component.kebabName.indexOf('q')
-            )
-          }
-        }
+        pattern: '*/Q*.js',
+        pathPrefix: false
       })
     }
   },
