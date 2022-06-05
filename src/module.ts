@@ -79,6 +79,9 @@ export default defineNuxtModule<ModuleOptions>({
         pattern: '*/Q*.js',
         pathPrefix: false
       })
+    },
+    'build:before': (_, options) => {
+      if (!options.transpile.includes('quasar')) { options.transpile.unshift('quasar') }
     }
   },
   setup: (opts, nuxt) => {
