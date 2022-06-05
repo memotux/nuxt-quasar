@@ -1,11 +1,10 @@
 # Quasar for Nuxt
 
-This Nuxt module expose UI Components and Utils (Composables, Directives and Plugins) from Quasar Framework UI to Nuxt.
-This is done by using `quasar-vite-plugin`. For this reason this module only can be use on Nuxt with Vite: `nuxt ^3.0.0-rc.2`.
+This Nuxt module expose UI Components and Utils (Composables, Directives and Plugins) from Quasar Framework UI to Nuxt. This module only can be use on Nuxt with Vite: `nuxt ^3.0.0-rc.2`.
 
 ## Pros
 
-- Quasar SSR on Nuxt.
+- Nuxt SSR for Quasar components.
 - Quasar components that are auto imported by Nuxt.
 - Quasar composables that are auto imported by Nuxt.
 - Quasar optional plugins, opt-in imported.
@@ -35,7 +34,7 @@ At `nuxt.config.ts` add module name and `quasar` to `build.transpile`:
 ```ts
 defineNuxtConfig({
   //...
-  // Add quasar to build.transpile
+  // Add quasar to build.transpile is OPTIONAL since v1.0.3
   build: {
     transpile: ['quasar']
   },

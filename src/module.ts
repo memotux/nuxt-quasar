@@ -82,6 +82,9 @@ export default defineNuxtModule<ModuleOptions>({
     },
     'build:before': (_, options) => {
       if (!options.transpile.includes('quasar')) { options.transpile.unshift('quasar') }
+    },
+    'prepare:types': ({ references }) => {
+      references.unshift({ types: 'quasar' })
     }
   },
   setup: (opts, nuxt) => {
@@ -122,7 +125,7 @@ import iconSet from 'quasar/src/icon-set'
 import * as directives from 'quasar/src/directives'
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const opts = {
+  const includes = {
     directives,
     plugins: { ${plugins} },
     config: ${config},
@@ -130,11 +133,11 @@ export default defineNuxtPlugin((nuxtApp) => {
   
   nuxtApp.vueApp.use({
     version: ${__QUASAR_VERSION__},
-    install(app) {
+    install(app, opts) {
       if(process.server) {
-        installQ(app, opts, nuxtApp.ssrContext)
+        installQ(app, {...opts, ...includes}, nuxtApp.ssrContext)
       } else {
-        installQ(app, opts)
+        installQ(app, {...opts, ...includes})
       }
     },
     lang,
