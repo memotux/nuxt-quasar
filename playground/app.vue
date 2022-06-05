@@ -6,7 +6,7 @@
       class="relative-position container flex flex-center text-white"
       :class="classes"
     >
-      Click/tap me
+      Click/tap me <code>{{ $q.screen.name }}</code>
     </div>
   </LayoutMain>
 </template>
@@ -14,6 +14,7 @@
 <script setup>
 const $q = useQuasar()
 const playNotify = () => {
+  // eslint-disable-next-line no-console
   console.log('Playing Notify')
   $q.notify('Congrats! you have: Quasar + Nuxt3')
 }
