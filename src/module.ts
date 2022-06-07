@@ -51,22 +51,27 @@ export default defineNuxtModule<ModuleOptions>({
       }, {
         from: 'quasar/src/utils',
         imports: [
-          // ['clone', 'qClone'],
-          // ['colors', 'qColors'],
-          // ['copy-to-clipboard', 'qCopyToClipboard'],
+          ['clone', 'qclone'],
+          ['colors', 'qcolors'],
+          ['copyToClipboard', 'qcopyToClipboard'],
+          ['createMetaMixin', 'qcreateMetaMixin'],
+          ['createUploaderComponent', 'qcreateUploaderComponent'],
           ['date', 'qdate'],
-          // ['debounce', 'qDebounce'],
-          // ['dom', 'qDom'],
-          // ['event', 'qEvent'],
-          // ['export-file', 'qExportFile'],
-          // ['extend', 'qExtend'],
-          // ['format', 'qFormat'],
-          // ['morph', 'qMorph'],
-          // ['open-url', 'qOpenUrl'],
-          // ['patterns', 'qPatterns'],
-          // ['prevent-scroll', 'qPreventScroll'],
-          // ['scroll', 'qScroll'],
-          // ['throttle', 'qThrottle'],
+          ['debounce', 'qdebounce'],
+          ['dom', 'qdom'],
+          ['event', 'qevent'],
+          ['exportFile', 'qexportFile'],
+          ['extend', 'qextend'],
+          ['format', 'qformat'],
+          ['frameDebounce', 'qframeDebounce'],
+          ['getCssVar', 'qgetCssVar'],
+          ['noop', 'qnoop'],
+          ['morph', 'qmorph'],
+          ['openURL', 'qopenURL'],
+          ['patterns', 'qpatterns'],
+          ['scroll', 'qscroll'],
+          ['setCssVar', 'qsetCssVar'],
+          ['throttle', 'qthrottle'],
           ['uid', 'quid']
         ]
       })
@@ -90,12 +95,12 @@ export default defineNuxtModule<ModuleOptions>({
   setup: (opts, nuxt) => {
     nuxt.options.css.push(...opts.css)
 
-    nuxt.hook('vite:extendConfig', async (config, { isServer }) => {
+    nuxt.hook('vite:extendConfig', async (config, { isServer, isClient }) => {
       const define = {
         __QUASAR_VERSION__: `${__QUASAR_VERSION__}`,
         __QUASAR_SSR__: isServer,
         __QUASAR_SSR_SERVER__: isServer,
-        __QUASAR_SSR_CLIENT__: isServer,
+        __QUASAR_SSR_CLIENT__: isServer && isClient,
         __QUASAR_SSR_PWA__: false
       }
 

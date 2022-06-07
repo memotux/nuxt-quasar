@@ -6,10 +6,11 @@ This Nuxt module expose UI Components and Utils (Composables, Directives and Plu
 
 - Nuxt SSR for Quasar components.
 - Quasar components that are auto imported by Nuxt.
+- Quasar directives.
 - Quasar composables that are auto imported by Nuxt.
-- Quasar optional plugins, opt-in imported.
+- Quasar plugins, opt-in imported.
 - Quasar variables on SFC styles and SASS/SCSS files.
-- Some Quasar utils that are auto imported by Nuxt.
+- Quasar utils that are auto imported by Nuxt.
 - Nuxt modern and universal, develop and production Nitro server (with API and Middlewares).
 - Nuxt SSG static site generate.
 
@@ -107,7 +108,7 @@ For more information, you can read the [Quasar Vite Plugin docs](https://quasar.
 
 - Directive `v-ripple` doesn't work. There is an [issue](https://github.com/quasarframework/quasar/issues/13154) with `vue ^3.2.33`. I propose a [PR](https://github.com/quasarframework/quasar/pull/13402) to a temporary fix. The current [best solution](https://github.com/quasarframework/quasar/issues/13154#issuecomment-1113273509) is `defineExpose({$q})` on `<script setup>` on components using `v-ripple`. Example at: `./playgraound/app.vue`.
 - Test animations.
-- Add Quasar Utils.
+- ~~Add Quasar Utils~~.
 - ~~Stop using `ClientOnly` component~~.
 
 ## Development
