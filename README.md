@@ -102,6 +102,18 @@ defineNuxtConfig({
 })
 ```
 
+### Quasar Utils
+
+For use Quasar Utils autoimport feature, prefix quasar util function name with `q` character. This is a difference with Quasar Framework, but make using utils safe.
+
+```vue
+<script setup>
+// Autoimport Quasar Util `date` using `qdate` 
+const { addToDate } = qdate
+const newDate = addToDate(new Date(), {days: 7, months: 1})
+</script>
+```
+
 For more information, you can read the [Quasar Vite Plugin docs](https://quasar.dev/start/vite-plugin), and `quasar.config.ts` [framework](https://quasar.dev/quasar-cli-vite/quasar-config-js#framework) docs.
 
 ## TODO
