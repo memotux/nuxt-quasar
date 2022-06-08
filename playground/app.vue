@@ -3,10 +3,12 @@
     <QBtn label="Quasar + Nuxt3" icon="bookmark" size="xl" color="primary" @click="playNotify" />
     <div
       v-ripple
-      class="relative-position container flex flex-center text-white"
+      class="relative-position container column flex-center text-white"
       :class="classes"
     >
-      Click/tap me <code>{{ $q.screen.name }}</code>
+      <p>Click/tap me</p>
+      <p>{{ $q.screen.name }}</p>
+      <p>{{ newDate }}</p>
     </div>
   </LayoutMain>
 </template>
@@ -47,9 +49,11 @@ onBeforeUnmount(() => {
   clearTimeout(timer)
 })
 const classes = computed(() => `bg-${color.value}`)
+
+const newDate = qdate.addToDate(new Date(), { days: 7, months: 1 })
 </script>
 
 <style lang="sass">
-.container
+.q-btn
   border: 1rem solid $secondary
 </style>

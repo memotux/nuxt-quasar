@@ -9,7 +9,7 @@ This Nuxt module expose UI Components and Utils (Composables, Directives and Plu
 - Quasar directives.
 - Quasar composables that are auto imported by Nuxt.
 - Quasar plugins, opt-in imported.
-- Quasar variables on SFC styles and SASS/SCSS files.
+- Quasar variables on SFC styles.
 - Quasar utils that are auto imported by Nuxt.
 - Nuxt modern and universal, develop and production Nitro server (with API and Middlewares).
 - Nuxt SSG static site generate.
@@ -109,9 +109,28 @@ For use Quasar Utils autoimport feature, prefix quasar util function name with `
 ```vue
 <script setup>
 // Autoimport Quasar Util `date` using `qdate` 
+const newDate = qdate.addToDate(new Date(), {days: 7, months: 1})
+
+// Or use implicit #imports if you want to destructurate
+import { qdate } from '#imports'
+
 const { addToDate } = qdate
 const newDate = addToDate(new Date(), {days: 7, months: 1})
 </script>
+```
+
+### Quasar SCSS variables
+
+If you need Quasar SCSS variables on your SASS/SCSS assets files import quasar variables file and/or your custom variables file to yor assets file.
+
+```scss
+// Order of import matters
+@import './quasar.variables.scss';
+@import 'quasar/src/css/variables.sass';
+
+.container {
+  border-color: $primary
+}
 ```
 
 For more information, you can read the [Quasar Vite Plugin docs](https://quasar.dev/start/vite-plugin), and `quasar.config.ts` [framework](https://quasar.dev/quasar-cli-vite/quasar-config-js#framework) docs.
