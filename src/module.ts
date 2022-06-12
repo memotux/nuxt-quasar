@@ -1,3 +1,4 @@
+import { dirname } from 'pathe'
 import {
   defineNuxtModule,
   addPluginTemplate,
@@ -76,9 +77,11 @@ export default defineNuxtModule<ModuleOptions>({
         ]
       })
     },
-    'components:dirs': (dirs) => {
+    'components:dirs': async (dirs) => {
+      const source = dirname(await resolvePath('quasar/src/components')) + '/components'
+
       dirs.push({
-        path: '@/node_modules/quasar/src/components',
+        path: source,
         transpile: true,
         watch: false,
         pattern: '*/Q*.js',

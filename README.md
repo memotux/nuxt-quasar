@@ -124,6 +124,7 @@ const newDate = addToDate(new Date(), {days: 7, months: 1})
 If you need Quasar SCSS variables on your SASS/SCSS assets files import quasar variables file and/or your custom variables file to yor assets file.
 
 ```scss
+// @/assets/styles/main.scss
 // Order of import matters
 @import './quasar.variables.scss';
 @import 'quasar/src/css/variables.sass';
