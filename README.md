@@ -16,9 +16,9 @@ This Nuxt module expose UI Components and Utils (Composables, Directives and Plu
 
 ## Cons
 
-- Not all directives have been tested. There is an issue with `v-ripple` (more related to `vue` than quasar or nuxt), you can read about it in the TODO section.
 - No Quasar Develop Modes (Electron, Capcitor, BEX, etc.)
 - ~~The use of `ClientOnly` Nuxt component on your Layout~~.
+- ~~Not all directives have been tested. There is an issue with `v-ripple` (more related to `vue` than quasar or nuxt), you can read about it in the TODO section.~~ Since `quasar v2.7.3`
 
 ## Setup
 
@@ -138,8 +138,9 @@ For more information, you can read the [Quasar Vite Plugin docs](https://quasar.
 
 ## TODO
 
-- Directive `v-ripple` doesn't work. There is an [issue](https://github.com/quasarframework/quasar/issues/13154) with `vue ^3.2.33`. I propose a [PR](https://github.com/quasarframework/quasar/pull/13402) to a temporary fix. The current [best solution](https://github.com/quasarframework/quasar/issues/13154#issuecomment-1113273509) is `defineExpose({$q})` on `<script setup>` on components using `v-ripple`. Example at: `./playgraound/app.vue`.
-- Test animations.
+- Add to quasar configKey animations.
+- Add to quasar configKey iconSet and icon libraries.
+- Since `quasar v2.7.3` `v-ripple` issue was fixed by [Quasar Framework Team](https://github.com/quasarframework/quasar/issues/13732#issuecomment-1159682150). ~~Directive `v-ripple` doesn't work. There is an [issue](https://github.com/quasarframework/quasar/issues/13154) with `vue ^3.2.33`. I propose a [PR](https://github.com/quasarframework/quasar/pull/13402) to a temporary fix. The current [best solution](https://github.com/quasarframework/quasar/issues/13154#issuecomment-1113273509) is `defineExpose({$q})` on `<script setup>` on components using `v-ripple`. Example at: `./playgraound/app.vue`.~~
 - ~~Add Quasar Utils~~.
 - ~~Stop using `ClientOnly` component~~.
 

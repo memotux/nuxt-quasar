@@ -96,9 +96,9 @@ picomatch@^2.0.4, picomatch@^2.2.1:
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
 
 quasar@^2.6.6:
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.7.1.tgz#a599978ce2f1f6327e6686a01923ccacd9a75ddd"
-  integrity sha512-V2FcD04nHE07p4p0YEeC3ZIA9kodyZ5wdZ+eXRZhUZ3cFugAneJ1D2WCyKoqwM4OReFCk/1jlqQxCCUaTU4X3g==
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.7.3.tgz#ff57ac5f3c9a8fdc345f59362d7b0f45c80bc68d"
+  integrity sha512-4YQQP1FbfshXwav9QcOHpvSg4eME4iKzd85m4562EqcfuhRtycC/2WQg+cRxlEr43gEHM0uXaJmybNUWZpoYkw==
 
 readdirp@~3.6.0:
   version "3.6.0"
