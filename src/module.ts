@@ -17,7 +17,7 @@ interface ModuleOptions {
 }
 
 // eslint-disable-next-line quotes
-const __QUASAR_VERSION__ = `'2.7.3'`
+const __QUASAR_VERSION__ = `'2.8.2'`
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -28,7 +28,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Compatibility constraints
     compatibility: {
       // Semver version of supported nuxt versions
-      nuxt: '^3.0.0'
+      nuxt: '^3.0.0-rc.2'
     }
   },
   // Default configuration options for your module
@@ -41,7 +41,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   hooks: {
-    'autoImports:sources': (presets) => {
+    'imports:sources': (presets) => {
       presets.push({
         from: 'quasar/src/composables',
         imports: [
@@ -114,8 +114,6 @@ export default defineNuxtModule<ModuleOptions>({
         const quasarScssTransform = getScssTransformPlugin(scssPath)
         config.plugins.push(quasarScssTransform)
       }
-
-      return config
     })
 
     addPluginTemplate({

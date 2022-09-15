@@ -1,7 +1,9 @@
 /* eslint-disable space-before-function-paren */
+import type { Plugin } from 'vite'
+
 const fileExt = /\.s[a|c]ss$/
 
-export function getScssTransformPlugin(sassVariables: string | boolean) {
+export function getScssTransformPlugin(sassVariables: string | boolean): Plugin {
   const sassImportCode = ["@import 'quasar/src/css/variables.sass'", '']
 
   if (typeof sassVariables === 'string') {
