@@ -26,7 +26,7 @@ At your Nuxt project folder:
 
 ```sh
 # Install dependencies
-yarn add -D quasar sass@1.32.0 @quasar/extras nuxt-quasar-vite
+yarn add -D quasar sass@1.32.12 @quasar/extras nuxt-quasar-vite
 ```
 `@quasar/extras` is optional.
 
