@@ -1,4 +1,3 @@
-import { defineNuxtConfig } from 'nuxt'
 import QuasarNuxt from '../src/module'
 
 export default defineNuxtConfig({

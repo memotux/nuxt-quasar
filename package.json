@@ -50,6 +50,6 @@
   ],
   "peerDependencies": {
     "quasar": "^2.7.1",
-    "sass": "1.32.0"
+    "sass": "1.32.12"
   }
 }

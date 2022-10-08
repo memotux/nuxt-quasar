@@ -4,6 +4,6 @@
   "dependencies": {
     "@quasar/extras": "^1.13.6",
     "quasar": "^2.6.6",
-    "sass": "1.32.0"
+    "sass": "1.32.12"
   }
 }

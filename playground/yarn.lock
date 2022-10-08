@@ -27,7 +27,7 @@ braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-"chokidar@>=2.0.0 <4.0.0":
+"chokidar@>=3.0.0 <4.0.0":
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.3.tgz#1cf37c8707b932bd1af1ae22c0432e2acd1903bd"
   integrity sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==
@@ -96,9 +96,9 @@ picomatch@^2.0.4, picomatch@^2.2.1:
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
 
 quasar@^2.6.6:
-  version "2.8.2"
-  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.8.2.tgz#fbfd91811a0bafda71d191a144980cfd76d8647e"
-  integrity sha512-sHnW1SI0q5ZxFPGqRixC5i4FyiHK2xpgSHrSuS4nRQIXHiqsvrqafqOxfAAGhnBR+1fWJrHk8+8vDmBMhxzy1Q==
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.9.2.tgz#6e7d50f9c2c5a52b36e4b9bbd7129a440d64fb9c"
+  integrity sha512-Z4QWJDC4vFILKRJJdE0j/jnRTo94A2k403G6LtTiSIRSmV8dUl4YWqqNRH6lQQ01Vwjj06kKtN81fi3ontBt0w==
 
 readdirp@~3.6.0:
   version "3.6.0"
@@ -107,12 +107,12 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
-sass@1.32.0:
-  version "1.32.0"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.32.0.tgz#10101a026c13080b14e2b374d4e15ee24400a4d3"
-  integrity sha512-fhyqEbMIycQA4blrz/C0pYhv2o4x2y6FYYAH0CshBw3DXh5D5wyERgxw0ptdau1orc/GhNrhF7DFN2etyOCEng==
+sass@1.32.12:
+  version "1.32.12"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.32.12.tgz#a2a47ad0f1c168222db5206444a30c12457abb9f"
+  integrity sha512-zmXn03k3hN0KaiVTjohgkg98C3UowhL1/VSGdj4/VAAiMKGQOE80PFPxFP2Kyq0OUskPKcY5lImkhBKEHlypJA==
   dependencies:
-    chokidar ">=2.0.0 <4.0.0"
+    chokidar ">=3.0.0 <4.0.0"
 
 to-regex-range@^5.0.1:
   version "5.0.1"

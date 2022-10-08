@@ -48,10 +48,12 @@ defineNuxtConfig({
 Add Quasar components to your vue files:
 
 ```vue
+<!-- app.vue or layouts/default.vue -->
 <template>
   <QLayout view="hHh lpR fFf">
     <QPageContainer>
       <QPage padding class="column flex-center q-gutter-xl">
+        <!-- if on layouts use `slot`. if on app.vue use `NuxtPage` -->
         <slot />
       </QPage>
     </QPageContainer>
