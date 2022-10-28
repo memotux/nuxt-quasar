@@ -30,7 +30,7 @@ yarn add -D quasar sass@1.32.12 @quasar/extras nuxt-quasar-vite
 ```
 `@quasar/extras` is optional.
 
-At `nuxt.config.ts` add module name and `quasar` to `build.transpile`:
+At `nuxt.config.ts` add module name:
 
 ```ts
 defineNuxtConfig({

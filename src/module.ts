@@ -1,10 +1,8 @@
-import { dirname } from 'pathe'
 import {
   defineNuxtModule,
   addPluginTemplate,
   resolvePath
 } from '@nuxt/kit'
-import { genObjectFromRawEntries } from 'knitwork'
 import { getScssTransformPlugin } from './scssTransform'
 
 interface ModuleOptions {
@@ -17,7 +15,7 @@ interface ModuleOptions {
 }
 
 // eslint-disable-next-line quotes
-const __QUASAR_VERSION__ = `'2.9.2'`
+const __QUASAR_VERSION__ = `'2.10.0'`
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -78,7 +76,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
     },
     'components:dirs': async (dirs) => {
-      const source = dirname(await resolvePath('quasar/src/components')) + '/components'
+      const source = (await resolvePath('quasar/src/components')).replace('.js', '')
 
       dirs.push({
         path: source,
@@ -121,7 +119,7 @@ export default defineNuxtModule<ModuleOptions>({
       mode: 'all',
       write: true,
       getContents: () => {
-        const config = genObjectFromRawEntries(Object.entries(opts.config), '\t\t')
+        const config = JSON.stringify(opts.config, null, 2)
         const plugins = opts.plugins.join(',')
 
         return `import installQ from 'quasar/src/install-quasar'
@@ -141,7 +139,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     version: ${__QUASAR_VERSION__},
     install(app, opts) {
       if(process.server) {
-        installQ(app, {...opts, ...includes}, nuxtApp.ssrContext)
+        installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event)
       } else {
         installQ(app, {...opts, ...includes})
       }

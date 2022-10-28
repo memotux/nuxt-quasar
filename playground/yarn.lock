@@ -3,9 +3,9 @@
 
 
 "@quasar/extras@^1.13.6":
-  version "1.15.3"
-  resolved "https://registry.yarnpkg.com/@quasar/extras/-/extras-1.15.3.tgz#3fa4cab6df9b6d2001e6e8192a005ca71b1b0719"
-  integrity sha512-kc2h+zTOBRx8eR3TYUjB3ZmALYoH3LBSaOFuha11Ncixk8NTwm9GNCQL6kxmC/CQiaP9Q78KFFgrv3AXGnCvLw==
+  version "1.15.5"
+  resolved "https://registry.yarnpkg.com/@quasar/extras/-/extras-1.15.5.tgz#da427761c1c643c2cbe9dfa656817da54acb5686"
+  integrity sha512-JzKKx5/eKAip3X3bZUEJOOWT9NudqjF01gcce6rtyviko49OU4r+ekyJU3QQIKF8ZqnjZ+DpsVpMWBBZnO6hSQ==
 
 anymatch@~3.1.2:
   version "3.1.2"
@@ -96,9 +96,9 @@ picomatch@^2.0.4, picomatch@^2.2.1:
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
 
 quasar@^2.6.6:
-  version "2.9.2"
-  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.9.2.tgz#6e7d50f9c2c5a52b36e4b9bbd7129a440d64fb9c"
-  integrity sha512-Z4QWJDC4vFILKRJJdE0j/jnRTo94A2k403G6LtTiSIRSmV8dUl4YWqqNRH6lQQ01Vwjj06kKtN81fi3ontBt0w==
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.10.0.tgz#c9af5adad0d7ebe8f14c61c5403c943e7c935453"
+  integrity sha512-PHGcrzPQfFa4tv9a5Z/3D2uat48D4WC9Ad/imzHk/k3G41t0eFMH6glCjAvpCWF2q8dBYIg4nEchiPhlujbKsw==
 
 readdirp@~3.6.0:
   version "3.6.0"
