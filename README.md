@@ -63,13 +63,15 @@ Add Quasar components to your vue files:
 
 ## Nuxt Starter Template
 
-There is available a Starter Template available.
+There is available a Starter Template. [Repository](https://github.com/memotux/nuxt-quasar-template)
 
 In this template are configured:
 
 + Default Layout: `layouts/defaults.vue`
 + Default Pages like `index.vue`
 + Use `@nuxt/content@^2.1.1` and `@nuxt/image-edge`, and modifies `ProseImg` to use `QImg`.
+
+### Install
 
 ```sh
 # <nuxt-app> it's the name of your project folder
