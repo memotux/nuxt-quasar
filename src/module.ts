@@ -8,14 +8,14 @@ import { getScssTransformPlugin } from './scssTransform'
 interface ModuleOptions {
   sassVariables?: string | boolean
   css?: string[]
-  plugins?: ['AddressbarColor' | 'AppFullscreen' | 'AppVisibility' | 'BottomSheet' | 'Dialog' | 'LoadingBar' | 'Loading' | 'Notify' | 'LocalStorage' | 'SessionStorage']
+  plugins: ['AddressbarColor' | 'AppFullscreen' | 'AppVisibility' | 'BottomSheet' | 'Dialog' | 'LoadingBar' | 'Loading' | 'Notify' | 'LocalStorage' | 'SessionStorage']
   config?: {
     dark: boolean
   }
 }
 
 // eslint-disable-next-line quotes
-const __QUASAR_VERSION__ = `'2.10.0'`
+const __QUASAR_VERSION__ = `'2.10.1'`
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -86,17 +86,20 @@ export default defineNuxtModule<ModuleOptions>({
         pathPrefix: false
       })
     },
-    'build:before': (_, options) => {
-      if (!options.transpile.includes('quasar')) { options.transpile.unshift('quasar') }
-    },
     'prepare:types': ({ references }) => {
       references.unshift({ types: 'quasar' })
     }
   },
   setup: (opts, nuxt) => {
-    nuxt.options.css.push(...opts.css)
+    nuxt.options.css.push(...opts.css as string[])
+
+    if (!nuxt.options.build.transpile.includes('quasar')) {
+      nuxt.options.build.transpile.unshift('quasar')
+    }
 
     nuxt.hook('vite:extendConfig', async (config, { isServer, isClient }) => {
+      config.define = config.define || {}
+      config.plugins = config.plugins || []
       const define = {
         __QUASAR_VERSION__: `${__QUASAR_VERSION__}`,
         __QUASAR_SSR__: isServer,
