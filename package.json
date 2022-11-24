@@ -30,7 +30,7 @@
     "@nuxt/schema": "^3.0.0-rc.13",
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "eslint": "^8.23.1",
-    "nuxt": "^3.0.0-rc.13"
+    "nuxt": "^3.0.0-rc.14"
   },
   "author": {
     "email": "romeo@mendezfuentes.net",
