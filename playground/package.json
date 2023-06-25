@@ -2,8 +2,8 @@
   "private": true,
   "name": "quasar-nuxt-playground",
   "dependencies": {
-    "@quasar/extras": "^1.13.6",
-    "quasar": "^2.6.6",
+    "@quasar/extras": "^1.16.4",
+    "quasar": "^2.12.0",
     "sass": "1.32.12"
   }
 }
