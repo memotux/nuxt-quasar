@@ -8,14 +8,14 @@ import { getScssTransformPlugin } from './scssTransform'
 interface ModuleOptions {
   sassVariables?: string | boolean
   css?: string[]
-  plugins: ['AddressbarColor' | 'AppFullscreen' | 'AppVisibility' | 'BottomSheet' | 'Dialog' | 'LoadingBar' | 'Loading' | 'Notify' | 'LocalStorage' | 'SessionStorage']
+  plugins: Array<'AddressbarColor' | 'AppFullscreen' | 'AppVisibility' | 'BottomSheet' | 'Dialog' | 'LoadingBar' | 'Loading' | 'Notify' | 'LocalStorage' | 'SessionStorage'>
   config?: {
     dark: boolean
   }
 }
 
 // eslint-disable-next-line quotes
-const __QUASAR_VERSION__ = `'2.10.2'`
+const __QUASAR_VERSION__ = `'2.12.0'`
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -91,7 +91,9 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   setup: (opts, nuxt) => {
-    nuxt.options.css.push(...opts.css as string[])
+    if (opts.css) {
+      nuxt.options.css.push(...opts.css)
+    }
 
     if (!nuxt.options.build.transpile.includes('quasar')) {
       nuxt.options.build.transpile.unshift('quasar')
