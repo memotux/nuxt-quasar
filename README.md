@@ -17,8 +17,6 @@ This Nuxt module expose UI Components and Utils (Composables, Directives and Plu
 ## Cons
 
 - No Quasar Develop Modes (Electron, Capcitor, BEX, etc.)
-- ~~The use of `ClientOnly` Nuxt component on your Layout~~.
-- ~~Not all directives have been tested. There is an issue with `v-ripple` (more related to `vue` than quasar or nuxt), you can read about it in the TODO section.~~ Since `quasar v2.7.3`
 
 ## Setup
 
@@ -28,6 +26,7 @@ At your Nuxt project folder:
 # Install dependencies
 yarn add -D quasar sass@1.32.12 @quasar/extras nuxt-quasar-vite
 ```
+
 `@quasar/extras` is optional.
 
 At `nuxt.config.ts` add module name:
@@ -35,14 +34,10 @@ At `nuxt.config.ts` add module name:
 ```ts
 defineNuxtConfig({
   //...
-  // Add quasar to build.transpile is OPTIONAL since v1.0.3
-  build: {
-    transpile: ['quasar']
-  },
   // Add nuxt-quasar-vite to modules
-  modules: ['nuxt-quasar-vite'],
+  modules: ["nuxt-quasar-vite"],
   //...
-})
+});
 ```
 
 Add Quasar components to your vue files:
@@ -67,9 +62,9 @@ There is available a Starter Template. [Repository](https://github.com/memotux/n
 
 In this template are configured:
 
-+ Default Layout: `layouts/defaults.vue`
-+ Default Pages like `index.vue`
-+ Use `@nuxt/content@^2.1.1` and `@nuxt/image-edge`, and modifies `ProseImg` to use `QImg`.
+- Default Layout: `layouts/defaults.vue`
+- Default Pages like `index.vue`
+- Use `@nuxt/content@^2.1.1` and `@nuxt/image-edge`, and modifies `ProseImg` to use `QImg`.
 
 ### Install
 
@@ -79,7 +74,7 @@ npx nuxi init -t gh:memotux/nuxt-quasar-template <nuxt-app>
 
 cd <nuxt-app>
 
-yarn install 
+yarn install
 ```
 
 ## Config
@@ -87,7 +82,7 @@ yarn install
 ### Defaults
 
 ```ts
-{
+quasar : {
   sassVariables: true,
   css: ['quasar/src/css/index.sass'],
   plugins: ['Notify'],
@@ -107,22 +102,23 @@ defineNuxtConfig({
   // ...
   quasar: {
     // Optional string | boolean
-    sassVariables: 'assets/quasar.variables.scss',
+    sassVariables: "assets/quasar.variables.scss",
     // Optional string[]
     // If you use animations, add Quasar Extra CSS animation URL here.
-    css: ['@quasar/extras/material-icons/material-icons.css'],
+    // NOTE: This CSS files are inserted on module plugin template, NOT on `nuxt.config`.
+    css: ["@quasar/extras/material-icons/material-icons.css"],
     // List of extra Quasar Plugins
     // auto-instaled: [Platform, Body, Dark, Screen, History, Lang, IconSet]
     // optional: [AddressbarColor, AppFullscreen, AppVisibility, BottomSheet, Dialog,
     //            LoadingBar, Loading, Notify, LocalStorage, SessionStorage]
-    plugins: ['Dialog'],
+    plugins: ["Dialog"],
     /* Quasar UI config -- you'll notice in Quasar docs when you need it */
-    config: { 
-      dark: false
-    } 
-  }
+    config: {
+      dark: false,
+    },
+  },
   // ...
-})
+});
 ```
 
 ### Quasar Utils
@@ -131,29 +127,24 @@ For use Quasar Utils autoimport feature, prefix quasar util function name with `
 
 ```vue
 <script setup>
-// Autoimport Quasar Util `date` using `qdate` 
-const newDate = qdate.addToDate(new Date(), {days: 7, months: 1})
+// Autoimport Quasar Util `date` using `qdate`
+const newDate = qdate.addToDate(new Date(), { days: 7, months: 1 });
 
-// Or use implicit #imports if you want to destructurate
-import { qdate } from '#imports'
+// Or use explicit #imports if you want to destructurate
+import { qdate } from "#imports";
 
-const { addToDate } = qdate
-const newDate = addToDate(new Date(), {days: 7, months: 1})
+const { addToDate } = qdate;
+const newDate = addToDate(new Date(), { days: 7, months: 1 });
 </script>
 ```
 
 ### Quasar SCSS variables
 
-If you need Quasar SCSS variables on your SASS/SCSS assets files import quasar variables file and/or your custom variables file to yor assets file.
+Quasar SCSS variables and custom `sassVariables` are auto imported on your SASS/SCSS assets files.
 
 ```scss
-// @/assets/styles/main.scss
-// Order of import matters
-@import './quasar.variables.scss';
-@import 'quasar/src/css/variables.sass';
-
 .container {
-  border-color: $primary
+  border-color: $primary;
 }
 ```
 
@@ -163,9 +154,6 @@ For more information, you can read the [Quasar Vite Plugin docs](https://quasar.
 
 - Add to quasar configKey animations.
 - Add to quasar configKey iconSet and icon libraries.
-- Since `quasar v2.7.3` `v-ripple` issue was fixed by [Quasar Framework Team](https://github.com/quasarframework/quasar/issues/13732#issuecomment-1159682150). ~~Directive `v-ripple` doesn't work. There is an [issue](https://github.com/quasarframework/quasar/issues/13154) with `vue ^3.2.33`. I propose a [PR](https://github.com/quasarframework/quasar/pull/13402) to a temporary fix. The current [best solution](https://github.com/quasarframework/quasar/issues/13154#issuecomment-1113273509) is `defineExpose({$q})` on `<script setup>` on components using `v-ripple`. Example at: `./playgraound/app.vue`.~~
-- ~~Add Quasar Utils~~.
-- ~~Stop using `ClientOnly` component~~.
 
 ## Development
 
