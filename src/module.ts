@@ -115,7 +115,6 @@ export default defineNuxtModule<ModuleOptions>({
         }
         config.css = config.css || {}
         config.css.preprocessorOptions = config.css.preprocessorOptions || {}
-        console.log(config.css.preprocessorOptions);
 
         config.css.preprocessorOptions.scss = {
           additionalData: sassImportCode.join(';\n')
