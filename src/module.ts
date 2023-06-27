@@ -3,7 +3,6 @@ import {
   addPluginTemplate,
   resolvePath
 } from '@nuxt/kit'
-import { getScssTransformPlugin } from './scssTransform'
 
 interface ModuleOptions {
   sassVariables?: string | boolean
@@ -91,10 +90,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   setup: (opts, nuxt) => {
-    if (opts.css) {
-      nuxt.options.css.push(...opts.css)
-    }
-
     if (!nuxt.options.build.transpile.includes('quasar')) {
       nuxt.options.build.transpile.unshift('quasar')
     }
@@ -113,9 +108,21 @@ export default defineNuxtModule<ModuleOptions>({
       Object.assign(config.define, define)
 
       if (opts.sassVariables) {
-        const scssPath = typeof opts.sassVariables === 'string' ? await resolvePath(opts.sassVariables) : true
-        const quasarScssTransform = getScssTransformPlugin(scssPath)
-        config.plugins.push(quasarScssTransform)
+        const sassImportCode = ["@import 'quasar/src/css/variables.sass'", '']
+
+        if (typeof opts.sassVariables === 'string') {
+          sassImportCode.unshift(`@import '${opts.sassVariables}'`)
+        }
+        config.css = config.css || {}
+        config.css.preprocessorOptions = config.css.preprocessorOptions || {}
+        console.log(config.css.preprocessorOptions);
+
+        config.css.preprocessorOptions.scss = {
+          additionalData: sassImportCode.join(';\n')
+        }
+        config.css.preprocessorOptions.sass = {
+          additionalData: sassImportCode.join('\n')
+        }
       }
     })
 
@@ -126,12 +133,15 @@ export default defineNuxtModule<ModuleOptions>({
       getContents: () => {
         const config = JSON.stringify(opts.config, null, 2)
         const plugins = opts.plugins.join(',')
+        const css = opts.css?.map((s) => `import '${s}'`).join('\n') || ''
 
         return `import installQ from 'quasar/src/install-quasar'
 import { ${plugins} } from 'quasar/src/plugins'
 import lang from 'quasar/src/lang'
 import iconSet from 'quasar/src/icon-set'
 import * as directives from 'quasar/src/directives'
+
+${css}
 
 export default defineNuxtPlugin((nuxtApp) => {
   const includes = {
