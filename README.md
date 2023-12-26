@@ -24,7 +24,7 @@ At your Nuxt project folder:
 
 ```sh
 # Install dependencies
-yarn add -D quasar sass@1.32.12 @quasar/extras nuxt-quasar-vite
+pnpm add -D quasar sass @quasar/extras nuxt-quasar-vite
 ```
 
 `@quasar/extras` is optional.
@@ -70,11 +70,11 @@ In this template are configured:
 
 ```sh
 # <nuxt-app> it's the name of your project folder
-npx nuxi init -t gh:memotux/nuxt-quasar-template <nuxt-app>
+pnpx nuxi init -t gh:memotux/nuxt-quasar-template <nuxt-app>
 
 cd <nuxt-app>
 
-yarn install
+pnpm install
 ```
 
 ## Config
