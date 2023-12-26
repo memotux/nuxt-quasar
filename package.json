@@ -39,7 +39,7 @@
     "changelogen": "^0.5.3",
     "eslint": "^8.42.0",
     "nuxt": "^3.5.1",
-    "vitest": "^0.31.4"
+    "vitest": "^1.1.0"
   },
   "author": {
     "email": "romeo@mendezfuentes.net",
@@ -60,6 +60,6 @@
   ],
   "peerDependencies": {
     "quasar": "^2.7.1",
-    "sass": "1.32.12"
+    "sass": "^1.69.5"
   }
 }
