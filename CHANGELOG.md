@@ -4,6 +4,8 @@
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.0.12...v1.0.13)
 
+- Upgrade to NUXT 3.9
+
 ## v1.0.12
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.0.10...v1.0.12)
