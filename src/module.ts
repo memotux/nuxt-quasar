@@ -14,7 +14,7 @@ interface ModuleOptions {
 }
 
 // eslint-disable-next-line quotes
-const __QUASAR_VERSION__ = `'2.12.0'`
+const __QUASAR_VERSION__ = `'2.14.2'`
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
