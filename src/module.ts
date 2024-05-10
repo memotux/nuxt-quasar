@@ -14,7 +14,7 @@ interface ModuleOptions {
 }
 
 // eslint-disable-next-line quotes
-const __QUASAR_VERSION__ = `'2.14.2'`
+const __QUASAR_VERSION__ = `'2.16.2'`
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -134,11 +134,11 @@ export default defineNuxtModule<ModuleOptions>({
         const plugins = opts.plugins.join(',')
         const css = opts.css?.map((s) => `import '${s}'`).join('\n') || ''
 
-        return `import installQ from 'quasar/src/install-quasar'
-import { ${plugins} } from 'quasar/src/plugins'
-import lang from 'quasar/src/lang'
-import iconSet from 'quasar/src/icon-set'
-import * as directives from 'quasar/src/directives'
+        return `import installQ from 'quasar/src/install-quasar.js'
+import { ${plugins} } from 'quasar/src/plugins.js'
+import lang from 'quasar/src/plugins/lang/Lang.js'
+import iconSet from 'quasar/src/plugins/icon-set/IconSet.js'
+import * as directives from 'quasar/src/directives.js'
 
 ${css}
 
