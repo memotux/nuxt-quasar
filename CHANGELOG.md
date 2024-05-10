@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.14
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.0.13...v1.0.14)
+
+- Upgrade to NUXT 3.11
+- [Fix] Not resolve import for lang & icon-set
+
 ## v1.0.13
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.0.12...v1.0.13)
