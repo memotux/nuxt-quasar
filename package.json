@@ -29,15 +29,15 @@
     "@nuxt/kit": "^3.9.0"
   },
   "devDependencies": {
-    "@types/node": "^18",
     "@nuxt/devtools": "latest",
     "@nuxt/eslint-config": "^0.2.0",
     "@nuxt/module-builder": "^0.5.4",
     "@nuxt/schema": "^3.9.0",
     "@nuxt/test-utils": "^3.9.0",
+    "@types/node": "^18",
     "changelogen": "^0.5.5",
     "eslint": "^8.56.0",
-    "nuxt": "^3.9.0",
+    "nuxt": "^3.11.2",
     "vitest": "^0.33.0"
   },
   "author": {
@@ -58,7 +58,7 @@
     "ui"
   ],
   "peerDependencies": {
-    "quasar": "^2.7.1",
+    "quasar": "^2.16.2",
     "sass": "^1.69.5"
   }
 }
