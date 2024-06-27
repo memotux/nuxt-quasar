@@ -20,25 +20,25 @@
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "release": "pn prepack && pn changelogen --release && pn publish && git push --follow-tags",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.9.0"
+    "@nuxt/kit": "^3.12.2"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@nuxt/eslint-config": "^0.2.0",
-    "@nuxt/module-builder": "^0.5.4",
-    "@nuxt/schema": "^3.9.0",
-    "@nuxt/test-utils": "^3.9.0",
-    "@types/node": "^18",
+    "@nuxt/eslint-config": "^0.3.13",
+    "@nuxt/module-builder": "^0.8.0",
+    "@nuxt/schema": "^3.12.2",
+    "@nuxt/test-utils": "^3.13.1",
+    "@types/node": "^18.19.39",
     "changelogen": "^0.5.5",
-    "eslint": "^8.56.0",
-    "nuxt": "^3.11.2",
-    "vitest": "^0.33.0"
+    "eslint": "^9.5.0",
+    "nuxt": "^3.12.2",
+    "vitest": "^1.6.0"
   },
   "author": {
     "email": "romeo@mendezfuentes.net",
