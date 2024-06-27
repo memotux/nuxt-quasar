@@ -2,11 +2,11 @@
   "private": true,
   "name": "quasar-nuxt-playground",
   "dependencies": {
-    "@quasar/extras": "^1.16.4",
-    "quasar": "^2.16.2",
-    "sass": "^1.69.5"
+    "@quasar/extras": "^1.16.11",
+    "quasar": "^2.16.4",
+    "sass": "^1.77.6"
   },
   "devDependencies": {
-    "nuxt": "^3.11.2"
+    "nuxt": "^3.12.2"
   }
 }
