@@ -26,18 +26,18 @@
     "test:watch": "vitest watch"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.12.2"
+    "@nuxt/kit": "^3.13.0"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxt/eslint-config": "^0.3.13",
-    "@nuxt/module-builder": "^0.8.0",
-    "@nuxt/schema": "^3.12.2",
-    "@nuxt/test-utils": "^3.13.1",
-    "@types/node": "^18.19.39",
+    "@nuxt/module-builder": "^0.8.3",
+    "@nuxt/schema": "^3.13.0",
+    "@nuxt/test-utils": "^3.14.1",
+    "@types/node": "^18.19.46",
     "changelogen": "^0.5.5",
-    "eslint": "^9.5.0",
-    "nuxt": "^3.12.2",
+    "eslint": "^9.9.1",
+    "nuxt": "^3.13.0",
     "vitest": "^1.6.0"
   },
   "author": {
@@ -60,5 +60,6 @@
   "peerDependencies": {
     "quasar": "^2.16.2",
     "sass": "^1.69.5"
-  }
+  },
+  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1"
 }
