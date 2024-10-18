@@ -117,10 +117,12 @@ export default defineNuxtModule<ModuleOptions>({
         config.css.preprocessorOptions = config.css.preprocessorOptions || {}
 
         config.css.preprocessorOptions.scss = {
-          additionalData: sassImportCode.join(';\n')
+          additionalData: sassImportCode.join(';\n'),
+          silenceDeprecations: ['import', 'global-builtin', 'legacy-js-api']
         }
         config.css.preprocessorOptions.sass = {
-          additionalData: sassImportCode.join('\n')
+          additionalData: sassImportCode.join('\n'),
+          silenceDeprecations: ['import', 'global-builtin', 'legacy-js-api']
         }
       }
     })
