@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.0
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.0.14...v1.1.0)
+
+### 🚀 Enhancements
+
+- SASS 1.80+ suppress deprecation warnings ([0afcb39](https://github.com/memotux/nuxt-quasar/commit/0afcb39))
+
+### ❤️ Contributors
+
+- MemoTux <romeo@mendezfuentes.net>
+
 ## v1.0.14
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.0.13...v1.0.14)
