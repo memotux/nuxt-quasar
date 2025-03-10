@@ -26,9 +26,7 @@ const playNotify = () => {
   console.log("Playing Notify");
   $q.notify("Congrats! you have: Quasar + Nuxt3");
 };
-// `v-ripple` issue is fixed on `quasar v2.7.3`
-// https://github.com/quasarframework/quasar/issues/13732#issuecomment-1159682150
-// defineExpose({ $q })
+
 const colors = [
   "primary",
   "amber",
