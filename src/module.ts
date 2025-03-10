@@ -13,7 +13,8 @@ interface ModuleOptions {
   }
 }
 
-const __QUASAR_VERSION__ = `'2.16.9'`
+const __QUASAR_VERSION__ = `'2.18.1'`
+const quasarSrc = await resolvePath('quasar').then(path => path.replace(/dist.*$/g, 'src/'))
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -39,14 +40,14 @@ export default defineNuxtModule<ModuleOptions>({
   hooks: {
     'imports:sources': (presets) => {
       presets.push({
-        from: 'quasar/src/composables',
+        from: quasarSrc + 'composables',
         imports: [
           'useQuasar',
           'useDialogPluginComponent',
           'useFormChild',
         ],
       }, {
-        from: 'quasar/src/utils',
+        from: quasarSrc + 'utils',
         imports: [
           ['clone', 'qclone'],
           ['colors', 'qcolors'],
@@ -74,10 +75,8 @@ export default defineNuxtModule<ModuleOptions>({
       })
     },
     'components:dirs': async (dirs) => {
-      const source = await resolvePath('quasar').then(path => path.replace('dist/quasar.server.prod.js', 'src/components'))
-
       dirs.push({
-        path: source,
+        path: quasarSrc + 'components',
         transpile: true,
         watch: false,
         pattern: '**/Q*.js',
@@ -118,15 +117,17 @@ export default defineNuxtModule<ModuleOptions>({
 
         config.css.preprocessorOptions.scss = {
           additionalData: sassImportCode.join(';\n'),
+          silenceDeprecations: ['import'],
         }
         config.css.preprocessorOptions.sass = {
           additionalData: sassImportCode.join('\n'),
+          silenceDeprecations: ['import'],
         }
       }
     })
 
     addPluginTemplate({
-      filename: 'plugins/quasarVueUse.ts',
+      filename: 'plugins/nuxt-quasar-vite.ts',
       mode: 'all',
       write: true,
       getContents: () => {
