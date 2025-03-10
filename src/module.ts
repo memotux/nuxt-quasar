@@ -114,16 +114,14 @@ export default defineNuxtModule<ModuleOptions>({
         if (typeof opts.sassVariables === 'string') {
           sassImportCode.unshift(`@import '${opts.sassVariables}'`)
         }
-        config.css = config.css || {}
-        config.css.preprocessorOptions = config.css.preprocessorOptions || {}
+        config.css ??= {}
+        config.css.preprocessorOptions ??= {}
 
         config.css.preprocessorOptions.scss = {
-          additionalData: sassImportCode.join(';\n'),
-          silenceDeprecations: ['import', 'global-builtin', 'legacy-js-api']
+          additionalData: sassImportCode.join(';\n')
         }
         config.css.preprocessorOptions.sass = {
-          additionalData: sassImportCode.join('\n'),
-          silenceDeprecations: ['import', 'global-builtin', 'legacy-js-api']
+          additionalData: sassImportCode.join('\n')
         }
       }
     })
