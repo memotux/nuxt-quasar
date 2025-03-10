@@ -75,13 +75,14 @@ export default defineNuxtModule<ModuleOptions>({
       })
     },
     'components:dirs': async (dirs) => {
-      const source = (await resolvePath('quasar/src/components')).replace('.js', '')
+      let source = await resolvePath('quasar').then(path => path.replace('dist/quasar.server.prod.js', 'src/components'))
 
       dirs.push({
         path: source,
         transpile: true,
         watch: false,
-        pattern: '*/Q*.js',
+        pattern: '**/Q*.js',
+        ignore: ['**.test.js', '*/__tests__/*'],
         pathPrefix: false
       })
     },
