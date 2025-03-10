@@ -1,7 +1,7 @@
 import {
   defineNuxtModule,
   addPluginTemplate,
-  resolvePath
+  resolvePath,
 } from '@nuxt/kit'
 
 interface ModuleOptions {
@@ -13,7 +13,6 @@ interface ModuleOptions {
   }
 }
 
-// eslint-disable-next-line quotes
 const __QUASAR_VERSION__ = `'2.16.9'`
 
 export default defineNuxtModule<ModuleOptions>({
@@ -25,8 +24,8 @@ export default defineNuxtModule<ModuleOptions>({
     // Compatibility constraints
     compatibility: {
       // Semver version of supported nuxt versions
-      nuxt: '^3.0.0-rc.2'
-    }
+      nuxt: '^3.0.0-rc.2',
+    },
   },
   // Default configuration options for your module
   defaults: {
@@ -34,8 +33,8 @@ export default defineNuxtModule<ModuleOptions>({
     css: ['quasar/src/css/index.sass'],
     plugins: ['Notify'],
     config: {
-      dark: true
-    }
+      dark: true,
+    },
   },
   hooks: {
     'imports:sources': (presets) => {
@@ -44,8 +43,8 @@ export default defineNuxtModule<ModuleOptions>({
         imports: [
           'useQuasar',
           'useDialogPluginComponent',
-          'useFormChild'
-        ]
+          'useFormChild',
+        ],
       }, {
         from: 'quasar/src/utils',
         imports: [
@@ -70,12 +69,12 @@ export default defineNuxtModule<ModuleOptions>({
           ['scroll', 'qscroll'],
           ['setCssVar', 'qsetCssVar'],
           ['throttle', 'qthrottle'],
-          ['uid', 'quid']
-        ]
+          ['uid', 'quid'],
+        ],
       })
     },
     'components:dirs': async (dirs) => {
-      let source = await resolvePath('quasar').then(path => path.replace('dist/quasar.server.prod.js', 'src/components'))
+      const source = await resolvePath('quasar').then(path => path.replace('dist/quasar.server.prod.js', 'src/components'))
 
       dirs.push({
         path: source,
@@ -83,12 +82,12 @@ export default defineNuxtModule<ModuleOptions>({
         watch: false,
         pattern: '**/Q*.js',
         ignore: ['**.test.js', '*/__tests__/*'],
-        pathPrefix: false
+        pathPrefix: false,
       })
     },
     'prepare:types': ({ references }) => {
       references.unshift({ types: 'quasar' })
-    }
+    },
   },
   setup: (opts, nuxt) => {
     if (!nuxt.options.build.transpile.includes('quasar')) {
@@ -103,13 +102,13 @@ export default defineNuxtModule<ModuleOptions>({
         __QUASAR_SSR__: isServer,
         __QUASAR_SSR_SERVER__: isServer,
         __QUASAR_SSR_CLIENT__: isServer && isClient,
-        __QUASAR_SSR_PWA__: false
+        __QUASAR_SSR_PWA__: false,
       }
 
       Object.assign(config.define, define)
 
       if (opts.sassVariables) {
-        const sassImportCode = ["@import 'quasar/src/css/variables.sass'", '']
+        const sassImportCode = [`@import 'quasar/src/css/variables.sass'`, '']
 
         if (typeof opts.sassVariables === 'string') {
           sassImportCode.unshift(`@import '${opts.sassVariables}'`)
@@ -118,10 +117,10 @@ export default defineNuxtModule<ModuleOptions>({
         config.css.preprocessorOptions ??= {}
 
         config.css.preprocessorOptions.scss = {
-          additionalData: sassImportCode.join(';\n')
+          additionalData: sassImportCode.join(';\n'),
         }
         config.css.preprocessorOptions.sass = {
-          additionalData: sassImportCode.join('\n')
+          additionalData: sassImportCode.join('\n'),
         }
       }
     })
@@ -133,7 +132,7 @@ export default defineNuxtModule<ModuleOptions>({
       getContents: () => {
         const config = JSON.stringify(opts.config, null, 2)
         const plugins = opts.plugins.join(',')
-        const css = opts.css?.map((s) => `import '${s}'`).join('\n') || ''
+        const css = opts.css?.map(s => `import '${s}'`).join('\n') || ''
 
         return `import installQ from 'quasar/src/install-quasar.js'
 import { ${plugins} } from 'quasar/src/plugins.js'
@@ -164,7 +163,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   })
 })
 `
-      }
+      },
     })
-  }
+  },
 })
