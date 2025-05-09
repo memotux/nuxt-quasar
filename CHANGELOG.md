@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.1.2
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.1...v1.1.2)
+
+### 🏡 Chore
+
+- Cleanup package dependecies ([4f9c00e](https://github.com/memotux/nuxt-quasar/commit/4f9c00e))
+- Package script release changelogen bump ([c2cb369](https://github.com/memotux/nuxt-quasar/commit/c2cb369))
+- Upgrade packages dependencies & module template ([9d8b764](https://github.com/memotux/nuxt-quasar/commit/9d8b764))
+
+### ❤️ Contributors
+
+- MemoTux <romeo@mendezfuentes.net>
+
 ## v1.1.1
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.0...v1.1.1)
