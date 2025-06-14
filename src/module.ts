@@ -141,8 +141,6 @@ import lang from 'quasar/src/plugins/lang/Lang.js'
 import iconSet from 'quasar/src/plugins/icon-set/IconSet.js'
 import * as directives from 'quasar/src/directives.js'
 
-import { defineNuxtPlugin } from '#app/nuxt'
-
 ${css}
 
 export default defineNuxtPlugin((nuxtApp) => {
