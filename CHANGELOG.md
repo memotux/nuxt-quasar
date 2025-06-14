@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.4
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.3...v1.1.4)
+
+### 🩹 Fixes
+
+- **plugin:** Undo commit 566416c2 ([0f6afc8](https://github.com/memotux/nuxt-quasar/commit/0f6afc8))
+
+### ❤️ Contributors
+
+- MemoTux <romeo@mendezfuentes.net>
+
 ## v1.1.3
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.2...v1.1.3)
