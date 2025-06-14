@@ -153,8 +153,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use({
     version: ${__QUASAR_VERSION__},
     install(app, opts) {
-      if(process.server) {
-        installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event)
+      if(import.meta.server) {
+        installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event.node)
       } else {
         installQ(app, {...opts, ...includes})
       }
