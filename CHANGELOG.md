@@ -1,5 +1,29 @@
 # Changelog
 
+## v1.1.3
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.2...v1.1.3)
+
+### 🩹 Fixes
+
+- Lint errors ([ea91f8b](https://github.com/memotux/nuxt-quasar/commit/ea91f8b))
+- Github workflow failed test ([b5b4921](https://github.com/memotux/nuxt-quasar/commit/b5b4921))
+- **bug:** Duplicated import on nuxt HMR ([566416c](https://github.com/memotux/nuxt-quasar/commit/566416c))
+
+### 🏡 Chore
+
+- Update package script realease ([315d3fc](https://github.com/memotux/nuxt-quasar/commit/315d3fc))
+- Add package script 'dev:generate' ([9c0ba18](https://github.com/memotux/nuxt-quasar/commit/9c0ba18))
+- Add test ([3cbf74c](https://github.com/memotux/nuxt-quasar/commit/3cbf74c))
+- Update github workflow ([76356a4](https://github.com/memotux/nuxt-quasar/commit/76356a4))
+- Upgrade package dependencies ([e17afa5](https://github.com/memotux/nuxt-quasar/commit/e17afa5))
+- Update tsconfig ([6a892fb](https://github.com/memotux/nuxt-quasar/commit/6a892fb))
+- **plugin:** Use import.meta.server instead of process.server ([cd934c1](https://github.com/memotux/nuxt-quasar/commit/cd934c1))
+
+### ❤️ Contributors
+
+- MemoTux <romeo@mendezfuentes.net>
+
 ## v1.1.2
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.1...v1.1.2)
