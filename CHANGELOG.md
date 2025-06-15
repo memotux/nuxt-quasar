@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.1.5
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.4...v1.1.5)
+
+### 🩹 Fixes
+
+- **plugin:** Nuxt HMR import bug ([06b80f2](https://github.com/memotux/nuxt-quasar/commit/06b80f2))
+
+### 🏡 Chore
+
+- **plugin:** Define nuxt plugin as object ([1949103](https://github.com/memotux/nuxt-quasar/commit/1949103))
+
+### ❤️ Contributors
+
+- MemoTux <romeo@mendezfuentes.net>
+
 ## v1.1.4
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.3...v1.1.4)
