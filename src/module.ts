@@ -127,7 +127,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addPluginTemplate({
-      filename: 'plugins/nuxt-quasar-vite.ts',
+      filename: 'quasar/plugin.ts',
       mode: 'all',
       write: true,
       getContents: () => {
