@@ -143,25 +143,28 @@ import * as directives from 'quasar/src/directives.js'
 
 ${css}
 
-export default defineNuxtPlugin((nuxtApp) => {
-  const includes = {
-    directives,
-    plugins: { ${plugins} },
-    config: ${config},
+export default defineNuxtPlugin({
+  name: 'nuxt:quasar-install',
+  setup(nuxtApp) {
+    const includes = {
+      directives,
+      plugins: { ${plugins} },
+      config: ${config},
+    }
+    
+    nuxtApp.vueApp.use({
+      version: ${__QUASAR_VERSION__},
+      install(app, opts) {
+        if(import.meta.server) {
+          installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event.node)
+        } else {
+          installQ(app, {...opts, ...includes})
+        }
+      },
+      lang,
+      iconSet
+    })
   }
-  
-  nuxtApp.vueApp.use({
-    version: ${__QUASAR_VERSION__},
-    install(app, opts) {
-      if(import.meta.server) {
-        installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event.node)
-      } else {
-        installQ(app, {...opts, ...includes})
-      }
-    },
-    lang,
-    iconSet
-  })
 })
 `
       },
