@@ -13,7 +13,7 @@ interface ModuleOptions {
   }
 }
 
-const __QUASAR_VERSION__ = `'2.18.1'`
+const __QUASAR_VERSION__ = `'2.18.2'`
 const quasarSrc = await resolvePath('quasar').then(path => path.replace(/dist.*$/g, 'src/'))
 
 export default defineNuxtModule<ModuleOptions>({
@@ -25,7 +25,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Compatibility constraints
     compatibility: {
       // Semver version of supported nuxt versions
-      nuxt: '^3.0.0-rc.2',
+      nuxt: '>=3.0.0-rc.2',
     },
   },
   // Default configuration options for your module
@@ -151,7 +151,7 @@ export default defineNuxtPlugin({
       plugins: { ${plugins} },
       config: ${config},
     }
-    
+
     nuxtApp.vueApp.use({
       version: ${__QUASAR_VERSION__},
       install(app, opts) {
