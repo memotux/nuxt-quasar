@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.2.0
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.6...v1.2.0)
+
+### 🏡 Chore
+
+- UPGRADE package dependencies ([eb468f3](https://github.com/memotux/nuxt-quasar/commit/eb468f3))
+- DEPRECATED vite:extendConfig hook ([be6a4ff](https://github.com/memotux/nuxt-quasar/commit/be6a4ff))
+
+### ❤️ Contributors
+
+- MemoTux <romeo@mendezfuentes.net>
+
 ## v1.1.6
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.5...v1.1.6)
