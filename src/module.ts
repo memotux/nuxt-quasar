@@ -3,6 +3,7 @@ import {
   addPluginTemplate,
   resolvePath,
 } from '@nuxt/kit'
+import type { ViteConfig } from '@nuxt/schema'
 
 interface ModuleOptions {
   sassVariables?: string | boolean
@@ -92,8 +93,15 @@ export default defineNuxtModule<ModuleOptions>({
     if (!nuxt.options.build.transpile.includes('quasar')) {
       nuxt.options.build.transpile.unshift('quasar')
     }
+    /**
+     * Deprecated in Nuxt 5+.
+     * In Nuxt 5, this operates on a shared configuration
+     * rather than separate client/server configs.
+     * https://nuxt.com/docs/4.x/api/advanced/hooks
+     */
+    nuxt.hook('vite:extendConfig', async (conf, { isServer, isClient }) => {
+      const config = conf as ViteConfig
 
-    nuxt.hook('vite:extendConfig', async (config, { isServer, isClient }) => {
       config.define = config.define || {}
       config.plugins = config.plugins || []
       const define = {
