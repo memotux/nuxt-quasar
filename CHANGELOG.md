@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.2.1
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.2.0...v1.2.1)
+
+### 🏡 Chore
+
+- Upgrade package dependencies ([13d9057](https://github.com/memotux/nuxt-quasar/commit/13d9057))
+
+### ❤️ Contributors
+
+- MemoTux <romeo@mendezfuentes.net>
+
 ## v1.2.0
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.1.6...v1.2.0)
