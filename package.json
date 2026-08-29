@@ -2,14 +2,28 @@
   "name": "nuxt-quasar-vite",
   "version": "1.2.0",
   "description": "Quasar Framework UI for Nuxt",
+  "keywords": [
+    "module",
+    "nuxt",
+    "quasar",
+    "ui",
+    "vite"
+  ],
+  "homepage": "https://github.com/memotux/nuxt-quasar",
   "license": "MIT",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/types.d.mts",
-      "import": "./dist/module.mjs"
-    }
+  "author": {
+    "name": "Romeo Mendez Fuentes",
+    "email": "romeo@mendezfuentes.net",
+    "url": "https://romeo.mendezfuentes.net"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/memotux/nuxt-quasar.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
   "main": "./dist/module.mjs",
   "typesVersions": {
     "*": {
@@ -18,9 +32,12 @@
       ]
     }
   },
-  "files": [
-    "dist"
-  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
+    }
+  },
   "scripts": {
     "prepack": "nuxt-module-build build",
     "dev": "nuxi dev playground",
@@ -35,42 +52,25 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "^3.1.0",
-    "@nuxt/eslint-config": "^1.10.0",
-    "@nuxt/kit": "^4.2.1",
-    "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.2.1",
-    "@nuxt/test-utils": "^3.20.1",
-    "@quasar/extras": "^1.17.0",
+    "@nuxt/eslint-config": "^1.17.0",
+    "@nuxt/kit": "^4.5.2",
+    "@nuxt/module-builder": "^1.0.3",
+    "@nuxt/schema": "^4.5.2",
+    "@nuxt/test-utils": "^4.2.0",
+    "@quasar/extras": "^2.0.4",
     "@types/node": "latest",
+    "baseline-browser-mapping": "^2.11.20",
     "changelogen": "^0.6.2",
-    "eslint": "^9.39.1",
-    "nuxt": "^4.2.1",
-    "quasar": "^2.18.5",
-    "sass": "^1.94.0",
-    "typescript": "~5.9.3",
-    "vitest": "^4.0.8",
-    "vue-tsc": "^3.1.3"
+    "eslint": "^10.9.1",
+    "nuxt": "^4.5.2",
+    "quasar": "^2.27.0",
+    "sass-embedded": "^1.103.1",
+    "typescript": "6",
+    "vitest": "^4.1.11",
+    "vue-tsc": "^3.3.11"
   },
-  "author": {
-    "email": "romeo@mendezfuentes.net",
-    "name": "Romeo Mendez Fuentes",
-    "url": "https://romeo.mendezfuentes.net"
-  },
-  "homepage": "https://github.com/memotux/nuxt-quasar",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/memotux/nuxt-quasar.git"
-  },
-  "keywords": [
-    "nuxt",
-    "quasar",
-    "module",
-    "vite",
-    "ui"
-  ],
   "peerDependencies": {
-    "quasar": "^2.16.2",
-    "sass": "^1.69.5"
-  },
-  "packageManager": "pnpm@10.21.0+sha512.da3337267e400fdd3d479a6c68079ac6db01d8ca4f67572083e722775a796788a7a9956613749e000fac20d424b594f7a791a5f4e2e13581c5ef947f26968a40"
+    "quasar": "^2.27.0",
+    "sass-embedded": "^1.103.1"
+  }
 }

@@ -24,7 +24,7 @@ At your Nuxt project folder:
 
 ```sh
 # Install dependencies
-pnpm add -D quasar sass @quasar/extras nuxt-quasar-vite
+pnpm add -D quasar sass-embedded@^1.93.2 @quasar/extras nuxt-quasar-vite
 ```
 
 `@quasar/extras` is optional.

@@ -14,7 +14,7 @@ interface ModuleOptions {
   }
 }
 
-const __QUASAR_VERSION__ = `'2.18.5'`
+const __QUASAR_VERSION__ = `'2.27.0'`
 const quasarSrc = await resolvePath('quasar').then(path => path.replace(/dist.*$/g, 'src/'))
 
 export default defineNuxtModule<ModuleOptions>({
