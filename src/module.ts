@@ -14,7 +14,8 @@ interface ModuleOptions {
   }
 }
 
-const __QUASAR_VERSION__ = `'2.27.0'`
+const quasarPkgInfo = (await import('quasar/package.json', { with: { type: 'json' } })).default
+const __QUASAR_VERSION__ = `'${quasarPkgInfo.version}'`
 const quasarSrc = await resolvePath('quasar').then(path => path.replace(/dist.*$/g, 'src/'))
 
 export default defineNuxtModule<ModuleOptions>({
