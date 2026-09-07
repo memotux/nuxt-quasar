@@ -104,11 +104,15 @@ export default defineNuxtModule<ModuleOptions>({
 
       config.define = config.define || {}
       config.plugins = config.plugins || []
+      // SSR defines are build-level (nuxt.options.ssr), not env-level:
+      // Quasar expects the same __QUASAR_SSR__ on client and server bundles,
+      // and vite:extendConfig env flags are mutually exclusive per call.
+      const ssrEnabled = nuxt.options.ssr === true
       const define = {
         __QUASAR_VERSION__: `${__QUASAR_VERSION__}`,
-        __QUASAR_SSR__: isServer,
-        __QUASAR_SSR_SERVER__: isServer,
-        __QUASAR_SSR_CLIENT__: isServer && isClient,
+        __QUASAR_SSR__: ssrEnabled,
+        __QUASAR_SSR_SERVER__: isServer && ssrEnabled,
+        __QUASAR_SSR_CLIENT__: isClient && ssrEnabled,
         __QUASAR_SSR_PWA__: false,
       }
 
@@ -172,6 +176,15 @@ export default defineNuxtPlugin({
       lang,
       iconSet
     })
+
+    if (import.meta.client) {
+      onNuxtReady(() => {
+        // Quasar SSR hydration takeover: with __QUASAR_SSR_CLIENT__ enabled,
+        // Screen/Platform/Meta/Body defer client init to $q.onSSRHydrated(),
+        // which the SSR application must call once hydration completes.
+        nuxtApp.vueApp.config.globalProperties.$q?.onSSRHydrated?.()
+      })
+    }
   }
 })
 `
