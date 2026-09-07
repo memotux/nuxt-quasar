@@ -4,11 +4,12 @@ import {
   resolvePath,
 } from '@nuxt/kit'
 import type { ViteConfig } from '@nuxt/schema'
+import { VALID_PLUGINS, validatePlugins } from './internal/plugins'
 
 interface ModuleOptions {
   sassVariables?: string | boolean
   css?: string[]
-  plugins: Array<'AddressbarColor' | 'AppFullscreen' | 'AppVisibility' | 'BottomSheet' | 'Dialog' | 'LoadingBar' | 'Loading' | 'Notify' | 'LocalStorage' | 'SessionStorage'>
+  plugins: typeof VALID_PLUGINS[number][]
   config?: {
     dark: boolean
   }
@@ -91,6 +92,7 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   setup: (opts, nuxt) => {
+    validatePlugins(opts.plugins)
     if (!nuxt.options.build.transpile.includes('quasar')) {
       nuxt.options.build.transpile.unshift('quasar')
     }
