@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mergeSassOptions, mergeScssOptions } from '../src/internal/merge-preprocessor-options'
+import { mergeSassOptions, mergeScssOptions } from '../src/internal'
 
 const moduleDefaults = {
   additionalData: 'moduleData',

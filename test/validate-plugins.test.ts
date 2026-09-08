@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { validatePlugins, VALID_PLUGINS } from '../src/internal/plugins'
+import { validatePlugins, VALID_PLUGINS } from '../src/internal'
 
 describe('validatePlugins', () => {
   it('accepts valid plugin names', () => {

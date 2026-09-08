@@ -4,9 +4,17 @@ import {
   resolvePath,
 } from '@nuxt/kit'
 import type { ViteConfig } from '@nuxt/schema'
-import type { VALID_PLUGINS } from './internal/plugins'
-import { validatePlugins } from './internal/plugins'
-import { mergeScssOptions, mergeSassOptions } from './internal/merge-preprocessor-options'
+import type { VALID_PLUGINS } from './internal'
+import {
+  validatePlugins,
+  mergeScssOptions,
+  mergeSassOptions,
+  buildDefineMatrix,
+  buildPluginContents,
+  buildSassImportCode,
+  buildImportPresets,
+  buildComponentDir,
+} from './internal'
 
 interface ModuleOptions {
   sassVariables?: string | boolean
@@ -44,50 +52,10 @@ export default defineNuxtModule<ModuleOptions>({
   },
   hooks: {
     'imports:sources': (presets) => {
-      presets.push({
-        from: quasarSrc + 'composables',
-        imports: [
-          'useQuasar',
-          'useDialogPluginComponent',
-          'useFormChild',
-        ],
-      }, {
-        from: quasarSrc + 'utils',
-        imports: [
-          ['clone', 'qclone'],
-          ['colors', 'qcolors'],
-          ['copyToClipboard', 'qcopyToClipboard'],
-          ['createMetaMixin', 'qcreateMetaMixin'],
-          ['createUploaderComponent', 'qcreateUploaderComponent'],
-          ['date', 'qdate'],
-          ['debounce', 'qdebounce'],
-          ['dom', 'qdom'],
-          ['event', 'qevent'],
-          ['exportFile', 'qexportFile'],
-          ['extend', 'qextend'],
-          ['format', 'qformat'],
-          ['frameDebounce', 'qframeDebounce'],
-          ['getCssVar', 'qgetCssVar'],
-          ['noop', 'qnoop'],
-          ['morph', 'qmorph'],
-          ['openURL', 'qopenURL'],
-          ['patterns', 'qpatterns'],
-          ['scroll', 'qscroll'],
-          ['setCssVar', 'qsetCssVar'],
-          ['throttle', 'qthrottle'],
-          ['uid', 'quid'],
-        ],
-      })
+      presets.push(...buildImportPresets(quasarSrc))
     },
     'components:dirs': async (dirs) => {
-      dirs.push({
-        path: quasarSrc + 'components',
-        transpile: true,
-        watch: false,
-        pattern: '**/Q*.js',
-        ignore: ['**.test.js', '*/__tests__/*'],
-        pathPrefix: false,
-      })
+      dirs.push(buildComponentDir(quasarSrc))
     },
     'prepare:types': ({ references }) => {
       references.unshift({ types: 'quasar' })
@@ -113,22 +81,12 @@ export default defineNuxtModule<ModuleOptions>({
       // Quasar expects the same __QUASAR_SSR__ on client and server bundles,
       // and vite:extendConfig env flags are mutually exclusive per call.
       const ssrEnabled = nuxt.options.ssr === true
-      const define = {
-        __QUASAR_VERSION__: `${__QUASAR_VERSION__}`,
-        __QUASAR_SSR__: ssrEnabled,
-        __QUASAR_SSR_SERVER__: isServer && ssrEnabled,
-        __QUASAR_SSR_CLIENT__: isClient && ssrEnabled,
-        __QUASAR_SSR_PWA__: false,
-      }
+      const define = buildDefineMatrix(ssrEnabled, isServer, isClient, __QUASAR_VERSION__)
 
       Object.assign(config.define, define)
 
       if (opts.sassVariables) {
-        const sassImportCode = [`@import 'quasar/src/css/variables.sass'`, '']
-
-        if (typeof opts.sassVariables === 'string') {
-          sassImportCode.unshift(`@import '${opts.sassVariables}'`)
-        }
+        const sassImportCode = buildSassImportCode(opts.sassVariables)
         config.css ??= {}
         config.css.preprocessorOptions ??= {}
 
@@ -156,53 +114,12 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'quasar/plugin.ts',
       mode: 'all',
       write: true,
-      getContents: () => {
-        const config = JSON.stringify(opts.config, null, 2)
-        const plugins = opts.plugins.join(',')
-        const css = opts.css?.map(s => `import '${s}'`).join('\n') || ''
-
-        return `import installQ from 'quasar/src/install-quasar.js'
-import { ${plugins} } from 'quasar/src/plugins.js'
-import lang from 'quasar/src/plugins/lang/Lang.js'
-import iconSet from 'quasar/src/plugins/icon-set/IconSet.js'
-import * as directives from 'quasar/src/directives.js'
-
-${css}
-
-export default defineNuxtPlugin({
-  name: 'nuxt:quasar-install',
-  setup(nuxtApp) {
-    const includes = {
-      directives,
-      plugins: { ${plugins} },
-      config: ${config},
-    }
-
-    nuxtApp.vueApp.use({
-      version: ${__QUASAR_VERSION__},
-      install(app, opts) {
-        if(import.meta.server) {
-          installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event.node)
-        } else {
-          installQ(app, {...opts, ...includes})
-        }
-      },
-      lang,
-      iconSet
-    })
-
-    if (import.meta.client) {
-      onNuxtReady(() => {
-        // Quasar SSR hydration takeover: with __QUASAR_SSR_CLIENT__ enabled,
-        // Screen/Platform/Meta/Body defer client init to $q.onSSRHydrated(),
-        // which the SSR application must call once hydration completes.
-        nuxtApp.vueApp.config.globalProperties.$q?.onSSRHydrated?.()
-      })
-    }
-  }
-})
-`
-      },
+      getContents: () => buildPluginContents({
+        plugins: opts.plugins,
+        css: opts.css ?? [],
+        config: opts.config,
+        quasarVersion: __QUASAR_VERSION__,
+      }),
     })
   },
 })
