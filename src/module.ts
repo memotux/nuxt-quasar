@@ -4,9 +4,11 @@ import {
   resolvePath,
 } from '@nuxt/kit'
 import type { ViteConfig } from '@nuxt/schema'
-import type { VALID_PLUGINS } from './internal'
+import type { VALID_PLUGINS, QuasarAnimation } from './internal'
 import {
   validatePlugins,
+  normalizeAnimations,
+  validateAnimations,
   mergeScssOptions,
   mergeSassOptions,
   buildDefineMatrix,
@@ -19,6 +21,7 @@ import {
 interface ModuleOptions {
   sassVariables?: string | boolean
   css?: string[]
+  animations?: 'all' | QuasarAnimation[]
   plugins: typeof VALID_PLUGINS[number][]
   config?: {
     dark: boolean
@@ -45,6 +48,7 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     sassVariables: true,
     css: ['quasar/src/css/index.sass'],
+    animations: [],
     plugins: ['Notify'],
     config: {
       dark: true,
@@ -61,8 +65,18 @@ export default defineNuxtModule<ModuleOptions>({
       references.unshift({ types: 'quasar' })
     },
   },
-  setup: (opts, nuxt) => {
+  setup: async (opts, nuxt) => {
     validatePlugins(opts.plugins)
+    const animations = normalizeAnimations(opts.animations)
+    validateAnimations(animations)
+    if (animations.length > 0) {
+      try {
+        await resolvePath('@quasar/extras/package.json')
+      }
+      catch {
+        throw new Error('nuxt-quasar-vite: the animations option requires the @quasar/extras package. Install it with: pnpm add -D @quasar/extras')
+      }
+    }
     if (!nuxt.options.build.transpile.includes('quasar')) {
       nuxt.options.build.transpile.unshift('quasar')
     }
@@ -117,6 +131,7 @@ export default defineNuxtModule<ModuleOptions>({
       getContents: () => buildPluginContents({
         plugins: opts.plugins,
         css: opts.css ?? [],
+        animations,
         config: opts.config,
         quasarVersion: __QUASAR_VERSION__,
       }),

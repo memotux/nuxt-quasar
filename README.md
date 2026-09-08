@@ -86,6 +86,7 @@ pnpm install
 quasar: {
   sassVariables: true,
   css: ['quasar/src/css/index.sass'],
+  animations: [],
   plugins: ['Notify'],
   config: {
     dark: true,
@@ -107,8 +108,11 @@ export default defineNuxtConfig({
     sassVariables: 'assets/quasar.variables.scss',
 
     // Extra CSS files, injected on the module plugin template (not `nuxt.config`).
-    // If you use animations, add the Quasar Extras CSS animation URL here.
     css: ['@quasar/extras/material-icons/material-icons.css'],
+
+    // Quasar CSS animations, or 'all' to include the complete animation bundle.
+    // Unknown names fail at setup time with a did-you-mean suggestion.
+    animations: ['fadeIn'],
 
     // List of opt-in Quasar plugins. Unknown names fail at setup time
     // with the list of valid plugins.
@@ -127,8 +131,29 @@ export default defineNuxtConfig({
 | --- | --- | --- | --- |
 | `sassVariables` | `boolean \| string` | `true` | Auto-inject Quasar variables into all your SASS/SCSS. A string is a path to your custom variables file (relative to the project root, e.g. `assets/quasar.variables.scss`), imported before Quasar's so it can override defaults. |
 | `css` | `string[]` | `['quasar/src/css/index.sass']` | CSS imported by the generated Quasar plugin (e.g. icon fonts from `@quasar/extras`). |
+| `animations` | `'all' \| string[]` | `[]` | Quasar CSS animations imported from `@quasar/extras`. |
 | `plugins` | `string[]` | `['Notify']` | Opt-in Quasar plugins, validated at setup. |
 | `config` | `object` | `{ dark: true }` | Quasar UI config passed to `installQuasar`. `dark` is the typed option; other keys are forwarded as-is. |
+
+### Animations
+
+Enable named animations from `@quasar/extras` and use them with the `animated` base class:
+
+```vue
+<div class="animated fadeIn">Content</div>
+```
+
+The `.animated` base class and the `--animate-duration`, `--animate-delay`, and `--animate-repeat` CSS variables come from Quasar's own CSS. Keep `quasar/src/css/index.sass` in the `css` option so those definitions remain available. The `prefers-reduced-motion` guard is included there as well.
+
+Use `animations: 'all'` to include all 98 animations. This adds approximately 30 KB of raw CSS (about 5 KB gzipped), so prefer individual names when possible. The option requires the optional `@quasar/extras` package.
+
+Two CSS files, `lightSpeedIn` and `lightSpeedOut`, are intentionally not in the typed animation list or the `'all'` bundle. Use the `css` option as an escape hatch:
+
+```ts
+css: ['@quasar/extras/animate/lightSpeedIn.css']
+```
+
+See the [Quasar animations documentation](https://quasar.dev/options/animations).
 
 ### Quasar plugins
 
@@ -217,8 +242,8 @@ For more information, read the [Quasar Vite Plugin docs](https://quasar.dev/star
 
 ## Roadmap
 
-- Add animations to the `quasar` config key.
 - Add `iconSet` and icon libraries options to the `quasar` config key.
+- Fix `quasar` config-key typing: Nuxt currently resolves the key to `Record<string, any>`, so options are not type-checked in `nuxt.config.ts` (typos and unknown keys pass silently; runtime validation is the only safety net).
 
 ## Development
 

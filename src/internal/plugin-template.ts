@@ -1,6 +1,7 @@
 export interface PluginTemplateOptions {
   plugins: string[]
   css: string[]
+  animations?: string[]
   config: Record<string, unknown> | undefined
   quasarVersion: string
 }
@@ -15,6 +16,7 @@ export interface PluginTemplateOptions {
 export function buildPluginContents(opts: PluginTemplateOptions): string {
   const config = JSON.stringify(opts.config, null, 2)
   const plugins = opts.plugins.join(',')
+  const animations = opts.animations?.map(s => `import '@quasar/extras/animate/${s}.css'`).join('\n') || ''
   const css = opts.css?.map(s => `import '${s}'`).join('\n') || ''
 
   return `import installQ from 'quasar/src/install-quasar.js'
@@ -23,7 +25,7 @@ import lang from 'quasar/src/plugins/lang/Lang.js'
 import iconSet from 'quasar/src/plugins/icon-set/IconSet.js'
 import * as directives from 'quasar/src/directives.js'
 
-${css}
+${animations}${animations && css ? '\n' : ''}${css}
 
 export default defineNuxtPlugin({
   name: 'nuxt:quasar-install',

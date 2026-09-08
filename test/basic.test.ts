@@ -20,4 +20,9 @@ describe('ssr', async () => {
 
     expect(plugin).toContain(`version: '${quasar.default.version}'`)
   })
+
+  it('includes the configured animation in the generated plugin', async () => {
+    const plugin = await readFile(fileURLToPath(new URL('../playground/.nuxt/quasar/plugin.ts', import.meta.url)), 'utf8')
+    expect(plugin).toContain('import \'@quasar/extras/animate/fadeIn.css\'')
+  })
 })

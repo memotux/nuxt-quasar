@@ -41,6 +41,22 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     expect(contents).toContain('import \'~/assets/custom.sass\'')
   })
 
+  it('includes animation import lines before CSS imports', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      animations: ['fadeIn'],
+    })
+    const animationIdx = contents.indexOf('import \'@quasar/extras/animate/fadeIn.css\'')
+    const cssIdx = contents.indexOf('import \'quasar/src/css/index.sass\'')
+    expect(animationIdx).toBeGreaterThan(-1)
+    expect(animationIdx).toBeLessThan(cssIdx)
+  })
+
+  it('does not include animation imports when animations are empty or undefined', () => {
+    expect(buildPluginContents(baseOpts)).not.toContain('@quasar/extras/animate/')
+    expect(buildPluginContents({ ...baseOpts, animations: [] })).not.toContain('@quasar/extras/animate/')
+  })
+
   it('produces empty CSS section when css array is empty', () => {
     const contents = buildPluginContents({ ...baseOpts, css: [] })
     // Check the CSS section is between directives and defineNuxtPlugin
