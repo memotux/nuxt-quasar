@@ -4,7 +4,9 @@ import {
   resolvePath,
 } from '@nuxt/kit'
 import type { ViteConfig } from '@nuxt/schema'
-import { VALID_PLUGINS, validatePlugins } from './internal/plugins'
+import type { VALID_PLUGINS } from './internal/plugins'
+import { validatePlugins } from './internal/plugins'
+import { mergeScssOptions, mergeSassOptions } from './internal/merge-preprocessor-options'
 
 interface ModuleOptions {
   sassVariables?: string | boolean
@@ -130,14 +132,23 @@ export default defineNuxtModule<ModuleOptions>({
         config.css ??= {}
         config.css.preprocessorOptions ??= {}
 
-        config.css.preprocessorOptions.scss = {
-          additionalData: sassImportCode.join(';\n'),
-          silenceDeprecations: ['import'],
-        }
-        config.css.preprocessorOptions.sass = {
-          additionalData: sassImportCode.join('\n'),
-          silenceDeprecations: ['import'],
-        }
+        const userScssOpts = config.css.preprocessorOptions.scss as Record<string, unknown> | undefined
+        const userSassOpts = config.css.preprocessorOptions.sass as Record<string, unknown> | undefined
+
+        config.css.preprocessorOptions.scss = mergeScssOptions(
+          {
+            additionalData: sassImportCode.join(';\n'),
+            silenceDeprecations: ['import'],
+          },
+          userScssOpts,
+        )
+        config.css.preprocessorOptions.sass = mergeSassOptions(
+          {
+            additionalData: sassImportCode.join('\n'),
+            silenceDeprecations: ['import'],
+          },
+          userSassOpts,
+        )
       }
     })
 
