@@ -12,17 +12,17 @@ describe('buildImportPresets (F4: imports:sources hook)', () => {
   describe('composables preset', () => {
     it('has correct from path', () => {
       const [composables] = buildImportPresets(QUASAR_SRC)
-      expect(composables.from).toBe(QUASAR_SRC + 'composables')
+      expect(composables!.from).toBe(QUASAR_SRC + 'composables')
     })
 
     it('has exactly 3 composable imports', () => {
       const [composables] = buildImportPresets(QUASAR_SRC)
-      expect(composables.imports).toHaveLength(3)
+      expect(composables!.imports).toHaveLength(3)
     })
 
     it('imports useQuasar, useDialogPluginComponent, useFormChild', () => {
       const [composables] = buildImportPresets(QUASAR_SRC)
-      expect(composables.imports).toEqual([
+      expect(composables!.imports).toEqual([
         'useQuasar',
         'useDialogPluginComponent',
         'useFormChild',
@@ -33,17 +33,17 @@ describe('buildImportPresets (F4: imports:sources hook)', () => {
   describe('utils preset', () => {
     it('has correct from path', () => {
       const [, utils] = buildImportPresets(QUASAR_SRC)
-      expect(utils.from).toBe(QUASAR_SRC + 'utils')
+      expect(utils!.from).toBe(QUASAR_SRC + 'utils')
     })
 
     it('has exactly 22 aliased import pairs', () => {
       const [, utils] = buildImportPresets(QUASAR_SRC)
-      expect(utils.imports).toHaveLength(22)
+      expect(utils!.imports).toHaveLength(22)
     })
 
     it('all imports are aliased tuples [original, q-prefixed]', () => {
       const [, utils] = buildImportPresets(QUASAR_SRC)
-      for (const imp of utils.imports) {
+      for (const imp of utils!.imports) {
         expect(Array.isArray(imp)).toBe(true)
         const [original, alias] = imp as [string, string]
         expect(alias).toBe('q' + original)
@@ -52,7 +52,7 @@ describe('buildImportPresets (F4: imports:sources hook)', () => {
 
     it('contains expected utility names', () => {
       const [, utilsPreset] = buildImportPresets(QUASAR_SRC)
-      const utils = utilsPreset.imports as [string, string][]
+      const utils = utilsPreset!.imports as [string, string][]
       const originals = utils.map(([name]) => name)
 
       expect(originals).toContain('clone')
@@ -81,7 +81,7 @@ describe('buildImportPresets (F4: imports:sources hook)', () => {
 
     it('aliases are all q-prefixed originals', () => {
       const [, utilsPreset] = buildImportPresets(QUASAR_SRC)
-      const utils = utilsPreset.imports as [string, string][]
+      const utils = utilsPreset!.imports as [string, string][]
       expect(utils).toEqual([
         ['clone', 'qclone'],
         ['colors', 'qcolors'],
@@ -111,7 +111,7 @@ describe('buildImportPresets (F4: imports:sources hook)', () => {
 
   it('uses the provided quasarSrc path as base', () => {
     const [composables, utils] = buildImportPresets('/custom/path/to/quasar/src/')
-    expect(composables.from).toBe('/custom/path/to/quasar/src/composables')
-    expect(utils.from).toBe('/custom/path/to/quasar/src/utils')
+    expect(composables!.from).toBe('/custom/path/to/quasar/src/composables')
+    expect(utils!.from).toBe('/custom/path/to/quasar/src/utils')
   })
 })

@@ -1,8 +1,10 @@
+import type { QuasarUIConfiguration } from 'quasar'
+
 export interface PluginTemplateOptions {
   plugins: string[]
   css: string[]
   animations?: string[]
-  config: Record<string, unknown> | undefined
+  config: QuasarUIConfiguration | undefined
   quasarVersion: string
 }
 
