@@ -28,13 +28,13 @@
   "typesVersions": {
     "*": {
       ".": [
-        "./dist/types.d.mts"
+        "./dist/module.d.mts"
       ]
     }
   },
   "exports": {
     ".": {
-      "types": "./dist/types.d.mts",
+      "types": "./dist/module.d.mts",
       "import": "./dist/module.mjs"
     }
   },

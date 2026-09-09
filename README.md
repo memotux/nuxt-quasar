@@ -133,7 +133,7 @@ export default defineNuxtConfig({
 | `css` | `string[]` | `['quasar/src/css/index.sass']` | CSS imported by the generated Quasar plugin (e.g. icon fonts from `@quasar/extras`). |
 | `animations` | `'all' \| string[]` | `[]` | Quasar CSS animations imported from `@quasar/extras`. |
 | `plugins` | `string[]` | `['Notify']` | Opt-in Quasar plugins, validated at setup. |
-| `config` | `object` | `{ dark: true }` | Quasar UI config passed to `installQuasar`. `dark` is the typed option; other keys are forwarded as-is. |
+| `config` | `QuasarUIConfiguration` | `{ dark: true }` | Quasar UI config passed to `installQuasar`. Fully typed using Quasar's `QuasarUIConfiguration` interface. |
 
 ### Animations
 
@@ -243,7 +243,6 @@ For more information, read the [Quasar Vite Plugin docs](https://quasar.dev/star
 ## Roadmap
 
 - Add `iconSet` and icon libraries options to the `quasar` config key.
-- Fix `quasar` config-key typing: Nuxt currently resolves the key to `Record<string, any>`, so options are not type-checked in `nuxt.config.ts` (typos and unknown keys pass silently; runtime validation is the only safety net).
 
 ## Development
 

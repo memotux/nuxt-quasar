@@ -4,6 +4,7 @@ import {
   resolvePath,
 } from '@nuxt/kit'
 import type { ViteConfig } from '@nuxt/schema'
+import type { QuasarUIConfiguration } from 'quasar'
 import type { VALID_PLUGINS, QuasarAnimation } from './internal'
 import {
   validatePlugins,
@@ -23,9 +24,7 @@ interface ModuleOptions {
   css?: string[]
   animations?: 'all' | QuasarAnimation[]
   plugins: typeof VALID_PLUGINS[number][]
-  config?: {
-    dark: boolean
-  }
+  config?: QuasarUIConfiguration
 }
 
 const quasarPkgInfo = (await import('quasar/package.json', { with: { type: 'json' } })).default
