@@ -2,14 +2,18 @@ import {
   defineNuxtModule,
   addPluginTemplate,
   resolvePath,
+  useLogger,
 } from '@nuxt/kit'
 import type { ViteConfig } from '@nuxt/schema'
 import type { QuasarUIConfiguration } from 'quasar'
-import type { VALID_PLUGINS, QuasarAnimation } from './internal'
+import type { VALID_PLUGINS, QuasarAnimation, QuasarIconLibrary } from './internal'
 import {
   validatePlugins,
   normalizeAnimations,
   validateAnimations,
+  normalizeIconLibraries,
+  validateIconLibraries,
+  warnLegacyIconCss,
   mergeScssOptions,
   mergeSassOptions,
   buildDefineMatrix,
@@ -23,6 +27,7 @@ interface ModuleOptions {
   sassVariables?: string | boolean
   css?: string[]
   animations?: 'all' | QuasarAnimation[]
+  iconLibraries?: QuasarIconLibrary[]
   plugins: typeof VALID_PLUGINS[number][]
   config?: QuasarUIConfiguration
 }
@@ -68,14 +73,25 @@ export default defineNuxtModule<ModuleOptions>({
     validatePlugins(opts.plugins)
     const animations = normalizeAnimations(opts.animations)
     validateAnimations(animations)
-    if (animations.length > 0) {
+    const iconLibraries = normalizeIconLibraries(opts.iconLibraries)
+    validateIconLibraries(iconLibraries)
+    // Both options resolve CSS from @quasar/extras, so one guard covers them.
+    const extrasOptions = [
+      animations.length > 0 ? 'animations' : '',
+      iconLibraries.length > 0 ? 'iconLibraries' : '',
+    ].filter(Boolean)
+    if (extrasOptions.length > 0) {
       try {
         await resolvePath('@quasar/extras/package.json')
       }
       catch {
-        throw new Error('nuxt-quasar-vite: the animations option requires the @quasar/extras package. Install it with: pnpm add -D @quasar/extras')
+        throw new Error(
+          `nuxt-quasar-vite: using ${extrasOptions.join(' or ')} requires the @quasar/extras package. `
+          + 'Install it with: pnpm add -D @quasar/extras',
+        )
       }
     }
+    warnLegacyIconCss(opts.css ?? [], useLogger('nuxt-quasar-vite'))
     if (!nuxt.options.build.transpile.includes('quasar')) {
       nuxt.options.build.transpile.unshift('quasar')
     }
@@ -131,6 +147,7 @@ export default defineNuxtModule<ModuleOptions>({
         plugins: opts.plugins,
         css: opts.css ?? [],
         animations,
+        iconLibraries,
         config: opts.config,
         quasarVersion: __QUASAR_VERSION__,
       }),

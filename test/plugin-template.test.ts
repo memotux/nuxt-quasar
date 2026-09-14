@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildPluginContents } from '../src/internal'
+import { buildPluginContents, normalizeIconLibraries } from '../src/internal'
 
 const QUASAR_VERSION = `'2.27.0'`
 
@@ -121,5 +121,77 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     const contents = buildPluginContents({ ...baseOpts, plugins: ['Notify'] })
     expect(contents).toContain('import { Notify } from \'quasar/src/plugins.js\'')
     expect(contents).toContain('plugins: { Notify }')
+  })
+})
+
+describe('buildPluginContents (iconLibraries option)', () => {
+  const MATERIAL_ICONS_LINE = 'import \'@quasar/extras/material-icons/material-icons.css\''
+  const MDI_LINE = 'import \'@quasar/extras/mdi-v7/mdi-v7.css\''
+  const ANIMATION_LINE = 'import \'@quasar/extras/animate/fadeIn.css\''
+  const CSS_LINE = 'import \'quasar/src/css/index.sass\''
+
+  it('emits one import line per selected icon library', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      iconLibraries: ['material-icons', 'mdi-v7'],
+    })
+    expect(contents).toContain(MATERIAL_ICONS_LINE)
+    expect(contents).toContain(MDI_LINE)
+  })
+
+  it('emits a single line per name once the selection is normalized', () => {
+    // Dedupe is the normalizer's job; the template renders what it is given.
+    const contents = buildPluginContents({
+      ...baseOpts,
+      iconLibraries: normalizeIconLibraries(['material-icons', '', 'material-icons']),
+    })
+    expect(contents.match(/@quasar\/extras\/material-icons\/material-icons\.css/g)).toHaveLength(1)
+  })
+
+  it('emits the lines in the order given', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      iconLibraries: ['mdi-v7', 'material-icons'],
+    })
+    expect(contents.indexOf(MDI_LINE)).toBeLessThan(contents.indexOf(MATERIAL_ICONS_LINE))
+  })
+
+  it('places icon library imports after animations and before css', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      animations: ['fadeIn'],
+      iconLibraries: ['material-icons'],
+    })
+    const animationIdx = contents.indexOf(ANIMATION_LINE)
+    const iconIdx = contents.indexOf(MATERIAL_ICONS_LINE)
+    const cssIdx = contents.indexOf(CSS_LINE)
+
+    expect(animationIdx).toBeGreaterThan(-1)
+    expect(animationIdx).toBeLessThan(iconIdx)
+    expect(iconIdx).toBeLessThan(cssIdx)
+  })
+
+  it('emits icon library imports with no animations selected', () => {
+    const contents = buildPluginContents({ ...baseOpts, iconLibraries: ['material-icons'] })
+    expect(contents.indexOf(MATERIAL_ICONS_LINE)).toBeLessThan(contents.indexOf(CSS_LINE))
+    expect(contents).not.toContain('@quasar/extras/animate/')
+  })
+
+  it('groups icon imports cleanly when animations and css are both absent', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      css: [],
+      iconLibraries: ['themify'],
+    })
+    expect(contents).toContain(
+      'import \'@quasar/extras/themify/themify.css\'\n\nexport default defineNuxtPlugin',
+    )
+  })
+
+  it('emits no icon import when iconLibraries is empty or undefined', () => {
+    expect(buildPluginContents({ ...baseOpts, iconLibraries: [] }))
+      .not.toContain('@quasar/extras/material-icons/')
+    expect(buildPluginContents(baseOpts))
+      .not.toContain('@quasar/extras/material-icons/')
   })
 })

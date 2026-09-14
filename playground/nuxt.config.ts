@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-08-27',
   quasar: {
     sassVariables: 'assets/styles/quasar.variables.scss',
-    css: ['@quasar/extras/material-icons/material-icons.css'],
+    iconLibraries: ['material-icons'],
     animations: ['fadeIn'],
   },
 })

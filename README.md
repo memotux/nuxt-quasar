@@ -130,8 +130,9 @@ export default defineNuxtConfig({
 | Option | Type | Default | Description |
 | --- | --- | --- | --- |
 | `sassVariables` | `boolean \| string` | `true` | Auto-inject Quasar variables into all your SASS/SCSS. A string is a path to your custom variables file (relative to the project root, e.g. `assets/quasar.variables.scss`), imported before Quasar's so it can override defaults. |
-| `css` | `string[]` | `['quasar/src/css/index.sass']` | CSS imported by the generated Quasar plugin (e.g. icon fonts from `@quasar/extras`). |
+| `css` | `string[]` | `['quasar/src/css/index.sass']` | CSS imported by the generated Quasar plugin. Use as an escape hatch for custom fonts or non-typed CSS. |
 | `animations` | `'all' \| string[]` | `[]` | Quasar CSS animations imported from `@quasar/extras`. |
+| `iconLibraries` | `string[]` | `[]` | Quasar CSS icon font libraries imported from `@quasar/extras`. Validated at setup. |
 | `plugins` | `string[]` | `['Notify']` | Opt-in Quasar plugins, validated at setup. |
 | `config` | `QuasarUIConfiguration` | `{ dark: true }` | Quasar UI config passed to `installQuasar`. Fully typed using Quasar's `QuasarUIConfiguration` interface. |
 
@@ -154,6 +155,30 @@ css: ['@quasar/extras/animate/lightSpeedIn.css']
 ```
 
 See the [Quasar animations documentation](https://quasar.dev/options/animations).
+
+### Icon libraries
+
+Enable typed CSS icon font libraries from `@quasar/extras`:
+
+```ts
+quasar: {
+  iconLibraries: ['material-icons', 'mdi-v7'],
+}
+```
+
+The option accepts an array of library names. Unknown names fail at setup time with a did-you-mean suggestion. The option requires the optional `@quasar/extras` package.
+
+Valid libraries: `bootstrap-icons`, `eva-icons`, `fontawesome-v7`, `ionicons-v4`, `line-awesome`, `material-icons`, `material-icons-outlined`, `material-icons-round`, `material-icons-sharp`, `material-symbols-outlined`, `material-symbols-rounded`, `material-symbols-sharp`, `mdi-v7`, `themify`.
+
+If you were previously importing icon libraries via `css`, migrate to `iconLibraries`:
+
+```ts
+// Before (deprecated, still works with a warning):
+css: ['@quasar/extras/material-icons/material-icons.css']
+
+// After (typed and validated):
+iconLibraries: ['material-icons']
+```
 
 ### Quasar plugins
 
@@ -242,7 +267,8 @@ For more information, read the [Quasar Vite Plugin docs](https://quasar.dev/star
 
 ## Roadmap
 
-- Add `iconSet` and icon libraries options to the `quasar` config key.
+- Add `iconLibraries` config option (typed icon font imports from `@quasar/extras`).
+- Add `iconSet` config option (Quasar core IconSet selection).
 
 ## Development
 

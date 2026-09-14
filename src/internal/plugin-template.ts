@@ -1,9 +1,11 @@
 import type { QuasarUIConfiguration } from 'quasar'
+import { buildIconLibraryImports } from './icon-libraries'
 
 export interface PluginTemplateOptions {
   plugins: string[]
   css: string[]
   animations?: string[]
+  iconLibraries?: string[]
   config: QuasarUIConfiguration | undefined
   quasarVersion: string
 }
@@ -19,7 +21,11 @@ export function buildPluginContents(opts: PluginTemplateOptions): string {
   const config = JSON.stringify(opts.config, null, 2)
   const plugins = opts.plugins.join(',')
   const animations = opts.animations?.map(s => `import '@quasar/extras/animate/${s}.css'`).join('\n') || ''
+  const iconLibraries = buildIconLibraryImports(opts.iconLibraries ?? []).join('\n')
   const css = opts.css?.map(s => `import '${s}'`).join('\n') || ''
+  // Import order is deterministic: animations -> icon libraries -> free-form css.
+  // Empty groups drop out so no blank import lines are emitted.
+  const importGroups = [animations, iconLibraries, css].filter(Boolean).join('\n')
 
   return `import installQ from 'quasar/src/install-quasar.js'
 import { ${plugins} } from 'quasar/src/plugins.js'
@@ -27,7 +33,7 @@ import lang from 'quasar/src/plugins/lang/Lang.js'
 import iconSet from 'quasar/src/plugins/icon-set/IconSet.js'
 import * as directives from 'quasar/src/directives.js'
 
-${animations}${animations && css ? '\n' : ''}${css}
+${importGroups}
 
 export default defineNuxtPlugin({
   name: 'nuxt:quasar-install',
