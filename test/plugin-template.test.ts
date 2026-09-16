@@ -21,10 +21,25 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     expect(contents).toContain('import { Notify,Dialog } from \'quasar/src/plugins.js\'')
   })
 
-  it('imports lang and iconSet', () => {
+  it('imports lang', () => {
     const contents = buildPluginContents(baseOpts)
     expect(contents).toContain('import lang from \'quasar/src/plugins/lang/Lang.js\'')
-    expect(contents).toContain('import iconSet from \'quasar/src/plugins/icon-set/IconSet.js\'')
+  })
+
+  it('does not import the IconSet plugin module (auto-installed by installQuasar)', () => {
+    const contents = buildPluginContents(baseOpts)
+    expect(contents).not.toContain('quasar/src/plugins/icon-set/IconSet.js')
+  })
+
+  it('does not carry a top-level iconSet entry on the vueApp.use payload', () => {
+    const contents = buildPluginContents(baseOpts)
+    const useStart = contents.indexOf('nuxtApp.vueApp.use({')
+    // The use({...}) call closes at 8-space indentation; inner installQ calls
+    // close deeper, so anchor on the dedented closer.
+    const useEnd = contents.indexOf('\n    })', useStart)
+    const payload = contents.slice(useStart, useEnd)
+    expect(useEnd).toBeGreaterThan(useStart)
+    expect(payload).not.toContain('iconSet')
   })
 
   it('imports directives namespace', () => {
@@ -121,6 +136,91 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     const contents = buildPluginContents({ ...baseOpts, plugins: ['Notify'] })
     expect(contents).toContain('import { Notify } from \'quasar/src/plugins.js\'')
     expect(contents).toContain('plugins: { Notify }')
+  })
+})
+
+describe('buildPluginContents (iconSet option)', () => {
+  const MDI_ICON_SET_LINE = 'import iconSet from \'quasar/icon-set/mdi-v7.js\''
+  const SVG_MDI_ICON_SET_LINE = 'import iconSet from \'quasar/icon-set/svg-mdi-v7.js\''
+  const ANIMATION_LINE = 'import \'@quasar/extras/animate/fadeIn.css\''
+  const ICON_LIBRARY_LINE = 'import \'@quasar/extras/material-icons/material-icons.css\''
+  const CSS_LINE = 'import \'quasar/src/css/index.sass\''
+  const DIRECTIVES_LINE = 'import * as directives from \'quasar/src/directives.js\''
+
+  it('emits exactly one icon-set import for a webfont name', () => {
+    const contents = buildPluginContents({ ...baseOpts, iconSet: 'mdi-v7' })
+    expect(contents).toContain(MDI_ICON_SET_LINE)
+    expect(contents.match(/quasar\/icon-set\//g)).toHaveLength(1)
+  })
+
+  it('places the icon-set import between the static Quasar imports and the @quasar/extras imports', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      iconSet: 'mdi-v7',
+      animations: ['fadeIn'],
+      iconLibraries: ['material-icons'],
+    })
+
+    const directivesIdx = contents.indexOf(DIRECTIVES_LINE)
+    const iconSetIdx = contents.indexOf(MDI_ICON_SET_LINE)
+    const animationIdx = contents.indexOf(ANIMATION_LINE)
+    const iconLibraryIdx = contents.indexOf(ICON_LIBRARY_LINE)
+    const cssIdx = contents.indexOf(CSS_LINE)
+
+    expect(iconSetIdx).toBeGreaterThan(directivesIdx)
+    expect(animationIdx).toBeGreaterThan(iconSetIdx)
+    expect(iconLibraryIdx).toBeGreaterThan(animationIdx)
+    expect(cssIdx).toBeGreaterThan(iconLibraryIdx)
+  })
+
+  it('spreads iconSet into the install payload alongside directives, plugins and config', () => {
+    const contents = buildPluginContents({ ...baseOpts, iconSet: 'mdi-v7' })
+
+    expect(contents).toContain('directives,')
+    expect(contents).toContain('plugins: { Notify,Dialog }')
+    expect(contents).toContain('iconSet,')
+
+    // iconSet lives inside the `includes` object spread into installQuasar,
+    // after config and before the vueApp.use call.
+    const includesIdx = contents.indexOf('const includes = {')
+    const configIdx = contents.indexOf('config:')
+    const iconSetIdx = contents.indexOf('iconSet,')
+    const useIdx = contents.indexOf('nuxtApp.vueApp.use({')
+    expect(includesIdx).toBeGreaterThan(-1)
+    expect(iconSetIdx).toBeGreaterThan(configIdx)
+    expect(iconSetIdx).toBeGreaterThan(includesIdx)
+    expect(iconSetIdx).toBeLessThan(useIdx)
+    expect(contents).toContain('installQ(app, {...opts, ...includes})')
+  })
+
+  it('emits the svg icon-set import with the same deterministic position', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      iconSet: 'svg-mdi-v7',
+      animations: ['fadeIn'],
+      iconLibraries: ['material-icons'],
+    })
+
+    expect(contents).toContain(SVG_MDI_ICON_SET_LINE)
+    expect(contents.match(/quasar\/icon-set\//g)).toHaveLength(1)
+
+    const iconSetIdx = contents.indexOf(SVG_MDI_ICON_SET_LINE)
+    expect(iconSetIdx).toBeGreaterThan(contents.indexOf(DIRECTIVES_LINE))
+    expect(iconSetIdx).toBeLessThan(contents.indexOf(ANIMATION_LINE))
+    expect(contents).toContain('iconSet,')
+  })
+
+  it('emits no icon-set import and no payload iconSet when the option is omitted, empty, or unknown', () => {
+    const cases = [
+      baseOpts,
+      { ...baseOpts, iconSet: '' },
+      { ...baseOpts, iconSet: 'not-a-real-set' },
+    ]
+    for (const opts of cases) {
+      const contents = buildPluginContents(opts)
+      expect(contents).not.toContain('quasar/icon-set/')
+      expect(contents).not.toContain('iconSet')
+    }
   })
 })
 

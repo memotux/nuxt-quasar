@@ -10,6 +10,13 @@ export {
   warnLegacyIconCss,
 } from './icon-libraries'
 export type { QuasarIconLibrary } from './icon-libraries'
+export {
+  VALID_ICON_SETS,
+  isSvgIconSet,
+  validateIconSet,
+  iconSetImportLine,
+} from './icon-set'
+export type { QuasarIconSet } from './icon-set'
 export { buildImportPresets } from './import-presets'
 export type { ImportPreset } from './import-presets'
 export { levenshteinDistance } from './levenshtein'

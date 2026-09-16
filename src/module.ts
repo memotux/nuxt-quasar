@@ -6,13 +6,15 @@ import {
 } from '@nuxt/kit'
 import type { ViteConfig } from '@nuxt/schema'
 import type { QuasarUIConfiguration } from 'quasar'
-import type { VALID_PLUGINS, QuasarAnimation, QuasarIconLibrary } from './internal'
+import type { VALID_PLUGINS, QuasarAnimation, QuasarIconLibrary, QuasarIconSet } from './internal'
 import {
   validatePlugins,
   normalizeAnimations,
   validateAnimations,
   normalizeIconLibraries,
   validateIconLibraries,
+  validateIconSet,
+  isSvgIconSet,
   warnLegacyIconCss,
   mergeScssOptions,
   mergeSassOptions,
@@ -28,6 +30,7 @@ interface ModuleOptions {
   css?: string[]
   animations?: 'all' | QuasarAnimation[]
   iconLibraries?: QuasarIconLibrary[]
+  iconSet?: QuasarIconSet
   plugins: typeof VALID_PLUGINS[number][]
   config?: QuasarUIConfiguration
 }
@@ -75,10 +78,15 @@ export default defineNuxtModule<ModuleOptions>({
     validateAnimations(animations)
     const iconLibraries = normalizeIconLibraries(opts.iconLibraries)
     validateIconLibraries(iconLibraries)
-    // Both options resolve CSS from @quasar/extras, so one guard covers them.
+    if (opts.iconSet !== undefined) {
+      validateIconSet(opts.iconSet)
+    }
+    // Animations, icon libraries and svg-* icon sets all resolve assets
+    // from @quasar/extras, so one guard covers them.
     const extrasOptions = [
       animations.length > 0 ? 'animations' : '',
       iconLibraries.length > 0 ? 'iconLibraries' : '',
+      opts.iconSet !== undefined && isSvgIconSet(opts.iconSet) ? 'iconSet' : '',
     ].filter(Boolean)
     if (extrasOptions.length > 0) {
       try {
@@ -148,6 +156,7 @@ export default defineNuxtModule<ModuleOptions>({
         css: opts.css ?? [],
         animations,
         iconLibraries,
+        iconSet: opts.iconSet,
         config: opts.config,
         quasarVersion: __QUASAR_VERSION__,
       }),

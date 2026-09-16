@@ -133,6 +133,7 @@ export default defineNuxtConfig({
 | `css` | `string[]` | `['quasar/src/css/index.sass']` | CSS imported by the generated Quasar plugin. Use as an escape hatch for custom fonts or non-typed CSS. |
 | `animations` | `'all' \| string[]` | `[]` | Quasar CSS animations imported from `@quasar/extras`. |
 | `iconLibraries` | `string[]` | `[]` | Quasar CSS icon font libraries imported from `@quasar/extras`. Validated at setup. |
+| `iconSet` | `string` | — (Quasar's bundled `material-icons`) | Selects the Quasar Icon Set mapping passed to `installQuasar`. One of 41 typed names, validated at setup. `svg-*` names require `@quasar/extras`. |
 | `plugins` | `string[]` | `['Notify']` | Opt-in Quasar plugins, validated at setup. |
 | `config` | `QuasarUIConfiguration` | `{ dark: true }` | Quasar UI config passed to `installQuasar`. Fully typed using Quasar's `QuasarUIConfiguration` interface. |
 
@@ -179,6 +180,39 @@ css: ['@quasar/extras/material-icons/material-icons.css']
 // After (typed and validated):
 iconLibraries: ['material-icons']
 ```
+
+### Icon set
+
+Select which Quasar Icon Set mapping your components use:
+
+```ts
+quasar: {
+  iconSet: 'mdi-v7',
+}
+```
+
+The option accepts a single name — Quasar supports exactly one active Icon Set, so arrays and the `'all'` shorthand are rejected. Unknown names fail at setup time with a did-you-mean suggestion. Valid names are the 41 publicly licensed mappings shipped by Quasar: 20 webfont sets (`bootstrap-icons`, `eva-icons`, `fontawesome-v5`, `fontawesome-v6`, `fontawesome-v7`, `ionicons-v4`, `line-awesome`, `material-icons` plus its `-outlined`/`-round`/`-sharp` variants, `material-symbols-outlined`/`-rounded`/`-sharp`, `mdi-v3` through `mdi-v7`, `themify`) and their 21 `svg-*` counterparts.
+
+Webfont mappings are pure JS lookups; bring the matching font CSS yourself, typically via `iconLibraries`:
+
+```ts
+quasar: {
+  iconSet: 'mdi-v7',
+  iconLibraries: ['mdi-v7'],
+}
+```
+
+`svg-*` variants import their icons from `@quasar/extras` and therefore require the optional `@quasar/extras` package — setup fails with a clear error when it is missing:
+
+```ts
+quasar: {
+  iconSet: 'svg-mdi-v7',
+}
+```
+
+When the option is omitted, Quasar's bundled `material-icons` mapping is used automatically and no extra import is emitted.
+
+Font Awesome Pro variants (`fontawesome-v5-pro`, `fontawesome-v6-pro`, `fontawesome-v7-pro`) exist in Quasar but require paid fonts not shipped by `@quasar/extras`; set them up manually via the `css` option and `$q.iconSet.set(...)`.
 
 ### Quasar plugins
 
@@ -268,7 +302,6 @@ For more information, read the [Quasar Vite Plugin docs](https://quasar.dev/star
 ## Roadmap
 
 - Add `iconLibraries` config option (typed icon font imports from `@quasar/extras`).
-- Add `iconSet` config option (Quasar core IconSet selection).
 
 ## Development
 

@@ -1,11 +1,13 @@
 import type { QuasarUIConfiguration } from 'quasar'
 import { buildIconLibraryImports } from './icon-libraries'
+import { VALID_ICON_SETS, iconSetImportLine } from './icon-set'
 
 export interface PluginTemplateOptions {
   plugins: string[]
   css: string[]
   animations?: string[]
   iconLibraries?: string[]
+  iconSet?: string
   config: QuasarUIConfiguration | undefined
   quasarVersion: string
 }
@@ -23,14 +25,19 @@ export function buildPluginContents(opts: PluginTemplateOptions): string {
   const animations = opts.animations?.map(s => `import '@quasar/extras/animate/${s}.css'`).join('\n') || ''
   const iconLibraries = buildIconLibraryImports(opts.iconLibraries ?? []).join('\n')
   const css = opts.css?.map(s => `import '${s}'`).join('\n') || ''
-  // Import order is deterministic: animations -> icon libraries -> free-form css.
+  // The module validates iconSet before wiring it here; an unknown or empty
+  // name is treated as absent so the template stays a total renderer.
+  const iconSetImport = opts.iconSet && (VALID_ICON_SETS as readonly string[]).includes(opts.iconSet)
+    ? iconSetImportLine(opts.iconSet)
+    : ''
+  const iconSetEntry = iconSetImport ? '\n      iconSet,' : ''
+  // Import order is deterministic: iconSet -> animations -> icon libraries -> free-form css.
   // Empty groups drop out so no blank import lines are emitted.
-  const importGroups = [animations, iconLibraries, css].filter(Boolean).join('\n')
+  const importGroups = [iconSetImport, animations, iconLibraries, css].filter(Boolean).join('\n')
 
   return `import installQ from 'quasar/src/install-quasar.js'
 import { ${plugins} } from 'quasar/src/plugins.js'
 import lang from 'quasar/src/plugins/lang/Lang.js'
-import iconSet from 'quasar/src/plugins/icon-set/IconSet.js'
 import * as directives from 'quasar/src/directives.js'
 
 ${importGroups}
@@ -41,7 +48,7 @@ export default defineNuxtPlugin({
     const includes = {
       directives,
       plugins: { ${plugins} },
-      config: ${config},
+      config: ${config},${iconSetEntry}
     }
 
     nuxtApp.vueApp.use({
@@ -54,7 +61,6 @@ export default defineNuxtPlugin({
         }
       },
       lang,
-      iconSet
     })
 
     if (import.meta.client) {
