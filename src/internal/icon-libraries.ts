@@ -1,4 +1,4 @@
-import { levenshteinDistance } from './levenshtein'
+import { validateArrayValues } from './validation'
 
 /**
  * Logger contract for `warnLegacyIconCss`. Accepts any object with a
@@ -53,27 +53,12 @@ export function normalizeIconLibraries(iconLibraries?: string[]): string[] {
 }
 
 export function validateIconLibraries(names: string[]): void {
-  const invalid = names.filter(name => !(VALID_ICON_LIBRARIES as readonly string[]).includes(name))
-  if (invalid.length === 0) return
-
-  const details = invalid.map((name) => {
-    if (name === 'all') {
-      return `'all' is not a valid icon library; list the libraries you need (e.g. 'material-icons')`
-    }
-
-    const nearest = VALID_ICON_LIBRARIES.reduce((best, candidate) => {
-      return levenshteinDistance(name, candidate) < levenshteinDistance(name, best) ? candidate : best
-    })
-    const suggestion = levenshteinDistance(name, nearest) <= 3
-      ? ` (did you mean '${nearest}'?)`
-      : ''
-    return `'${name}'${suggestion}`
+  validateArrayValues(names, {
+    validList: VALID_ICON_LIBRARIES,
+    domain: 'icon library',
+    domainPlural: 'icon libraries',
+    allMessage: '\'all\' is not a valid icon library; list the libraries you need (e.g. \'material-icons\')',
   })
-
-  throw new Error(
-    `nuxt-quasar-vite: unknown Quasar icon library(s): ${details.join(', ')}. `
-    + `Valid icon libraries: ${VALID_ICON_LIBRARIES.join(', ')}`,
-  )
 }
 
 export function buildIconLibraryImports(names: string[]): string[] {

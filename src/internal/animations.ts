@@ -1,4 +1,4 @@
-import { levenshteinDistance } from './levenshtein'
+import { validateArrayValues } from './validation'
 
 export const GENERAL_ANIMATIONS = [
   'bounce', 'flash', 'flip', 'headShake', 'heartBeat', 'hinge', 'jello', 'pulse', 'rubberBand',
@@ -42,29 +42,18 @@ export function normalizeAnimations(animations?: 'all' | string[]): string[] {
 }
 
 export function validateAnimations(names: string[]): void {
-  const invalid = names.filter(name => !(VALID_ANIMATIONS as readonly string[]).includes(name))
-  if (invalid.length === 0) return
-
-  const details = invalid.map((name) => {
-    if ((KNOWN_ORPHAN_ANIMATIONS as readonly string[]).includes(name)) {
-      return `'${name}' exists in @quasar/extras but is not part of the typed animation list; use `
-        + `css: ['@quasar/extras/animate/${name}.css']`
-    }
-    if (name === 'all') return '\'all\' is only valid as the string form: use animations: \'all\''
-
-    const nearest = VALID_ANIMATIONS.reduce((best, candidate) => {
-      return levenshteinDistance(name, candidate) < levenshteinDistance(name, best) ? candidate : best
-    })
-    const suggestion = levenshteinDistance(name, nearest) <= 3
-      ? ` (did you mean '${nearest}'?)`
-      : ''
-    return `'${name}'${suggestion}`
+  validateArrayValues(names, {
+    validList: VALID_ANIMATIONS,
+    domain: 'animation',
+    allMessage: '\'all\' is only valid as the string form: use animations: \'all\'',
+    perItemHint: (name) => {
+      if ((KNOWN_ORPHAN_ANIMATIONS as readonly string[]).includes(name)) {
+        return `exists in @quasar/extras but is not part of the typed animation list; use css: ['@quasar/extras/animate/${name}.css']`
+      }
+      return undefined
+    },
+    errorSuffix: 'See https://quasar.dev/options/animations',
   })
-
-  throw new Error(
-    `nuxt-quasar-vite: unknown Quasar animation(s): ${details.join(', ')}. `
-    + 'See https://quasar.dev/options/animations',
-  )
 }
 
 export function buildAnimationImports(names: string[]): string[] {

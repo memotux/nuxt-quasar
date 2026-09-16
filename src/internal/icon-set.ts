@@ -1,4 +1,4 @@
-import { levenshteinDistance } from './levenshtein'
+import { validateSingleValue } from './validation'
 
 /**
  * The publicly licensed icon-set mappings shipped by `quasar@2.27.0` under
@@ -64,6 +64,18 @@ const PRO_ICON_SETS: ReadonlySet<string> = new Set([
 ])
 
 /**
+ * Build the full rejection message for a Font Awesome Pro icon set.
+ */
+function proIconSetMessage(name: string): string {
+  return `unknown Quasar icon set: '${name}'. Font Awesome Pro variants exist in Quasar but require manual setup via the css option. Valid icon sets: ${VALID_ICON_SETS.join(', ')}`
+}
+
+/** Pre-built exclusion map for Pro icon sets. */
+const ICON_SET_EXCLUSIONS: ReadonlyMap<string, string> = new Map(
+  [...PRO_ICON_SETS].map(name => [name, proIconSetMessage(name)]),
+)
+
+/**
  * Whether the icon set is an `svg-*` variant. SVG mappings import their icons
  * from `@quasar/extras/<name>`, so they require that package; webfont mappings
  * are pure JS lookups and leave the font CSS to the user.
@@ -77,43 +89,15 @@ export function isSvgIconSet(name: string): boolean {
  * so arrays, objects, non-strings, the empty string and the `'all'` shorthand
  * are all rejected with explicit errors. Unknown names get a did-you-mean hint.
  */
-export function validateIconSet(name: string): void {
-  if (Array.isArray(name) || typeof name !== 'string') {
-    throw new TypeError(
-      `nuxt-quasar-vite: iconSet must be a single string, got ${Array.isArray(name) ? 'an array' : `a ${typeof name}`}. `
-      + 'Pass one icon set name (e.g. \'material-icons\').',
-    )
-  }
-  if (name === '') {
-    throw new Error(
-      'nuxt-quasar-vite: iconSet is empty; a named mapping is required (e.g. \'material-icons\').',
-    )
-  }
-  if ((VALID_ICON_SETS as readonly string[]).includes(name)) return
-  if (name === 'all') {
-    throw new Error(
-      'nuxt-quasar-vite: iconSet \'all\' is not a valid icon set; only a single named mapping '
-      + 'is accepted (e.g. \'material-icons\').',
-    )
-  }
-  if (PRO_ICON_SETS.has(name)) {
-    throw new Error(
-      `nuxt-quasar-vite: unknown Quasar icon set: '${name}'. Font Awesome Pro variants exist in Quasar `
-      + 'but require manual setup via the css option. '
-      + `Valid icon sets: ${VALID_ICON_SETS.join(', ')}`,
-    )
-  }
-
-  const nearest = VALID_ICON_SETS.reduce((best, candidate) => {
-    return levenshteinDistance(name, candidate) < levenshteinDistance(name, best) ? candidate : best
+export function validateIconSet(name: unknown): void {
+  validateSingleValue(name, {
+    validList: VALID_ICON_SETS,
+    field: 'iconSet',
+    domain: 'icon set',
+    example: 'material-icons',
+    allMessage: '\'all\' is not a valid icon set; only a single named mapping is accepted (e.g. \'material-icons\').',
+    exclusions: ICON_SET_EXCLUSIONS,
   })
-  const suggestion = levenshteinDistance(name, nearest) <= 3
-    ? ` (did you mean '${nearest}'?)`
-    : ''
-  throw new Error(
-    `nuxt-quasar-vite: unknown Quasar icon set: '${name}'${suggestion}. `
-    + `Valid icon sets: ${VALID_ICON_SETS.join(', ')}`,
-  )
 }
 
 /**

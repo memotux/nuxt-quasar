@@ -1,4 +1,4 @@
-import { levenshteinDistance } from './levenshtein'
+import { validateSingleValue } from './validation'
 
 /**
  * The modern language packs shipped by `quasar@2.27.0` under `quasar/lang/`.
@@ -93,49 +93,32 @@ export const DEPRECATED_LANG_ALIASES: ReadonlyMap<string, string> = new Map([
 ])
 
 /**
+ * Build the full rejection message for a deprecated language alias.
+ */
+function deprecatedLangMessage(alias: string, modern: string): string {
+  return `unknown Quasar language pack: '${alias}'. It is a deprecated alias kept for backwards compatibility; use the modern name '${modern}' instead. Valid language packs: ${VALID_LANG.join(', ')}`
+}
+
+/** Pre-built exclusion map for deprecated aliases. */
+const LANG_EXCLUSIONS: ReadonlyMap<string, string> = new Map(
+  [...DEPRECATED_LANG_ALIASES].map(([alias, modern]) => [alias, deprecatedLangMessage(alias, modern)]),
+)
+
+/**
  * Validate a single language-pack name. Quasar supports exactly one active
  * Language Pack, so arrays, objects, non-strings, the empty string and the
  * `'all'` shorthand are all rejected with explicit errors. Unknown names get
  * a did-you-mean hint; deprecated aliases get pointed at their modern names.
  */
-export function validateLang(name: string): void {
-  if (Array.isArray(name) || typeof name !== 'string') {
-    throw new TypeError(
-      `nuxt-quasar-vite: lang must be a single string, got ${Array.isArray(name) ? 'an array' : `a ${typeof name}`}. `
-      + 'Pass one language pack name (e.g. \'es\').',
-    )
-  }
-  if (name === '') {
-    throw new Error(
-      'nuxt-quasar-vite: lang is empty; a named language pack is required (e.g. \'es\').',
-    )
-  }
-  if ((VALID_LANG as readonly string[]).includes(name)) return
-  if (name === 'all') {
-    throw new Error(
-      'nuxt-quasar-vite: lang \'all\' is not a valid language pack; only a single named pack '
-      + 'is accepted (e.g. \'es\').',
-    )
-  }
-  if (DEPRECATED_LANG_ALIASES.has(name)) {
-    const modern = DEPRECATED_LANG_ALIASES.get(name)!
-    throw new Error(
-      `nuxt-quasar-vite: unknown Quasar language pack: '${name}'. It is a deprecated alias kept for `
-      + `backwards compatibility; use the modern name '${modern}' instead. `
-      + `Valid language packs: ${VALID_LANG.join(', ')}`,
-    )
-  }
-
-  const nearest = VALID_LANG.reduce((best, candidate) => {
-    return levenshteinDistance(name, candidate) < levenshteinDistance(name, best) ? candidate : best
+export function validateLang(name: unknown): void {
+  validateSingleValue(name, {
+    validList: VALID_LANG,
+    field: 'lang',
+    domain: 'language pack',
+    example: 'es',
+    allMessage: '\'all\' is not a valid language pack; only a single named pack is accepted (e.g. \'es\').',
+    exclusions: LANG_EXCLUSIONS,
   })
-  const suggestion = levenshteinDistance(name, nearest) <= 3
-    ? ` (did you mean '${nearest}'?)`
-    : ''
-  throw new Error(
-    `nuxt-quasar-vite: unknown Quasar language pack: '${name}'${suggestion}. `
-    + `Valid language packs: ${VALID_LANG.join(', ')}`,
-  )
 }
 
 /**

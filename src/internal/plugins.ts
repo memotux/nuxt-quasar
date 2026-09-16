@@ -1,3 +1,5 @@
+import { validateArrayValues } from './validation'
+
 export const VALID_PLUGINS = [
   'AddressbarColor', 'AppFullscreen', 'AppVisibility',
   'BottomSheet', 'Dialog', 'LoadingBar', 'Loading',
@@ -5,10 +7,9 @@ export const VALID_PLUGINS = [
 ] as const
 
 export function validatePlugins(plugins: string[]): void {
-  const invalid = plugins.filter(p => !(VALID_PLUGINS as readonly string[]).includes(p))
-  if (invalid.length > 0) {
-    throw new Error(
-      `nuxt-quasar-vite: unknown Quasar plugin(s): ${invalid.join(', ')}. Valid plugins: ${VALID_PLUGINS.join(', ')}`,
-    )
-  }
+  validateArrayValues(plugins, {
+    validList: VALID_PLUGINS,
+    domain: 'plugin',
+    quoteNames: false,
+  })
 }
