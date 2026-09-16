@@ -3,14 +3,16 @@ import { fileURLToPath } from 'node:url'
 import { dirname } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import {
-  GENERAL_ANIMATIONS,
-  IN_ANIMATIONS,
-  OUT_ANIMATIONS,
   VALID_ANIMATIONS,
   buildAnimationImports,
   normalizeAnimations,
   validateAnimations,
 } from '../src/internal'
+import {
+  GENERAL_ANIMATIONS,
+  IN_ANIMATIONS,
+  OUT_ANIMATIONS,
+} from '../src/internal/animations'
 
 const expectedAnimations = [...GENERAL_ANIMATIONS, ...IN_ANIMATIONS, ...OUT_ANIMATIONS]
 

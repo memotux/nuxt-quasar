@@ -3,13 +3,13 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import {
-  ICON_LIBRARY_CSS_PATHS,
   VALID_ICON_LIBRARIES,
   buildIconLibraryImports,
   buildPluginContents,
   normalizeIconLibraries,
   validateIconLibraries,
 } from '../src/internal'
+import { ICON_LIBRARY_CSS_PATHS } from '../src/internal/icon-libraries'
 
 let extrasAvailable = true
 try {

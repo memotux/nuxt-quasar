@@ -221,11 +221,10 @@ describe('buildPluginContents (iconSet option)', () => {
     expect(contents).toContain('iconSet,')
   })
 
-  it('emits no icon-set import and no payload iconSet when the option is omitted, empty, or unknown', () => {
+  it('emits no icon-set import and no payload iconSet when the option is omitted or empty', () => {
     const cases = [
       baseOpts,
       { ...baseOpts, iconSet: '' },
-      { ...baseOpts, iconSet: 'not-a-real-set' },
     ]
     for (const opts of cases) {
       const contents = buildPluginContents(opts)
@@ -309,11 +308,10 @@ describe('buildPluginContents (lang option)', () => {
     expect(contents).toContain('installQ(app, {...opts, ...includes})')
   })
 
-  it('emits no lang import and no payload lang when the option is omitted, empty, or unknown', () => {
+  it('emits no lang import and no payload lang when the option is omitted or empty', () => {
     const cases = [
       baseOpts,
       { ...baseOpts, lang: '' },
-      { ...baseOpts, lang: 'not-a-real-lang' },
     ]
     for (const opts of cases) {
       const contents = buildPluginContents(opts)

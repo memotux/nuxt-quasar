@@ -1,7 +1,8 @@
 import type { QuasarUIConfiguration } from 'quasar'
+import { buildAnimationImports } from './animations'
 import { buildIconLibraryImports } from './icon-libraries'
-import { VALID_ICON_SETS, iconSetImportLine } from './icon-set'
-import { VALID_LANG, langImportLine } from './lang'
+import { iconSetImportLine } from './icon-set'
+import { langImportLine } from './lang'
 
 export interface PluginTemplateOptions {
   plugins: string[]
@@ -24,20 +25,14 @@ export interface PluginTemplateOptions {
 export function buildPluginContents(opts: PluginTemplateOptions): string {
   const config = JSON.stringify(opts.config, null, 2)
   const plugins = opts.plugins.join(',')
-  const animations = opts.animations?.map(s => `import '@quasar/extras/animate/${s}.css'`).join('\n') || ''
+  const animations = buildAnimationImports(opts.animations ?? []).join('\n')
   const iconLibraries = buildIconLibraryImports(opts.iconLibraries ?? []).join('\n')
   const css = opts.css?.map(s => `import '${s}'`).join('\n') || ''
-  // The module validates iconSet before wiring it here; an unknown or empty
-  // name is treated as absent so the template stays a total renderer.
-  const iconSetImport = opts.iconSet && (VALID_ICON_SETS as readonly string[]).includes(opts.iconSet)
-    ? iconSetImportLine(opts.iconSet)
-    : ''
+  // module.ts validates iconSet and lang before wiring them here;
+  // undefined means "not configured", not "needs re-validation".
+  const iconSetImport = opts.iconSet ? iconSetImportLine(opts.iconSet) : ''
   const iconSetEntry = iconSetImport ? '\n      iconSet,' : ''
-  // The module validates lang before wiring it here; an unknown or empty
-  // name is treated as absent so the template stays a total renderer.
-  const langImport = opts.lang && (VALID_LANG as readonly string[]).includes(opts.lang)
-    ? langImportLine(opts.lang)
-    : ''
+  const langImport = opts.lang ? langImportLine(opts.lang) : ''
   const langEntry = langImport ? '\n      lang,' : ''
   // Import order is deterministic: iconSet -> lang -> animations -> icon libraries -> free-form css.
   // Empty groups drop out so no blank import lines are emitted.

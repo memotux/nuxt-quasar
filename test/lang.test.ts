@@ -3,11 +3,11 @@ import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import {
   VALID_LANG,
-  DEPRECATED_LANG_ALIASES,
   validateLang,
   langImportLine,
   buildPluginContents,
 } from '../src/internal'
+import { DEPRECATED_LANG_ALIASES } from '../src/internal/lang'
 
 // The 71 modern language packs shipped by quasar@2.27.0 under quasar/lang/,
 // in lexicographic order. Deliberately excludes the 3 deprecated aliases

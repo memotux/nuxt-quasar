@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { levenshteinDistance } from '../src/internal'
+import { levenshteinDistance } from '../src/internal/levenshtein'
 
 describe('levenshteinDistance', () => {
   it('returns 0 for identical strings', () => {
