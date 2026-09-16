@@ -6,7 +6,7 @@ import {
 } from '@nuxt/kit'
 import type { ViteConfig } from '@nuxt/schema'
 import type { QuasarUIConfiguration } from 'quasar'
-import type { VALID_PLUGINS, QuasarAnimation, QuasarIconLibrary, QuasarIconSet } from './internal'
+import type { VALID_PLUGINS, QuasarAnimation, QuasarIconLibrary, QuasarIconSet, QuasarLang } from './internal'
 import {
   validatePlugins,
   normalizeAnimations,
@@ -15,6 +15,7 @@ import {
   validateIconLibraries,
   validateIconSet,
   isSvgIconSet,
+  validateLang,
   warnLegacyIconCss,
   mergeScssOptions,
   mergeSassOptions,
@@ -31,6 +32,7 @@ interface ModuleOptions {
   animations?: 'all' | QuasarAnimation[]
   iconLibraries?: QuasarIconLibrary[]
   iconSet?: QuasarIconSet
+  lang?: QuasarLang
   plugins: typeof VALID_PLUGINS[number][]
   config?: QuasarUIConfiguration
 }
@@ -80,6 +82,9 @@ export default defineNuxtModule<ModuleOptions>({
     validateIconLibraries(iconLibraries)
     if (opts.iconSet !== undefined) {
       validateIconSet(opts.iconSet)
+    }
+    if (opts.lang !== undefined) {
+      validateLang(opts.lang)
     }
     // Animations, icon libraries and svg-* icon sets all resolve assets
     // from @quasar/extras, so one guard covers them.
@@ -157,6 +162,7 @@ export default defineNuxtModule<ModuleOptions>({
         animations,
         iconLibraries,
         iconSet: opts.iconSet,
+        lang: opts.lang,
         config: opts.config,
         quasarVersion: __QUASAR_VERSION__,
       }),

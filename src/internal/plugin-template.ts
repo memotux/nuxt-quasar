@@ -1,6 +1,7 @@
 import type { QuasarUIConfiguration } from 'quasar'
 import { buildIconLibraryImports } from './icon-libraries'
 import { VALID_ICON_SETS, iconSetImportLine } from './icon-set'
+import { VALID_LANG, langImportLine } from './lang'
 
 export interface PluginTemplateOptions {
   plugins: string[]
@@ -8,6 +9,7 @@ export interface PluginTemplateOptions {
   animations?: string[]
   iconLibraries?: string[]
   iconSet?: string
+  lang?: string
   config: QuasarUIConfiguration | undefined
   quasarVersion: string
 }
@@ -31,13 +33,18 @@ export function buildPluginContents(opts: PluginTemplateOptions): string {
     ? iconSetImportLine(opts.iconSet)
     : ''
   const iconSetEntry = iconSetImport ? '\n      iconSet,' : ''
-  // Import order is deterministic: iconSet -> animations -> icon libraries -> free-form css.
+  // The module validates lang before wiring it here; an unknown or empty
+  // name is treated as absent so the template stays a total renderer.
+  const langImport = opts.lang && (VALID_LANG as readonly string[]).includes(opts.lang)
+    ? langImportLine(opts.lang)
+    : ''
+  const langEntry = langImport ? '\n      lang,' : ''
+  // Import order is deterministic: iconSet -> lang -> animations -> icon libraries -> free-form css.
   // Empty groups drop out so no blank import lines are emitted.
-  const importGroups = [iconSetImport, animations, iconLibraries, css].filter(Boolean).join('\n')
+  const importGroups = [iconSetImport, langImport, animations, iconLibraries, css].filter(Boolean).join('\n')
 
   return `import installQ from 'quasar/src/install-quasar.js'
 import { ${plugins} } from 'quasar/src/plugins.js'
-import lang from 'quasar/src/plugins/lang/Lang.js'
 import * as directives from 'quasar/src/directives.js'
 
 ${importGroups}
@@ -48,7 +55,7 @@ export default defineNuxtPlugin({
     const includes = {
       directives,
       plugins: { ${plugins} },
-      config: ${config},${iconSetEntry}
+      config: ${config},${iconSetEntry}${langEntry}
     }
 
     nuxtApp.vueApp.use({
@@ -60,7 +67,6 @@ export default defineNuxtPlugin({
           installQ(app, {...opts, ...includes})
         }
       },
-      lang,
     })
 
     if (import.meta.client) {

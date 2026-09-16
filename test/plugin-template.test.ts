@@ -21,9 +21,20 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     expect(contents).toContain('import { Notify,Dialog } from \'quasar/src/plugins.js\'')
   })
 
-  it('imports lang', () => {
+  it('does not import the Lang plugin module (auto-installed by installQuasar)', () => {
     const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('import lang from \'quasar/src/plugins/lang/Lang.js\'')
+    expect(contents).not.toContain('quasar/src/plugins/lang/Lang.js')
+  })
+
+  it('does not carry a top-level lang entry on the vueApp.use payload', () => {
+    const contents = buildPluginContents(baseOpts)
+    const useStart = contents.indexOf('nuxtApp.vueApp.use({')
+    // The use({...}) call closes at 8-space indentation; inner installQ calls
+    // close deeper, so anchor on the dedented closer.
+    const useEnd = contents.indexOf('\n    })', useStart)
+    const payload = contents.slice(useStart, useEnd)
+    expect(useEnd).toBeGreaterThan(useStart)
+    expect(payload).not.toContain('lang')
   })
 
   it('does not import the IconSet plugin module (auto-installed by installQuasar)', () => {
@@ -220,6 +231,94 @@ describe('buildPluginContents (iconSet option)', () => {
       const contents = buildPluginContents(opts)
       expect(contents).not.toContain('quasar/icon-set/')
       expect(contents).not.toContain('iconSet')
+    }
+  })
+})
+
+describe('buildPluginContents (lang option)', () => {
+  const LANG_LINE = 'import lang from \'quasar/lang/es.js\''
+  const MDI_ICON_SET_LINE = 'import iconSet from \'quasar/icon-set/mdi-v7.js\''
+  const ANIMATION_LINE = 'import \'@quasar/extras/animate/fadeIn.css\''
+  const ICON_LIBRARY_LINE = 'import \'@quasar/extras/material-icons/material-icons.css\''
+  const CSS_LINE = 'import \'quasar/src/css/index.sass\''
+  const DIRECTIVES_LINE = 'import * as directives from \'quasar/src/directives.js\''
+
+  it('emits exactly one lang import for a valid name', () => {
+    const contents = buildPluginContents({ ...baseOpts, lang: 'es' })
+    expect(contents).toContain(LANG_LINE)
+    expect(contents.match(/quasar\/lang\//g)).toHaveLength(1)
+  })
+
+  it('places the lang import between the static Quasar imports and the @quasar/extras imports', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      lang: 'es',
+      animations: ['fadeIn'],
+      iconLibraries: ['material-icons'],
+    })
+
+    const directivesIdx = contents.indexOf(DIRECTIVES_LINE)
+    const langIdx = contents.indexOf(LANG_LINE)
+    const animationIdx = contents.indexOf(ANIMATION_LINE)
+    const iconLibraryIdx = contents.indexOf(ICON_LIBRARY_LINE)
+    const cssIdx = contents.indexOf(CSS_LINE)
+
+    expect(langIdx).toBeGreaterThan(directivesIdx)
+    expect(animationIdx).toBeGreaterThan(langIdx)
+    expect(iconLibraryIdx).toBeGreaterThan(animationIdx)
+    expect(cssIdx).toBeGreaterThan(iconLibraryIdx)
+  })
+
+  it('places the lang import after the iconSet import when both are set', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      iconSet: 'mdi-v7',
+      lang: 'es',
+      animations: ['fadeIn'],
+      iconLibraries: ['material-icons'],
+    })
+
+    const iconSetIdx = contents.indexOf(MDI_ICON_SET_LINE)
+    const langIdx = contents.indexOf(LANG_LINE)
+    const animationIdx = contents.indexOf(ANIMATION_LINE)
+
+    expect(iconSetIdx).toBeGreaterThan(-1)
+    expect(langIdx).toBeGreaterThan(iconSetIdx)
+    expect(animationIdx).toBeGreaterThan(langIdx)
+  })
+
+  it('spreads lang into the install payload alongside directives, plugins, config and iconSet', () => {
+    const contents = buildPluginContents({ ...baseOpts, iconSet: 'mdi-v7', lang: 'es' })
+
+    expect(contents).toContain('directives,')
+    expect(contents).toContain('plugins: { Notify,Dialog }')
+    expect(contents).toContain('config:')
+    expect(contents).toContain('iconSet,')
+    expect(contents).toContain('lang,')
+
+    // lang lives inside the `includes` object spread into installQuasar,
+    // after config and before the vueApp.use call.
+    const includesIdx = contents.indexOf('const includes = {')
+    const configIdx = contents.indexOf('config:')
+    const langIdx = contents.indexOf('lang,')
+    const useIdx = contents.indexOf('nuxtApp.vueApp.use({')
+    expect(includesIdx).toBeGreaterThan(-1)
+    expect(langIdx).toBeGreaterThan(configIdx)
+    expect(langIdx).toBeGreaterThan(includesIdx)
+    expect(langIdx).toBeLessThan(useIdx)
+    expect(contents).toContain('installQ(app, {...opts, ...includes})')
+  })
+
+  it('emits no lang import and no payload lang when the option is omitted, empty, or unknown', () => {
+    const cases = [
+      baseOpts,
+      { ...baseOpts, lang: '' },
+      { ...baseOpts, lang: 'not-a-real-lang' },
+    ]
+    for (const opts of cases) {
+      const contents = buildPluginContents(opts)
+      expect(contents).not.toContain('quasar/lang/')
+      expect(contents).not.toContain('lang,')
     }
   })
 })

@@ -19,6 +19,13 @@ export {
 export type { QuasarIconSet } from './icon-set'
 export { buildImportPresets } from './import-presets'
 export type { ImportPreset } from './import-presets'
+export {
+  VALID_LANG,
+  DEPRECATED_LANG_ALIASES,
+  validateLang,
+  langImportLine,
+} from './lang'
+export type { QuasarLang } from './lang'
 export { levenshteinDistance } from './levenshtein'
 export { mergeSassOptions, mergeScssOptions } from './merge-preprocessor-options'
 export type { ScssModuleDefaults } from './merge-preprocessor-options'

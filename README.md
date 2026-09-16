@@ -134,6 +134,7 @@ export default defineNuxtConfig({
 | `animations` | `'all' \| string[]` | `[]` | Quasar CSS animations imported from `@quasar/extras`. |
 | `iconLibraries` | `string[]` | `[]` | Quasar CSS icon font libraries imported from `@quasar/extras`. Validated at setup. |
 | `iconSet` | `string` | — (Quasar's bundled `material-icons`) | Selects the Quasar Icon Set mapping passed to `installQuasar`. One of 41 typed names, validated at setup. `svg-*` names require `@quasar/extras`. |
+| `lang` | `string` | — (Quasar's bundled `en-US`) | Selects the Quasar Language Pack passed to `installQuasar`. One of 71 typed modern names, validated at setup. |
 | `plugins` | `string[]` | `['Notify']` | Opt-in Quasar plugins, validated at setup. |
 | `config` | `QuasarUIConfiguration` | `{ dark: true }` | Quasar UI config passed to `installQuasar`. Fully typed using Quasar's `QuasarUIConfiguration` interface. |
 
@@ -213,6 +214,22 @@ quasar: {
 When the option is omitted, Quasar's bundled `material-icons` mapping is used automatically and no extra import is emitted.
 
 Font Awesome Pro variants (`fontawesome-v5-pro`, `fontawesome-v6-pro`, `fontawesome-v7-pro`) exist in Quasar but require paid fonts not shipped by `@quasar/extras`; set them up manually via the `css` option and `$q.iconSet.set(...)`.
+
+### Language pack
+
+Select which Quasar Language Pack your components use:
+
+```ts
+quasar: {
+  lang: 'es',
+}
+```
+
+The option accepts a single name — Quasar supports exactly one active Language Pack, so arrays, objects, non-strings, the empty string and the `'all'` shorthand are rejected. Unknown names fail at setup time with a did-you-mean suggestion. Valid names are the 71 modern language packs shipped by Quasar (`ar`, `ar-TN`, `az-Latn`, `bg`, `bn`, `bs-BA`, `ca`, `ckb`, `cs`, `da`, `de`, `de-CH`, `de-DE`, `el`, `en-GB`, `en-US`, `eo`, `es`, `et`, `eu`, `fa`, `fa-IR`, `fi`, `fr`, `gn`, `he`, `hi`, `hr`, `hu`, `id`, `is`, `it`, `ja`, `kk`, `km`, `ko-KR`, `lb`, `lt`, `lu`, `lv`, `mk`, `ml`, `ms`, `ms-MY`, `my`, `nb-NO`, `nl`, `pl`, `pt`, `pt-BR`, `ro`, `ru`, `sk`, `sl`, `sm`, `sq`, `sr`, `sr-Cyrl`, `sv`, `ta`, `th`, `tl`, `tr`, `ug`, `uk`, `ur-PK`, `uz-Cyrl`, `uz-Latn`, `vi`, `zh-CN`, `zh-TW`). Language packs are pure JS lookup tables and never require `@quasar/extras`.
+
+When the option is omitted, Quasar's bundled `en-US` pack is used automatically and no extra import is emitted.
+
+Quasar also ships 3 deprecated aliases (`kur-CKB`, `mm`, `sr-CYR`) that re-export the modern names — use the modern names (`ckb`, `my`, `sr-Cyrl`) instead, or set an alias manually via a `Lang.set(...)` boot file.
 
 ### Quasar plugins
 
