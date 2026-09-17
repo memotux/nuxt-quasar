@@ -4,7 +4,6 @@ import {
   ANIMATION_LINE,
   CSS_LINE,
   DIRECTIVES_LINE,
-  QUASAR_VERSION,
   iconLibraryImport,
   iconSetImport,
   importLines,
@@ -24,51 +23,48 @@ const MATERIAL_ICONS_LINE = iconLibraryImport('material-icons')
 const MDI_LINE = iconLibraryImport('mdi-v7')
 
 describe('buildPluginContents (F2: plugin template generator)', () => {
-  it('imports installQ from quasar', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('import installQ from \'quasar/src/install-quasar.js\'')
-  })
+  it('emits the exact default plugin for the base options', () => {
+    expect(buildPluginContents(baseOpts)).toMatchInlineSnapshot(`
+      "import installQ from 'quasar/src/install-quasar.js'
+      import { Notify,Dialog } from 'quasar/src/plugins.js'
+      import * as directives from 'quasar/src/directives.js'
 
-  it('imports requested plugins from quasar/src/plugins.js', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('import { Notify,Dialog } from \'quasar/src/plugins.js\'')
-  })
+      import 'quasar/src/css/index.sass'
 
-  it('does not import the Lang plugin module (auto-installed by installQuasar)', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).not.toContain('quasar/src/plugins/lang/Lang.js')
-  })
+      export default defineNuxtPlugin({
+        name: 'nuxt:quasar-install',
+        setup(nuxtApp) {
+          const includes = {
+            directives,
+            plugins: { Notify,Dialog },
+            config: {
+        "dark": true
+      },
+          }
 
-  it('does not carry a top-level lang entry on the vueApp.use payload', () => {
-    const contents = buildPluginContents(baseOpts)
-    const useStart = contents.indexOf('nuxtApp.vueApp.use({')
-    // The use({...}) call closes at 8-space indentation; inner installQ calls
-    // close deeper, so anchor on the dedented closer.
-    const useEnd = contents.indexOf('\n    })', useStart)
-    const payload = contents.slice(useStart, useEnd)
-    expect(useEnd).toBeGreaterThan(useStart)
-    expect(payload).not.toContain('lang')
-  })
+          nuxtApp.vueApp.use({
+            version: '2.27.0',
+            install(app, opts) {
+              if(import.meta.server) {
+                installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event.node)
+              } else {
+                installQ(app, {...opts, ...includes})
+              }
+            },
+          })
 
-  it('does not import the IconSet plugin module (auto-installed by installQuasar)', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).not.toContain('quasar/src/plugins/icon-set/IconSet.js')
-  })
-
-  it('does not carry a top-level iconSet entry on the vueApp.use payload', () => {
-    const contents = buildPluginContents(baseOpts)
-    const useStart = contents.indexOf('nuxtApp.vueApp.use({')
-    // The use({...}) call closes at 8-space indentation; inner installQ calls
-    // close deeper, so anchor on the dedented closer.
-    const useEnd = contents.indexOf('\n    })', useStart)
-    const payload = contents.slice(useStart, useEnd)
-    expect(useEnd).toBeGreaterThan(useStart)
-    expect(payload).not.toContain('iconSet')
-  })
-
-  it('imports directives namespace', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('import * as directives from \'quasar/src/directives.js\'')
+          if (import.meta.client) {
+            onNuxtReady(() => {
+              // Quasar SSR hydration takeover: with __QUASAR_SSR_CLIENT__ enabled,
+              // Screen/Platform/Meta/Body defer client init to $q.onSSRHydrated(),
+              // which the SSR application must call once hydration completes.
+              nuxtApp.vueApp.config.globalProperties.$q?.onSSRHydrated?.()
+            })
+          }
+        }
+      })
+      "
+    `)
   })
 
   it('includes CSS import lines', () => {
@@ -78,22 +74,6 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     })
     expect(contents).toContain('import \'quasar/src/css/index.sass\'')
     expect(contents).toContain('import \'~/assets/custom.sass\'')
-  })
-
-  it('includes animation import lines before CSS imports', () => {
-    const contents = buildPluginContents({
-      ...baseOpts,
-      animations: ['fadeIn'],
-    })
-    const animationIdx = contents.indexOf('import \'@quasar/extras/animate/fadeIn.css\'')
-    const cssIdx = contents.indexOf('import \'quasar/src/css/index.sass\'')
-    expect(animationIdx).toBeGreaterThan(-1)
-    expect(animationIdx).toBeLessThan(cssIdx)
-  })
-
-  it('does not include animation imports when animations are empty or undefined', () => {
-    expect(buildPluginContents(baseOpts)).not.toContain('@quasar/extras/animate/')
-    expect(buildPluginContents({ ...baseOpts, animations: [] })).not.toContain('@quasar/extras/animate/')
   })
 
   it('produces empty CSS section when css array is empty', () => {
@@ -106,48 +86,9 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     expect(between).not.toContain('import \'')
   })
 
-  it('SSR branch: uses import.meta.server for server install with ssrContext', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('if(import.meta.server)')
-    expect(contents).toContain('installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event.node)')
-  })
-
-  it('SSR branch: client fallback without ssrContext', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('} else {')
-    expect(contents).toContain('installQ(app, {...opts, ...includes})')
-  })
-
-  it('includes onSSRHydrated block inside import.meta.client guard', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('if (import.meta.client)')
-    expect(contents).toContain('onNuxtReady(() => {')
-    expect(contents).toContain('$q?.onSSRHydrated?.()')
-  })
-
-  it('includes the quasar version in vueApp.use', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain(`version: ${QUASAR_VERSION}`)
-  })
-
   it('serializes config as JSON', () => {
     const contents = buildPluginContents(baseOpts)
     expect(contents).toContain('config: {\n  "dark": true\n},')
-  })
-
-  it('includes plugin names in the includes.plugins object', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('plugins: { Notify,Dialog }')
-  })
-
-  it('includes directives in the includes object', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('directives,')
-  })
-
-  it('sets plugin name to nuxt:quasar-install', () => {
-    const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('name: \'nuxt:quasar-install\'')
   })
 
   it('handles undefined config gracefully', () => {
@@ -410,6 +351,28 @@ describe('buildPluginContents (import order)', () => {
         iconSetImport(iconSet),
         langImport('es'),
         ANIMATION_LINE,
+        iconLibraryImport('material-icons'),
+        CSS_LINE,
+      ])
+    },
+  )
+
+  it.each(ICON_SET_VARIANTS)(
+    'emits the same total order when no animations are selected (iconSet: %s)',
+    (iconSet) => {
+      const contents = buildPluginContents({
+        ...baseOpts,
+        iconSet,
+        lang: 'es',
+        iconLibraries: ['material-icons'],
+      })
+
+      expect(importLines(contents)).toEqual([
+        'import installQ from \'quasar/src/install-quasar.js\'',
+        'import { Notify,Dialog } from \'quasar/src/plugins.js\'',
+        DIRECTIVES_LINE,
+        iconSetImport(iconSet),
+        langImport('es'),
         iconLibraryImport('material-icons'),
         CSS_LINE,
       ])
