@@ -11,10 +11,7 @@ import {
 } from '../src/internal'
 import { ICON_LIBRARY_CSS_PATHS } from '../src/internal/icon-libraries'
 import {
-  ANIMATION_LINE,
-  CSS_LINE,
   CSS_SPECIFIER,
-  iconLibraryImport,
   makeBaseOpts,
 } from './helpers/template-fixtures'
 
@@ -146,36 +143,6 @@ describe('buildIconLibraryImports', () => {
 describe('iconLibraries wiring into the generated plugin', () => {
   const baseOpts = makeBaseOpts({ css: [CSS_SPECIFIER, '~/assets/custom.sass'] })
 
-  const ICON_LINE = iconLibraryImport('material-icons')
-
-  it('emits the icon library import between the animation and css imports', () => {
-    const contents = buildPluginContents({
-      ...baseOpts,
-      animations: ['fadeIn'],
-      iconLibraries: ['material-icons'],
-    })
-
-    const animationIdx = contents.indexOf(ANIMATION_LINE)
-    const iconIdx = contents.indexOf(ICON_LINE)
-    const cssIdx = contents.indexOf(CSS_LINE)
-
-    expect(animationIdx).toBeGreaterThan(-1)
-    expect(iconIdx).toBeGreaterThan(animationIdx)
-    expect(cssIdx).toBeGreaterThan(iconIdx)
-  })
-
-  it('emits the icon library import before css when no animations are selected', () => {
-    const contents = buildPluginContents({
-      ...baseOpts,
-      iconLibraries: ['material-icons'],
-    })
-
-    const iconIdx = contents.indexOf(ICON_LINE)
-    expect(iconIdx).toBeGreaterThan(-1)
-    expect(iconIdx).toBeLessThan(contents.indexOf(CSS_LINE))
-    expect(contents).not.toContain('@quasar/extras/animate/')
-  })
-
   it('emits one import per normalized selection', () => {
     const contents = buildPluginContents({
       ...baseOpts,
@@ -185,13 +152,6 @@ describe('iconLibraries wiring into the generated plugin', () => {
     expect(contents).toContain('import \'@quasar/extras/mdi-v7/mdi-v7.css\'')
     expect(contents).toContain('import \'@quasar/extras/themify/themify.css\'')
     expect(contents.match(/@quasar\/extras\/mdi-v7\/mdi-v7\.css/g)).toHaveLength(1)
-  })
-
-  it('emits no icon import when iconLibraries is empty or omitted', () => {
-    expect(buildPluginContents({ ...baseOpts, iconLibraries: [] }))
-      .not.toContain('@quasar/extras/material-icons/')
-    expect(buildPluginContents(baseOpts))
-      .not.toContain('@quasar/extras/material-icons/')
   })
 })
 

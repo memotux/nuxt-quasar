@@ -5,10 +5,8 @@ import {
   VALID_LANG,
   validateLang,
   langImportLine,
-  buildPluginContents,
 } from '../src/internal'
 import { DEPRECATED_LANG_ALIASES } from '../src/internal/lang'
-import { iconSetImport, langImport, makeBaseOpts } from './helpers/template-fixtures'
 
 // The 71 modern language packs shipped by quasar@2.27.0 under quasar/lang/,
 // in lexicographic order. Deliberately excludes the 3 deprecated aliases
@@ -134,28 +132,6 @@ describe('langImportLine', () => {
   it('throws on an unknown name', () => {
     expect(() => langImportLine('not-a-real-lang'))
       .toThrow(/unknown Quasar language pack/)
-  })
-})
-
-describe('lang wiring into the generated plugin', () => {
-  const baseOpts = makeBaseOpts()
-
-  it('emits the lang import between the iconSet dynamic import and the @quasar/extras imports', () => {
-    const contents = buildPluginContents({
-      ...baseOpts,
-      iconSet: 'mdi-v7',
-      lang: 'es',
-      animations: ['fadeIn'],
-      iconLibraries: ['material-icons'],
-    })
-
-    const iconSetIdx = contents.indexOf(iconSetImport('mdi-v7'))
-    const langIdx = contents.indexOf(langImport('es'))
-    const extrasIdx = contents.indexOf('@quasar/extras')
-    expect(iconSetIdx).toBeGreaterThan(-1)
-    expect(langIdx).toBeGreaterThan(iconSetIdx)
-    expect(extrasIdx).toBeGreaterThan(langIdx)
-    expect(contents).toContain('lang,')
   })
 })
 

@@ -7,6 +7,7 @@ import {
   QUASAR_VERSION,
   iconLibraryImport,
   iconSetImport,
+  importLines,
   langImport,
   makeBaseOpts,
 } from './helpers/template-fixtures'
@@ -384,4 +385,35 @@ describe('buildPluginContents (iconLibraries option)', () => {
     expect(buildPluginContents(baseOpts))
       .not.toContain('@quasar/extras/material-icons/')
   })
+})
+
+describe('buildPluginContents (import order)', () => {
+  const ICON_SET_VARIANTS = ['mdi-v7', 'svg-mdi-v7', 'fontawesome-v7'] as const
+
+  it.each(ICON_SET_VARIANTS)(
+    'emits every import group in the documented total order (iconSet: %s)',
+    (iconSet) => {
+      const contents = buildPluginContents({
+        ...baseOpts,
+        iconSet,
+        lang: 'es',
+        animations: ['fadeIn'],
+        iconLibraries: ['material-icons'],
+      })
+
+      // The two static Quasar imports are asserted by their own tests above, so
+      // they are written out here; every other line comes from the helper so the
+      // expected order cannot drift from the shared constants.
+      expect(importLines(contents)).toEqual([
+        'import installQ from \'quasar/src/install-quasar.js\'',
+        'import { Notify,Dialog } from \'quasar/src/plugins.js\'',
+        DIRECTIVES_LINE,
+        iconSetImport(iconSet),
+        langImport('es'),
+        ANIMATION_LINE,
+        iconLibraryImport('material-icons'),
+        CSS_LINE,
+      ])
+    },
+  )
 })

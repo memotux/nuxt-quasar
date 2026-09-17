@@ -53,3 +53,13 @@ export function makeBaseOpts(overrides?: Partial<PluginTemplateOptions>): Plugin
     ...overrides,
   }
 }
+
+/**
+ * The `import` lines emitted by `buildPluginContents`, in the order they appear.
+ *
+ * The template emits every import group in one fixed total order, so asserting
+ * this array once covers every pairwise ordering assertion.
+ */
+export function importLines(contents: string): string[] {
+  return contents.split('\n').filter(line => line.startsWith('import '))
+}

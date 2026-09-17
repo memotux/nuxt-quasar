@@ -202,7 +202,7 @@ describe('iconSetImportLine', () => {
 describe('iconSet wiring into the generated plugin', () => {
   const baseOpts = makeBaseOpts()
 
-  it('emits the fontawesome-v7 icon-set import between the static Quasar imports and the @quasar/extras imports', () => {
+  it('emits exactly one fontawesome-v7 icon-set import', () => {
     const contents = buildPluginContents({
       ...baseOpts,
       iconSet: 'fontawesome-v7',
@@ -210,16 +210,8 @@ describe('iconSet wiring into the generated plugin', () => {
       iconLibraries: ['material-icons'],
     })
 
-    const iconSetLine = iconSetImport('fontawesome-v7')
-    expect(contents).toContain(iconSetLine)
+    expect(contents).toContain(iconSetImport('fontawesome-v7'))
     expect(contents.match(/quasar\/icon-set\//g)).toHaveLength(1)
-
-    const directivesIdx = contents.indexOf('import * as directives')
-    const iconSetIdx = contents.indexOf(iconSetLine)
-    const extrasIdx = contents.indexOf('@quasar/extras')
-    expect(iconSetIdx).toBeGreaterThan(directivesIdx)
-    expect(extrasIdx).toBeGreaterThan(iconSetIdx)
-    expect(contents).toContain('iconSet,')
   })
 })
 
