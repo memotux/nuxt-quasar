@@ -1,14 +1,26 @@
 import { describe, it, expect } from 'vitest'
 import { buildPluginContents, normalizeIconLibraries } from '../src/internal'
+import {
+  ANIMATION_LINE,
+  CSS_LINE,
+  DIRECTIVES_LINE,
+  QUASAR_VERSION,
+  iconLibraryImport,
+  iconSetImport,
+  langImport,
+  makeBaseOpts,
+} from './helpers/template-fixtures'
 
-const QUASAR_VERSION = `'2.27.0'`
+const baseOpts = makeBaseOpts({ plugins: ['Notify', 'Dialog'] })
 
-const baseOpts = {
-  plugins: ['Notify', 'Dialog'],
-  css: ['quasar/src/css/index.sass'],
-  config: { dark: true },
-  quasarVersion: QUASAR_VERSION,
-}
+// Import-line fixtures shared by the describe blocks below; declared once so a
+// template change has exactly one place to update in this file.
+const MDI_ICON_SET_LINE = iconSetImport('mdi-v7')
+const SVG_MDI_ICON_SET_LINE = iconSetImport('svg-mdi-v7')
+const LANG_LINE = langImport('es')
+const ICON_LIBRARY_LINE = iconLibraryImport('material-icons')
+const MATERIAL_ICONS_LINE = iconLibraryImport('material-icons')
+const MDI_LINE = iconLibraryImport('mdi-v7')
 
 describe('buildPluginContents (F2: plugin template generator)', () => {
   it('imports installQ from quasar', () => {
@@ -151,13 +163,6 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
 })
 
 describe('buildPluginContents (iconSet option)', () => {
-  const MDI_ICON_SET_LINE = 'import iconSet from \'quasar/icon-set/mdi-v7.js\''
-  const SVG_MDI_ICON_SET_LINE = 'import iconSet from \'quasar/icon-set/svg-mdi-v7.js\''
-  const ANIMATION_LINE = 'import \'@quasar/extras/animate/fadeIn.css\''
-  const ICON_LIBRARY_LINE = 'import \'@quasar/extras/material-icons/material-icons.css\''
-  const CSS_LINE = 'import \'quasar/src/css/index.sass\''
-  const DIRECTIVES_LINE = 'import * as directives from \'quasar/src/directives.js\''
-
   it('emits exactly one icon-set import for a webfont name', () => {
     const contents = buildPluginContents({ ...baseOpts, iconSet: 'mdi-v7' })
     expect(contents).toContain(MDI_ICON_SET_LINE)
@@ -235,13 +240,6 @@ describe('buildPluginContents (iconSet option)', () => {
 })
 
 describe('buildPluginContents (lang option)', () => {
-  const LANG_LINE = 'import lang from \'quasar/lang/es.js\''
-  const MDI_ICON_SET_LINE = 'import iconSet from \'quasar/icon-set/mdi-v7.js\''
-  const ANIMATION_LINE = 'import \'@quasar/extras/animate/fadeIn.css\''
-  const ICON_LIBRARY_LINE = 'import \'@quasar/extras/material-icons/material-icons.css\''
-  const CSS_LINE = 'import \'quasar/src/css/index.sass\''
-  const DIRECTIVES_LINE = 'import * as directives from \'quasar/src/directives.js\''
-
   it('emits exactly one lang import for a valid name', () => {
     const contents = buildPluginContents({ ...baseOpts, lang: 'es' })
     expect(contents).toContain(LANG_LINE)
@@ -322,11 +320,6 @@ describe('buildPluginContents (lang option)', () => {
 })
 
 describe('buildPluginContents (iconLibraries option)', () => {
-  const MATERIAL_ICONS_LINE = 'import \'@quasar/extras/material-icons/material-icons.css\''
-  const MDI_LINE = 'import \'@quasar/extras/mdi-v7/mdi-v7.css\''
-  const ANIMATION_LINE = 'import \'@quasar/extras/animate/fadeIn.css\''
-  const CSS_LINE = 'import \'quasar/src/css/index.sass\''
-
   it('emits one import line per selected icon library', () => {
     const contents = buildPluginContents({
       ...baseOpts,

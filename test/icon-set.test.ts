@@ -8,6 +8,7 @@ import {
   validateIconSet,
   iconSetImportLine,
 } from '../src/internal'
+import { iconSetImport, makeBaseOpts } from './helpers/template-fixtures'
 
 const WEBFONT_ICON_SETS = [
   'bootstrap-icons',
@@ -199,12 +200,7 @@ describe('iconSetImportLine', () => {
 })
 
 describe('iconSet wiring into the generated plugin', () => {
-  const baseOpts = {
-    plugins: ['Notify'],
-    css: ['quasar/src/css/index.sass'],
-    config: { dark: true },
-    quasarVersion: `'2.27.0'`,
-  }
+  const baseOpts = makeBaseOpts()
 
   it('emits the fontawesome-v7 icon-set import between the static Quasar imports and the @quasar/extras imports', () => {
     const contents = buildPluginContents({
@@ -214,7 +210,7 @@ describe('iconSet wiring into the generated plugin', () => {
       iconLibraries: ['material-icons'],
     })
 
-    const iconSetLine = 'import iconSet from \'quasar/icon-set/fontawesome-v7.js\''
+    const iconSetLine = iconSetImport('fontawesome-v7')
     expect(contents).toContain(iconSetLine)
     expect(contents.match(/quasar\/icon-set\//g)).toHaveLength(1)
 

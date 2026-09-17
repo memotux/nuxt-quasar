@@ -10,6 +10,13 @@ import {
   validateIconLibraries,
 } from '../src/internal'
 import { ICON_LIBRARY_CSS_PATHS } from '../src/internal/icon-libraries'
+import {
+  ANIMATION_LINE,
+  CSS_LINE,
+  CSS_SPECIFIER,
+  iconLibraryImport,
+  makeBaseOpts,
+} from './helpers/template-fixtures'
 
 let extrasAvailable = true
 try {
@@ -137,16 +144,9 @@ describe('buildIconLibraryImports', () => {
 })
 
 describe('iconLibraries wiring into the generated plugin', () => {
-  const baseOpts = {
-    plugins: ['Notify'],
-    css: ['quasar/src/css/index.sass', '~/assets/custom.sass'],
-    config: { dark: true },
-    quasarVersion: `'2.27.0'`,
-  }
+  const baseOpts = makeBaseOpts({ css: [CSS_SPECIFIER, '~/assets/custom.sass'] })
 
-  const ANIMATION_LINE = 'import \'@quasar/extras/animate/fadeIn.css\''
-  const ICON_LINE = 'import \'@quasar/extras/material-icons/material-icons.css\''
-  const CSS_LINE = 'import \'quasar/src/css/index.sass\''
+  const ICON_LINE = iconLibraryImport('material-icons')
 
   it('emits the icon library import between the animation and css imports', () => {
     const contents = buildPluginContents({

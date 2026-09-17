@@ -8,6 +8,7 @@ import {
   buildPluginContents,
 } from '../src/internal'
 import { DEPRECATED_LANG_ALIASES } from '../src/internal/lang'
+import { iconSetImport, langImport, makeBaseOpts } from './helpers/template-fixtures'
 
 // The 71 modern language packs shipped by quasar@2.27.0 under quasar/lang/,
 // in lexicographic order. Deliberately excludes the 3 deprecated aliases
@@ -137,12 +138,7 @@ describe('langImportLine', () => {
 })
 
 describe('lang wiring into the generated plugin', () => {
-  const baseOpts = {
-    plugins: ['Notify'],
-    css: ['quasar/src/css/index.sass'],
-    config: { dark: true },
-    quasarVersion: `'2.27.0'`,
-  }
+  const baseOpts = makeBaseOpts()
 
   it('emits the lang import between the iconSet dynamic import and the @quasar/extras imports', () => {
     const contents = buildPluginContents({
@@ -153,8 +149,8 @@ describe('lang wiring into the generated plugin', () => {
       iconLibraries: ['material-icons'],
     })
 
-    const iconSetIdx = contents.indexOf('import iconSet from \'quasar/icon-set/mdi-v7.js\'')
-    const langIdx = contents.indexOf('import lang from \'quasar/lang/es.js\'')
+    const iconSetIdx = contents.indexOf(iconSetImport('mdi-v7'))
+    const langIdx = contents.indexOf(langImport('es'))
     const extrasIdx = contents.indexOf('@quasar/extras')
     expect(iconSetIdx).toBeGreaterThan(-1)
     expect(langIdx).toBeGreaterThan(iconSetIdx)
