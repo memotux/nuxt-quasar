@@ -4,6 +4,9 @@ import { buildIconLibraryImports } from './icon-libraries'
 import { iconSetImportLine } from './icon-set'
 import { langImportLine } from './lang'
 
+/** Indentation of the `config` field inside the generated `includes` object (`setup()` body). */
+const CONFIG_FIELD_INDENT = '      '
+
 export interface PluginTemplateOptions {
   plugins: string[]
   css: string[]
@@ -23,7 +26,11 @@ export interface PluginTemplateOptions {
  * SSR hydration takeover via `onSSRHydrated`.
  */
 export function buildPluginContents(opts: PluginTemplateOptions): string {
+  // JSON.stringify emits its tree from column 0; shift it into the `includes`
+  // block so the closing brace aligns with `config:` instead of column 0.
+  // The optional chain keeps the `config: undefined` output when unset.
   const config = JSON.stringify(opts.config, null, 2)
+    ?.replace(/\n/g, `\n${CONFIG_FIELD_INDENT}`)
   const plugins = opts.plugins.join(',')
   const animations = buildAnimationImports(opts.animations ?? []).join('\n')
   const iconLibraries = buildIconLibraryImports(opts.iconLibraries ?? []).join('\n')

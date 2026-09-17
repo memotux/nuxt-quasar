@@ -6,7 +6,7 @@ import { levenshteinDistance } from './levenshtein'
  */
 export function nearestSuggestion(name: string, validList: readonly string[]): string {
   const nearest = validList.reduce((best, candidate) =>
-    levenshteinDistance(name, candidate) < levenshteinDistance(name, best) ? candidate : best
+    levenshteinDistance(name, candidate) < levenshteinDistance(name, best) ? candidate : best,
   )
   return levenshteinDistance(name, nearest) <= 3
     ? ` (did you mean '${nearest}'?)`

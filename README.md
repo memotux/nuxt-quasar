@@ -316,10 +316,6 @@ With that in place, Quasar variables are available in any style:
 
 For more information, read the [Quasar Vite Plugin docs](https://quasar.dev/start/vite-plugin) and the `quasar.config.ts` [framework](https://quasar.dev/quasar-cli-vite/quasar-config-js#framework) docs.
 
-## Roadmap
-
-- Add `iconLibraries` config option (typed icon font imports from `@quasar/extras`).
-
 ## Development
 
 - Clone the repo: `git clone https://github.com/memotux/nuxt-quasar.git`

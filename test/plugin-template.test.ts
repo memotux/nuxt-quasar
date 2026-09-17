@@ -38,8 +38,8 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
             directives,
             plugins: { Notify,Dialog },
             config: {
-        "dark": true
-      },
+              "dark": true
+            },
           }
 
           nuxtApp.vueApp.use({
@@ -97,7 +97,7 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
 
   it('serializes config as JSON', () => {
     const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('config: {\n  "dark": true\n},')
+    expect(contents).toContain('config: {\n        "dark": true\n      },')
   })
 
   it('handles undefined config gracefully', () => {
