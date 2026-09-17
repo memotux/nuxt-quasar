@@ -83,7 +83,6 @@ describe('warnLegacyIconCss', () => {
     const logger = createLogger()
     const css = [QUASAR_CSS, LEGACY_MATERIAL_ICONS]
 
-    expect(() => warnLegacyIconCss(css, logger)).not.toThrow()
     expect(warnLegacyIconCss(css, logger)).toBeUndefined()
     expect(css).toEqual([QUASAR_CSS, LEGACY_MATERIAL_ICONS])
   })

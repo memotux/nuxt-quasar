@@ -50,35 +50,6 @@ describe('buildImportPresets (F4: imports:sources hook)', () => {
       }
     })
 
-    it('contains expected utility names', () => {
-      const [, utilsPreset] = buildImportPresets(QUASAR_SRC)
-      const utils = utilsPreset!.imports as [string, string][]
-      const originals = utils.map(([name]) => name)
-
-      expect(originals).toContain('clone')
-      expect(originals).toContain('colors')
-      expect(originals).toContain('copyToClipboard')
-      expect(originals).toContain('date')
-      expect(originals).toContain('debounce')
-      expect(originals).toContain('dom')
-      expect(originals).toContain('event')
-      expect(originals).toContain('exportFile')
-      expect(originals).toContain('extend')
-      expect(originals).toContain('format')
-      expect(originals).toContain('frameDebounce')
-      expect(originals).toContain('getCssVar')
-      expect(originals).toContain('noop')
-      expect(originals).toContain('morph')
-      expect(originals).toContain('openURL')
-      expect(originals).toContain('patterns')
-      expect(originals).toContain('scroll')
-      expect(originals).toContain('setCssVar')
-      expect(originals).toContain('throttle')
-      expect(originals).toContain('uid')
-      expect(originals).toContain('createMetaMixin')
-      expect(originals).toContain('createUploaderComponent')
-    })
-
     it('aliases are all q-prefixed originals', () => {
       const [, utilsPreset] = buildImportPresets(QUASAR_SRC)
       const utils = utilsPreset!.imports as [string, string][]

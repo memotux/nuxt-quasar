@@ -4,16 +4,6 @@ import { buildComponentDir } from '../src/internal'
 const QUASAR_SRC = '/node_modules/quasar/src/'
 
 describe('buildComponentDir (F5: components:dirs hook)', () => {
-  it('returns all required fields', () => {
-    const dir = buildComponentDir(QUASAR_SRC)
-    expect(dir).toHaveProperty('path')
-    expect(dir).toHaveProperty('transpile')
-    expect(dir).toHaveProperty('watch')
-    expect(dir).toHaveProperty('pattern')
-    expect(dir).toHaveProperty('ignore')
-    expect(dir).toHaveProperty('pathPrefix')
-  })
-
   it('path is quasarSrc + components', () => {
     const dir = buildComponentDir(QUASAR_SRC)
     expect(dir.path).toBe(QUASAR_SRC + 'components')

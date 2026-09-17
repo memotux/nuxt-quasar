@@ -132,8 +132,7 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
 
   it('serializes config as JSON', () => {
     const contents = buildPluginContents(baseOpts)
-    expect(contents).toContain('config: {')
-    expect(contents).toContain('"dark": true')
+    expect(contents).toContain('config: {\n  "dark": true\n},')
   })
 
   it('includes plugin names in the includes.plugins object', () => {

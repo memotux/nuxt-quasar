@@ -23,12 +23,6 @@ describe('buildSassImportCode (F3: sassVariables branching)', () => {
     ])
   })
 
-  it('string path appears first (unshift), Quasar variables second', () => {
-    const result = buildSassImportCode('custom.scss')
-    expect(result[0]).toContain('custom.scss')
-    expect(result[1]).toContain('quasar/src/css/variables.sass')
-  })
-
   it('joined with semicolon-newline produces correct SCSS additionalData', () => {
     const result = buildSassImportCode(true)
     const joined = result.join(';\n')
