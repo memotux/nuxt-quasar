@@ -61,6 +61,7 @@ openspec/
 .codegraph/
 .agents/
 .claude/
+odd/
 
 # Local reference notes
 quasar-vue-plugin-example.txt
