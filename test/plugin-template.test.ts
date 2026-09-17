@@ -67,6 +67,15 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     `)
   })
 
+  it('emits no animation imports when the selection is an empty array', () => {
+    // module.ts passes normalizeAnimations() output to this generator, so the
+    // template always receives an ARRAY in production: the empty array is the
+    // real path, not the omitted-key one the snapshot above pins. The snapshot
+    // therefore cannot stand in for this assertion.
+    expect(buildPluginContents({ ...baseOpts, animations: [] }))
+      .not.toContain('@quasar/extras/animate/')
+  })
+
   it('includes CSS import lines', () => {
     const contents = buildPluginContents({
       ...baseOpts,
