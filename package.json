@@ -63,6 +63,8 @@
     "changelogen": "^0.6.2",
     "eslint": "^10.9.1",
     "nuxt": "^4.5.2",
+    "playwright": "^1.63.0",
+    "playwright-core": "^1.63.0",
     "quasar": "^2.27.0",
     "sass-embedded": "^1.103.1",
     "typescript": "6",

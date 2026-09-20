@@ -324,6 +324,9 @@ For more information, read the [Quasar Vite Plugin docs](https://quasar.dev/star
 - Start the [playground](./playground) in dev mode: `pnpm dev`
 - Build the playground: `pnpm dev:build` (or `pnpm dev:generate` for SSG)
 - Run tests: `pnpm test`
+- Install the browser for the e2e suite once: `npx playwright install chromium`
+  (the suite is chromium-only; Firefox `waitUntil: 'hydration'` is broken upstream, see
+  [nuxt/test-utils#1671](https://github.com/nuxt/test-utils/issues/1671))
 - Lint: `pnpm lint`
 - Type-check: `pnpm test:types`
 

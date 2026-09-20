@@ -1,44 +1,6 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { readFile } from 'node:fs/promises'
-import { fileURLToPath } from 'node:url'
-import { resolve as resolvePath } from 'node:path'
-import { $fetch, createTest, setTestContext, useTestContext } from '@nuxt/test-utils/e2e'
-import type { TestOptions } from '@nuxt/test-utils/e2e'
-
-function fixtureDir(name: string): string {
-  return fileURLToPath(new URL(`../fixtures/${name}`, import.meta.url))
-}
-
-// `setup()` binds the fixture context globally, so only the last `setup()`
-// call in a file survives: the other suites' `beforeAll` hooks would run
-// against a stale (or already torn down) context. `createTest()` returns the
-// same hooks `setup()` registers, and pinning the context to this describe
-// block keeps each fixture's server, build dir and Nuxt config isolated.
-function setupScoped(options: Partial<TestOptions>) {
-  const hooks = createTest(options)
-  const ctx = hooks.ctx
-  beforeAll(async () => {
-    setTestContext(ctx)
-    await hooks.beforeAll()
-  }, ctx.options.setupTimeout)
-  beforeEach(hooks.beforeEach)
-  afterEach(hooks.afterEach)
-  afterAll(async () => {
-    setTestContext(ctx)
-    await hooks.afterAll()
-  }, ctx.options.teardownTimeout)
-}
-
-// Each fixture gets an explicit buildDir so the generated plugin lands at a
-// stable path (`<fixture>/.nuxt/quasar/plugin.ts`) instead of the random
-// `.nuxt/test/<id>` directory @nuxt/test-utils picks for production builds.
-function fixtureBuildDir(name: string): string {
-  return resolvePath(fixtureDir(name), '.nuxt')
-}
-
-async function readGeneratedPlugin(name: string): Promise<string> {
-  return readFile(`${fixtureBuildDir(name)}/quasar/plugin.ts`, 'utf8')
-}
+import { describe, expect, it } from 'vitest'
+import { $fetch, useTestContext } from '@nuxt/test-utils/e2e'
+import { fixtureBuildDir, fixtureDir, readGeneratedPlugin, setupScoped } from './helpers'
 
 // `useTestContext().options` holds the test-utils setup options (where
 // `build` is a boolean), so the module's `transpile.unshift('quasar')` is
