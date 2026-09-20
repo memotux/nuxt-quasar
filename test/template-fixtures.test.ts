@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseQuasarNamedImports } from './helpers/template-fixtures'
+import { parseQuasarNamedImports, parseSideEffectImports } from './helpers/template-fixtures'
 
 describe('parseQuasarNamedImports (helper contract)', () => {
   it('extracts exact well-formed statements, one per line', () => {
@@ -32,5 +32,29 @@ describe('parseQuasarNamedImports (helper contract)', () => {
       `import iconset from 'quasar/icon-set/mdi-v7.js'`, // wrong name case
     ].join('\n')
     expect(parseQuasarNamedImports(contents, 'iconSet', 'icon-set')).toEqual([])
+  })
+})
+
+describe('parseSideEffectImports (helper contract)', () => {
+  it('extracts exact well-formed side-effect statements, scoped by prefix', () => {
+    const contents = [
+      `import '@quasar/extras/animate/fadeIn.css'`,
+      `import '@quasar/extras/mdi-v7/mdi-v7.css'`,
+      `import 'quasar/src/css/index.sass'`,
+    ].join('\n')
+    expect(parseSideEffectImports(contents, '@quasar/extras/animate/'))
+      .toEqual([`import '@quasar/extras/animate/fadeIn.css'`])
+    expect(parseSideEffectImports(contents, '@quasar/extras/mdi-v7/'))
+      .toEqual([`import '@quasar/extras/mdi-v7/mdi-v7.css'`])
+    expect(parseSideEffectImports(contents, 'quasar/src/css/'))
+      .toEqual([`import 'quasar/src/css/index.sass'`])
+  })
+
+  it('returns [] for commented-out lines and stray fragments (the old count still saw 1)', () => {
+    const contents = [
+      `// import '@quasar/extras/animate/fadeIn.css'`,
+      `const note = 'see @quasar/extras/animate/ docs'`,
+    ].join('\n')
+    expect(parseSideEffectImports(contents, '@quasar/extras/animate/')).toEqual([])
   })
 })

@@ -73,3 +73,13 @@ export function importLines(contents: string): string[] {
 export function parseQuasarNamedImports(contents: string, name: string, module: string): string[] {
   return contents.match(new RegExp(`^import ${name} from 'quasar/${module}/[^']+\\.js'$`, 'gm')) ?? []
 }
+
+/**
+ * Extract full side-effect `import '<prefix>...'` statements from
+ * generated-plugin contents, one per line. Lines are anchored (^...$ with
+ * the m flag) so commented-out or malformed lines, and stray path fragments
+ * in string literals, cannot match — unlike a raw fragment count.
+ */
+export function parseSideEffectImports(contents: string, prefix: string): string[] {
+  return contents.match(new RegExp(`^import '${prefix}[^']+'$`, 'gm')) ?? []
+}

@@ -13,6 +13,7 @@ import { ICON_LIBRARY_CSS_PATHS } from '../src/internal/icon-libraries'
 import {
   CSS_SPECIFIER,
   makeBaseOpts,
+  parseSideEffectImports,
 } from './helpers/template-fixtures'
 
 let extrasAvailable = true
@@ -151,7 +152,8 @@ describe('iconLibraries wiring into the generated plugin', () => {
 
     expect(contents).toContain('import \'@quasar/extras/mdi-v7/mdi-v7.css\'')
     expect(contents).toContain('import \'@quasar/extras/themify/themify.css\'')
-    expect(contents.match(/@quasar\/extras\/mdi-v7\/mdi-v7\.css/g)).toHaveLength(1)
+    expect(parseSideEffectImports(contents, '@quasar/extras/mdi-v7/'))
+      .toEqual([`import '@quasar/extras/mdi-v7/mdi-v7.css'`])
   })
 })
 

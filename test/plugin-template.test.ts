@@ -10,6 +10,7 @@ import {
   langImport,
   makeBaseOpts,
   parseQuasarNamedImports,
+  parseSideEffectImports,
 } from './helpers/template-fixtures'
 
 const baseOpts = makeBaseOpts({ plugins: ['Notify', 'Dialog'] })
@@ -289,7 +290,8 @@ describe('buildPluginContents (iconLibraries option)', () => {
       ...baseOpts,
       iconLibraries: normalizeIconLibraries(['material-icons', '', 'material-icons']),
     })
-    expect(contents.match(/@quasar\/extras\/material-icons\/material-icons\.css/g)).toHaveLength(1)
+    expect(parseSideEffectImports(contents, '@quasar/extras/material-icons/'))
+      .toEqual([MATERIAL_ICONS_LINE])
   })
 
   it('emits the lines in the order given', () => {
