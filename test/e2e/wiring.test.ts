@@ -50,9 +50,21 @@ function resolvedTranspile(): string[] {
 describe('wiring · basic fixture (defaults)', () => {
   setupScoped({ rootDir: fixtureDir('basic'), buildDir: fixtureBuildDir('basic') })
 
-  it('serves an HTML page with the fixture marker', async () => {
+  it('renders a real QBtn via component auto-import in the SSR output', async () => {
     const html = await $fetch('/')
-    expect(html).toContain('basic')
+    // QBtn must server-render as a <button> carrying the q-btn class —
+    // this proves the components:dirs wiring (auto-import) end to end.
+    expect(html).toMatch(/<button[^>]*class="[^"]*\bq-btn\b/)
+    expect(html).toContain('fixture-qbtn')
+  })
+
+  it('exposes $q with the module-pinned Quasar version at SSR', async () => {
+    const html = await $fetch('/')
+    const quasar = await import('quasar/package.json', { with: { type: 'json' } })
+    // useQuasar() only works if the generated plugin actually installed
+    // Quasar on the app; $q.version is pinned by the module from
+    // quasar/package.json, so the rendered text must match it exactly.
+    expect(html).toContain(`<p id="q-version">${quasar.default.version}</p>`)
   })
 
   it('generates the plugin with the default config block', async () => {
@@ -78,9 +90,21 @@ describe('wiring · basic fixture (defaults)', () => {
 describe('wiring · all-options fixture (every option active)', () => {
   setupScoped({ rootDir: fixtureDir('all-options'), buildDir: fixtureBuildDir('all-options') })
 
-  it('serves an HTML page with the fixture marker', async () => {
+  it('renders a real QBtn via component auto-import in the SSR output', async () => {
     const html = await $fetch('/')
-    expect(html).toContain('all-options')
+    // QBtn must server-render as a <button> carrying the q-btn class —
+    // this proves the components:dirs wiring (auto-import) end to end.
+    expect(html).toMatch(/<button[^>]*class="[^"]*\bq-btn\b/)
+    expect(html).toContain('fixture-qbtn')
+  })
+
+  it('exposes $q with the module-pinned Quasar version at SSR', async () => {
+    const html = await $fetch('/')
+    const quasar = await import('quasar/package.json', { with: { type: 'json' } })
+    // useQuasar() only works if the generated plugin actually installed
+    // Quasar on the app; $q.version is pinned by the module from
+    // quasar/package.json, so the rendered text must match it exactly.
+    expect(html).toContain(`<p id="q-version">${quasar.default.version}</p>`)
   })
 
   it('emits iconSet, lang, animations, and iconLibraries imports', async () => {
