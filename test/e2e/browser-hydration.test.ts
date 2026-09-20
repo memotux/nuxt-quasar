@@ -1,16 +1,17 @@
 import { describe, it, expect } from 'vitest'
 import { createPage } from '@nuxt/test-utils/e2e'
+import type { NuxtPage } from '@nuxt/test-utils/e2e'
 import { browserBuildDir, fixtureDir, setupScoped } from './helpers'
 
 // Console capture is for OBSERVATION, not assertion: the browser layer has
 // never run against this module, and client-side Quasar/Nuxt warnings are
 // findings to report, not failures to silence.
-function attachConsoleCollector(page: { on: (event: string, cb: (msg: unknown) => void) => void }) {
+function attachConsoleCollector(page: NuxtPage) {
   const entries: string[] = []
   page.on('console', (msg) => {
-    const type = (msg as { type?: () => string }).type?.() ?? 'unknown'
+    const type = msg.type()
     if (type === 'error' || type === 'warning') {
-      entries.push(`[${type}] ${(msg as { text?: () => string }).text?.() ?? ''}`)
+      entries.push(`[${type}] ${msg.text()}`)
     }
   })
   return entries
@@ -41,8 +42,8 @@ describe('browser · basic fixture (hydration takeover + interactivity)', () => 
   it('resolves a real $q.screen class after the SSR takeover', async () => {
     const page = await createPage('/', { viewport: { width: 1024, height: 768 } })
     const name = await page.evaluate(() => {
-      const app = window.useNuxtApp()
-      return app.vueApp.config.globalProperties.$q.screen?.name
+      const app = window.useNuxtApp?.()
+      return app?.vueApp.config.globalProperties.$q?.screen?.name
     })
     // Post-takeover, Screen resolves a real breakpoint class (pre-init it
     // does not). 1024x768 maps to 'md', but assert the class set, not one
