@@ -51,6 +51,7 @@ const EXPECTED_RUNTIME_EXPORTS = [
   // plugins.ts
   'VALID_PLUGINS',
   'validatePlugins',
+  'normalizePlugins',
   // sass-imports.ts
   'buildSassImportCode',
   // validation.ts

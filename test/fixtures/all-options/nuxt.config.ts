@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     iconLibraries: ['mdi-v7', 'material-icons'],
     iconSet: 'mdi-v7',
     lang: 'es',
-    plugins: ['Dialog', 'LocalStorage'],
+    plugins: ['Notify', 'Dialog', 'LocalStorage'],
     config: {
       dark: true,
       brand: { primary: '#ff0000' },

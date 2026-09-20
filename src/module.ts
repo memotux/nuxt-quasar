@@ -9,6 +9,7 @@ import type { QuasarUIConfiguration } from 'quasar'
 import type { VALID_PLUGINS, QuasarAnimation, QuasarIconLibrary, QuasarIconSet, QuasarLang } from './internal'
 import {
   validatePlugins,
+  normalizePlugins,
   normalizeAnimations,
   validateAnimations,
   normalizeIconLibraries,
@@ -76,6 +77,11 @@ export default defineNuxtModule<ModuleOptions>({
   },
   setup: async (opts, nuxt) => {
     validatePlugins(opts.plugins)
+    // defu merges the `plugins` default with the user list by concatenation:
+    // dedupe so an explicitly re-declared default (e.g. 'Notify') cannot
+    // emit a duplicate import specifier and break the generated plugin.
+    // Validation runs first, so invalid-name error semantics are unchanged.
+    const plugins = normalizePlugins(opts.plugins)
     const animations = normalizeAnimations(opts.animations)
     validateAnimations(animations)
     const iconLibraries = normalizeIconLibraries(opts.iconLibraries)
@@ -157,7 +163,7 @@ export default defineNuxtModule<ModuleOptions>({
       mode: 'all',
       write: true,
       getContents: () => buildPluginContents({
-        plugins: opts.plugins,
+        plugins,
         css: opts.css ?? [],
         animations,
         iconLibraries,

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { validatePlugins, VALID_PLUGINS } from '../src/internal'
+import { normalizePlugins, validatePlugins, VALID_PLUGINS } from '../src/internal'
 
 describe('validatePlugins', () => {
   it('accepts valid plugin names', () => {
@@ -24,5 +24,30 @@ describe('validatePlugins', () => {
 
   it('accepts empty array', () => {
     expect(() => validatePlugins([])).not.toThrow()
+  })
+})
+
+describe('normalizePlugins', () => {
+  it('deduplicates entries preserving first-occurrence order', () => {
+    expect(normalizePlugins(['Notify', 'Dialog', 'Notify'])).toEqual(['Notify', 'Dialog'])
+  })
+
+  it('returns the list unchanged when there are no duplicates', () => {
+    expect(normalizePlugins(['Notify', 'Dialog'])).toEqual(['Notify', 'Dialog'])
+  })
+
+  it('returns an empty array for undefined', () => {
+    expect(normalizePlugins(undefined)).toEqual([])
+  })
+
+  it('drops falsy entries', () => {
+    expect(normalizePlugins(['Notify', '', 'Dialog'])).toEqual(['Notify', 'Dialog'])
+  })
+
+  it('deduplicates the defu-merged shape (user list first, defaults appended)', () => {
+    // Shape produced by Nuxt's defu merge when the user re-declares the
+    // module default 'Notify': user list first, default-only entries appended.
+    expect(normalizePlugins(['Notify', 'Dialog', 'LocalStorage', 'Notify']))
+      .toEqual(['Notify', 'Dialog', 'LocalStorage'])
   })
 })

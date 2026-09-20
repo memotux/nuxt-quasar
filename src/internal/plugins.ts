@@ -13,3 +13,15 @@ export function validatePlugins(plugins: string[]): void {
     quoteNames: false,
   })
 }
+
+/**
+ * Deduplicate the (defu-merged) plugins list. Nuxt merges module defaults
+ * with user options by array concatenation, so a user who explicitly
+ * includes the default 'Notify' would otherwise emit a duplicate import
+ * specifier (`Notify,Notify,Dialog`) — a hard parse error in the generated
+ * plugin. First occurrence wins; order is preserved.
+ */
+export function normalizePlugins(plugins?: string[]): string[] {
+  if (plugins === undefined) return []
+  return [...new Set(plugins.filter(Boolean))]
+}

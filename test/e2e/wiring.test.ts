@@ -96,12 +96,12 @@ describe('wiring · all-options fixture (every option active)', () => {
     // icon libraries (both).
     expect(plugin).toContain(`import '@quasar/extras/mdi-v7/mdi-v7.css'`)
     expect(plugin).toContain(`import '@quasar/extras/material-icons/material-icons.css'`)
-    // All configured plugins land in the single static plugin specifier. The
-    // module default `plugins: ['Notify']` is merged with the fixture list
-    // rather than replaced, so the fixture must not redeclare 'Notify'
-    // (a duplicate specifier breaks the bundle) and the emitted order is the
-    // merged, sorted set.
-    expect(plugin).toMatch(/import \{ Dialog,LocalStorage,Notify \} from 'quasar\/src\/plugins\.js'/)
+    // Regression (defu merge): the fixture re-declares the module default
+    // 'Notify' explicitly. defu concat-merges without dedup, which used to
+    // emit a duplicate specifier (Notify,Notify,...) and a hard PARSE_ERROR.
+    // The deduped specifier must preserve first-occurrence order with no
+    // duplicate entries.
+    expect(plugin).toMatch(/import \{ Notify,Dialog,LocalStorage \} from 'quasar\/src\/plugins\.js'/)
     // iconSet and lang keys on the install payload.
     expect(plugin).toContain('iconSet,')
     expect(plugin).toContain('lang,')
