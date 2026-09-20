@@ -38,7 +38,10 @@ describe('buildDefineMatrix (F1: SSR define matrix)', () => {
         // __QUASAR_SSR_CLIENT__ is true only when both isClient AND ssrEnabled
         expect(result.__QUASAR_SSR_CLIENT__).toBe(isClient && ssrEnabled)
 
-        // __QUASAR_SSR_PWA__ is always false
+        // __QUASAR_SSR_PWA__ is a deliberate constant: Quasar's PWA mode is a
+        // quasar CLI concern that Nuxt does not use, so the define is pinned
+        // false for both bundles. If a future PWA option lands, the shape-pin
+        // test forces this file to be revisited.
         expect(result.__QUASAR_SSR_PWA__).toBe(false)
       })
     }
@@ -81,5 +84,18 @@ describe('buildDefineMatrix (F1: SSR define matrix)', () => {
   it('returns exactly 5 keys (no extra defines)', () => {
     const result = buildDefineMatrix(true, true, false, QUASAR_VERSION)
     expect(Object.keys(result)).toHaveLength(5)
+  })
+
+  it('emits exactly the five known define keys (shape pin: adding or renaming a define is deliberate)', () => {
+    const result = buildDefineMatrix(true, true, false, QUASAR_VERSION)
+    // Default JS sort compares UTF-16 code units, so `__QUASAR_SSR__` (whose
+    // next character is `_`) sorts after the `__QUASAR_SSR_*` names.
+    expect(Object.keys(result).sort()).toEqual([
+      '__QUASAR_SSR_CLIENT__',
+      '__QUASAR_SSR_PWA__',
+      '__QUASAR_SSR_SERVER__',
+      '__QUASAR_SSR__',
+      '__QUASAR_VERSION__',
+    ])
   })
 })

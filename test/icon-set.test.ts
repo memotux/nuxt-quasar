@@ -8,7 +8,7 @@ import {
   validateIconSet,
   iconSetImportLine,
 } from '../src/internal'
-import { iconSetImport, makeBaseOpts } from './helpers/template-fixtures'
+import { iconSetImport, makeBaseOpts, parseQuasarNamedImports } from './helpers/template-fixtures'
 
 const WEBFONT_ICON_SETS = [
   'bootstrap-icons',
@@ -211,7 +211,8 @@ describe('iconSet wiring into the generated plugin', () => {
     })
 
     expect(contents).toContain(iconSetImport('fontawesome-v7'))
-    expect(contents.match(/quasar\/icon-set\//g)).toHaveLength(1)
+    expect(parseQuasarNamedImports(contents, 'iconSet', 'icon-set'))
+      .toEqual([`import iconSet from 'quasar/icon-set/fontawesome-v7.js'`])
   })
 })
 

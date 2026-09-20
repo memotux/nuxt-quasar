@@ -63,3 +63,13 @@ export function makeBaseOpts(overrides?: Partial<PluginTemplateOptions>): Plugin
 export function importLines(contents: string): string[] {
   return contents.split('\n').filter(line => line.startsWith('import '))
 }
+
+/**
+ * Extract full `import <name> from 'quasar/<module>/<x>.js'` statements from
+ * generated-plugin contents, one per line. Lines are anchored (^...$ with the
+ * m flag) so commented-out or malformed lines, and stray path fragments inside
+ * string literals, cannot match — unlike a raw fragment count.
+ */
+export function parseQuasarNamedImports(contents: string, name: string, module: string): string[] {
+  return contents.match(new RegExp(`^import ${name} from 'quasar/${module}/[^']+\\.js'$`, 'gm')) ?? []
+}

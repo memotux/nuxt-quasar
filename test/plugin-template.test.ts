@@ -9,6 +9,7 @@ import {
   importLines,
   langImport,
   makeBaseOpts,
+  parseQuasarNamedImports,
 } from './helpers/template-fixtures'
 
 const baseOpts = makeBaseOpts({ plugins: ['Notify', 'Dialog'] })
@@ -116,7 +117,8 @@ describe('buildPluginContents (iconSet option)', () => {
   it('emits exactly one icon-set import for a webfont name', () => {
     const contents = buildPluginContents({ ...baseOpts, iconSet: 'mdi-v7' })
     expect(contents).toContain(MDI_ICON_SET_LINE)
-    expect(contents.match(/quasar\/icon-set\//g)).toHaveLength(1)
+    expect(parseQuasarNamedImports(contents, 'iconSet', 'icon-set'))
+      .toEqual([MDI_ICON_SET_LINE])
   })
 
   it('places the icon-set import between the static Quasar imports and the @quasar/extras imports', () => {
@@ -168,7 +170,8 @@ describe('buildPluginContents (iconSet option)', () => {
     })
 
     expect(contents).toContain(SVG_MDI_ICON_SET_LINE)
-    expect(contents.match(/quasar\/icon-set\//g)).toHaveLength(1)
+    expect(parseQuasarNamedImports(contents, 'iconSet', 'icon-set'))
+      .toEqual([SVG_MDI_ICON_SET_LINE])
 
     const iconSetIdx = contents.indexOf(SVG_MDI_ICON_SET_LINE)
     expect(iconSetIdx).toBeGreaterThan(contents.indexOf(DIRECTIVES_LINE))
@@ -193,7 +196,8 @@ describe('buildPluginContents (lang option)', () => {
   it('emits exactly one lang import for a valid name', () => {
     const contents = buildPluginContents({ ...baseOpts, lang: 'es' })
     expect(contents).toContain(LANG_LINE)
-    expect(contents.match(/quasar\/lang\//g)).toHaveLength(1)
+    expect(parseQuasarNamedImports(contents, 'lang', 'lang'))
+      .toEqual([LANG_LINE])
   })
 
   it('places the lang import between the static Quasar imports and the @quasar/extras imports', () => {
