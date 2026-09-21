@@ -329,6 +329,14 @@ For more information, read the [Quasar Vite Plugin docs](https://quasar.dev/star
 - Install the browser for the e2e suite once: `npx playwright install chromium`
   (the suite is chromium-only; Firefox `waitUntil: 'hydration'` is broken upstream, see
   [nuxt/test-utils#1671](https://github.com/nuxt/test-utils/issues/1671))
+
+The two layers partition the suite: the browser layer is every test whose path contains `e2e/browser`,
+and the fast layer is everything else. Name browser tests `browser-*.test.ts` in an `e2e/` directory.
+The fast layer's exclusion is deliberately narrower than the browser layer's filter, so no test can
+fall outside both layers — a test that is excluded but not included runs in no CI job at all. The fast
+layer installs no browser on purpose, so a browser test that lands there fails loudly instead of
+passing unverified. `vitest --exclude` adds to the default excludes; it does not replace them.
+
 - Lint: `pnpm lint`
 - Type-check: `pnpm test:types`
 

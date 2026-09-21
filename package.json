@@ -48,7 +48,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:no-browser": "vitest run --exclude '**/e2e/browser-*'",
-    "test:browser": "vitest run test/e2e/browser",
+    "test:browser": "vitest run e2e/browser",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
