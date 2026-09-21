@@ -21,6 +21,9 @@ const EXPECTED_RUNTIME_EXPORTS = [
   'buildComponentDir',
   // define-matrix.ts
   'buildDefineMatrix',
+  // extras-requirements.ts
+  'requiredExtrasOptions',
+  'extrasRequirementMessage',
   // icon-libraries.ts
   'VALID_ICON_LIBRARIES',
   'ICON_LIBRARY_CSS_PATHS',

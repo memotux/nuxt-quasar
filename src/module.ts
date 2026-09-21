@@ -15,7 +15,6 @@ import {
   normalizeIconLibraries,
   validateIconLibraries,
   validateIconSet,
-  isSvgIconSet,
   validateLang,
   warnLegacyIconCss,
   mergeScssOptions,
@@ -25,6 +24,8 @@ import {
   buildSassImportCode,
   buildImportPresets,
   buildComponentDir,
+  requiredExtrasOptions,
+  extrasRequirementMessage,
 } from './internal'
 
 interface ModuleOptions {
@@ -94,20 +95,17 @@ export default defineNuxtModule<ModuleOptions>({
     }
     // Animations, icon libraries and svg-* icon sets all resolve assets
     // from @quasar/extras, so one guard covers them.
-    const extrasOptions = [
-      animations.length > 0 ? 'animations' : '',
-      iconLibraries.length > 0 ? 'iconLibraries' : '',
-      opts.iconSet !== undefined && isSvgIconSet(opts.iconSet) ? 'iconSet' : '',
-    ].filter(Boolean)
+    const extrasOptions = requiredExtrasOptions({
+      animations,
+      iconLibraries,
+      iconSet: opts.iconSet,
+    })
     if (extrasOptions.length > 0) {
       try {
         await resolvePath('@quasar/extras/package.json')
       }
       catch {
-        throw new Error(
-          `nuxt-quasar-vite: using ${extrasOptions.join(' or ')} requires the @quasar/extras package. `
-          + 'Install it with: pnpm add -D @quasar/extras',
-        )
+        throw new Error(extrasRequirementMessage(extrasOptions))
       }
     }
     warnLegacyIconCss(opts.css ?? [], useLogger('nuxt-quasar-vite'))

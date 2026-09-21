@@ -1,6 +1,7 @@
 export * from './animations'
 export * from './component-dir'
 export * from './define-matrix'
+export * from './extras-requirements'
 export * from './icon-libraries'
 export * from './icon-set'
 export * from './import-presets'
