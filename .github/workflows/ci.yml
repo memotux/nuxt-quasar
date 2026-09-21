@@ -6,6 +6,13 @@ on:
       - main
   pull_request:
 
+# Rapid pushes to the same PR would otherwise queue duplicate runs. Cancel the
+# superseded run for pull requests, but let main runs finish: cancelling on main
+# would leave a commit without a CI record.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   lint:
     runs-on: ubuntu-latest
