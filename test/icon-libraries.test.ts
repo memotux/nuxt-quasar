@@ -1,4 +1,3 @@
-import { readdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { describe, it, expect } from 'vitest'
@@ -15,14 +14,7 @@ import {
   makeBaseOpts,
   parseSideEffectImports,
 } from './helpers/template-fixtures'
-
-let extrasAvailable = true
-try {
-  await import('@quasar/extras/package.json', { with: { type: 'json' } })
-}
-catch {
-  extrasAvailable = false
-}
+import { readShippedDir } from './helpers/drift'
 
 const EXPECTED_ICON_LIBRARIES = [
   'bootstrap-icons',
@@ -157,17 +149,17 @@ describe('iconLibraries wiring into the generated plugin', () => {
   })
 })
 
-describe.skipIf(!extrasAvailable)('icon libraries drift guard', () => {
+describe('icon libraries drift guard', () => {
   it('matches the CSS icon font libraries shipped by @quasar/extras exactly', async () => {
     const extrasDir = dirname(dirname(fileURLToPath(new URL('../node_modules/@quasar/extras/exports/animate/animate-list.js', import.meta.url))))
-    const entries = await readdir(extrasDir, { withFileTypes: true })
+    const entries = await readShippedDir(extrasDir, { withFileTypes: true })
 
     // Find directories that contain <name>/<name>.css — these are the CSS icon font libraries.
     const cssIconLibraries: string[] = []
     for (const entry of entries) {
       if (!entry.isDirectory()) continue
       const name = entry.name
-      const dirContents = await readdir(join(extrasDir, name))
+      const dirContents = await readShippedDir(join(extrasDir, name))
       if (dirContents.includes(`${name}.css`)) {
         cssIconLibraries.push(name)
       }

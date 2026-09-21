@@ -1,4 +1,3 @@
-import { readdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import {
@@ -9,6 +8,7 @@ import {
   iconSetImportLine,
 } from '../src/internal'
 import { iconSetImport, makeBaseOpts, parseQuasarNamedImports } from './helpers/template-fixtures'
+import { readShippedDir } from './helpers/drift'
 
 const WEBFONT_ICON_SETS = [
   'bootstrap-icons',
@@ -216,26 +216,10 @@ describe('iconSet wiring into the generated plugin', () => {
   })
 })
 
-let quasarAvailable = true
-try {
-  await import('quasar/package.json', { with: { type: 'json' } })
-}
-catch {
-  quasarAvailable = false
-}
-
-let extrasAvailable = true
-try {
-  await import('@quasar/extras/package.json', { with: { type: 'json' } })
-}
-catch {
-  extrasAvailable = false
-}
-
-describe.skipIf(!quasarAvailable || !extrasAvailable)('icon set drift guard', () => {
+describe('icon set drift guard', () => {
   it('matches the publicly licensed mappings shipped by quasar/icon-set/ exactly', async () => {
     const iconSetDir = fileURLToPath(new URL('../node_modules/quasar/icon-set', import.meta.url))
-    const entries = await readdir(iconSetDir)
+    const entries = await readShippedDir(iconSetDir)
 
     const shipped = entries
       .filter(name => name.endsWith('.js'))

@@ -1,4 +1,3 @@
-import { readdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import {
@@ -7,6 +6,7 @@ import {
   langImportLine,
 } from '../src/internal'
 import { DEPRECATED_LANG_ALIASES } from '../src/internal/lang'
+import { readShippedDir } from './helpers/drift'
 
 // The 71 modern language packs shipped by quasar@2.27.0 under quasar/lang/,
 // in lexicographic order. Deliberately excludes the 3 deprecated aliases
@@ -135,18 +135,10 @@ describe('langImportLine', () => {
   })
 })
 
-let quasarAvailable = true
-try {
-  await import('quasar/package.json', { with: { type: 'json' } })
-}
-catch {
-  quasarAvailable = false
-}
-
-describe.skipIf(!quasarAvailable)('lang drift guard', () => {
+describe('lang drift guard', () => {
   it('matches the modern language packs shipped by quasar/lang/ exactly, excluding deprecated aliases and index.json', async () => {
     const langDir = fileURLToPath(new URL('../node_modules/quasar/lang', import.meta.url))
-    const entries = await readdir(langDir)
+    const entries = await readShippedDir(langDir)
 
     const shipped = entries
       .filter(name => name.endsWith('.js'))

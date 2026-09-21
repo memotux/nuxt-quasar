@@ -1,4 +1,3 @@
-import { readdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname } from 'node:path'
 import { describe, it, expect } from 'vitest'
@@ -15,21 +14,9 @@ import {
   OUT_ANIMATIONS,
 } from '../src/internal/animations'
 import { CSS_LINE, DIRECTIVES_LINE, importLines, makeBaseOpts } from './helpers/template-fixtures'
+import { loadUpstreamModule, readShippedDir } from './helpers/drift'
 
 const expectedAnimations = [...GENERAL_ANIMATIONS, ...IN_ANIMATIONS, ...OUT_ANIMATIONS]
-
-let extrasAvailable = true
-let animateList: {
-  generalAnimations: string[]
-  inAnimations: string[]
-  outAnimations: string[]
-} | undefined
-try {
-  animateList = await import('@quasar/extras/animate/animate-list.common') as unknown as typeof animateList
-}
-catch {
-  extrasAvailable = false
-}
 
 describe('animations', () => {
   it('accepts valid animation names', () => {
@@ -83,18 +70,24 @@ describe('animations', () => {
   })
 })
 
-describe.skipIf(!extrasAvailable)('animations drift guard', () => {
-  it('matches upstream animation lists exactly', () => {
-    expect(GENERAL_ANIMATIONS).toEqual(animateList?.generalAnimations)
-    expect(IN_ANIMATIONS).toEqual(animateList?.inAnimations)
-    expect(OUT_ANIMATIONS).toEqual(animateList?.outAnimations)
+describe('animations drift guard', () => {
+  it('matches upstream animation lists exactly', async () => {
+    const animateList = await loadUpstreamModule<{
+      generalAnimations: string[]
+      inAnimations: string[]
+      outAnimations: string[]
+    }>('@quasar/extras/animate/animate-list.common', '@quasar/extras')
+
+    expect(GENERAL_ANIMATIONS).toEqual(animateList.generalAnimations)
+    expect(IN_ANIMATIONS).toEqual(animateList.inAnimations)
+    expect(OUT_ANIMATIONS).toEqual(animateList.outAnimations)
   })
 
   it('pins the animation CSS file set and orphan names', async () => {
-    const packageJson = await import('@quasar/extras/package.json', { with: { type: 'json' } })
+    const packageJson = await loadUpstreamModule<{ default: { name: string } }>('@quasar/extras/package.json', '@quasar/extras')
     expect(packageJson.default.name).toBe('@quasar/extras')
     const animateDir = dirname(fileURLToPath(new URL('../node_modules/@quasar/extras/exports/animate/animate-list.js', import.meta.url)))
-    const files = await readdir(animateDir)
+    const files = await readShippedDir(animateDir)
     const cssNames = files.filter(file => file.endsWith('.css')).map(file => file.slice(0, -4))
 
     expect(cssNames.filter(name => !(VALID_ANIMATIONS as readonly string[]).includes(name)))
