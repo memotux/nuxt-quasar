@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   lint:
@@ -42,5 +43,46 @@ jobs:
       - name: Playground prepare
         run: npm run dev:prepare
 
-      - name: Test
-        run: npm run test
+      # No browser is installed in this job on purpose: a browser-dependent
+      # test that lands here fails loudly instead of passing unverified.
+      # Browser tests belong to the test-browser job below.
+      - name: Test (unit + SSR wiring)
+        run: npm run test:no-browser
+
+  test-browser:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm i -g --force corepack@latest && corepack enable
+
+      - name: Install dependencies
+        run: npx nypm@latest i
+
+      - name: Playground prepare
+        run: npm run dev:prepare
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install chromium --with-deps
+
+      # The cache holds browser binaries only, never the OS libraries, so a
+      # cache hit still needs the system dependencies installed.
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Test (browser hydration e2e)
+        run: npm run test:browser
