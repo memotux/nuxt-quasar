@@ -4,6 +4,7 @@ import { dirname } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import {
   VALID_ANIMATIONS,
+  buildPluginContents,
   buildAnimationImports,
   normalizeAnimations,
   validateAnimations,
@@ -13,6 +14,7 @@ import {
   IN_ANIMATIONS,
   OUT_ANIMATIONS,
 } from '../src/internal/animations'
+import { CSS_LINE, DIRECTIVES_LINE, importLines, makeBaseOpts } from './helpers/template-fixtures'
 
 const expectedAnimations = [...GENERAL_ANIMATIONS, ...IN_ANIMATIONS, ...OUT_ANIMATIONS]
 
@@ -98,5 +100,38 @@ describe.skipIf(!extrasAvailable)('animations drift guard', () => {
     expect(cssNames.filter(name => !(VALID_ANIMATIONS as readonly string[]).includes(name)))
       .toEqual(['lightSpeedIn', 'lightSpeedOut'])
     expect(VALID_ANIMATIONS.filter(name => !cssNames.includes(name))).toEqual([])
+  })
+})
+
+describe('animations \'all\' composed path', () => {
+  // module.ts runs exactly this composition: normalizeAnimations(opts.animations)
+  // then validateAnimations(normalized) then buildPluginContents({ animations }).
+  // The shorthand is therefore validated in its EXPANDED array form, and the
+  // template receives 98 names, not the string 'all'.
+  it('normalizes the all shorthand into a selection that passes validation', () => {
+    const normalized = normalizeAnimations('all')
+
+    expect(normalized).toHaveLength(98)
+    expect(() => validateAnimations(normalized)).not.toThrow()
+  })
+
+  it('emits one CSS import per animation as one contiguous group in the documented position', () => {
+    const normalized = normalizeAnimations('all')
+    const contents = buildPluginContents({ ...makeBaseOpts(), animations: normalized })
+    const animationLines = buildAnimationImports(normalized)
+
+    expect(animationLines).toHaveLength(98)
+    expect(animationLines[0]).toBe('import \'@quasar/extras/animate/bounce.css\'')
+    expect(animationLines.at(-1)).toBe('import \'@quasar/extras/animate/zoomOutUp.css\'')
+
+    // Asserting the whole sequence (not a count) proves the 98 lines are
+    // contiguous and that no line was displaced out of the group.
+    expect(importLines(contents)).toEqual([
+      'import installQ from \'quasar/src/install-quasar.js\'',
+      'import { Notify } from \'quasar/src/plugins.js\'',
+      DIRECTIVES_LINE,
+      ...animationLines,
+      CSS_LINE,
+    ])
   })
 })

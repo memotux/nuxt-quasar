@@ -52,6 +52,24 @@ describe('wiring · basic fixture (defaults)', () => {
 describe('wiring · all-options fixture (every option active)', () => {
   setupScoped({ rootDir: fixtureDir('all-options'), buildDir: fixtureBuildDir('all-options') })
 
+  // The two tests below assert the JS-lookup options TOOK EFFECT, not merely
+  // that the generator emitted an import. The `emits iconSet, lang, ...` test
+  // reads the generated plugin text; these read the installed `$q` after SSR
+  // install, which is the only place the option -> payload -> Quasar install
+  // chain is exercised end to end. Quasar reads exactly the `lang` / `iconSet`
+  // keys from the `includes` payload (quasar/src/install-quasar.js).
+  it('applies iconSet: the SSR payload installs the configured mdi-v7 mapping', async () => {
+    const html = await $fetch('/')
+
+    expect(html).toContain('<p id="q-icon-set">mdi-v7</p>')
+  })
+
+  it('applies lang: the SSR payload installs the configured es language pack', async () => {
+    const html = await $fetch('/')
+
+    expect(html).toContain('<p id="q-lang">es</p>')
+  })
+
   it('renders a real QBtn via component auto-import in the SSR output', async () => {
     const html = await $fetch('/')
     // QBtn must server-render as a <button> carrying the q-btn class —
