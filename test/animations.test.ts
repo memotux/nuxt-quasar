@@ -33,6 +33,11 @@ describe('animations', () => {
 
   it('normalizes all animations in upstream order', () => {
     expect(normalizeAnimations('all')).toEqual(expectedAnimations)
+    // 98 is an INDEPENDENT tripwire and must stay a literal. VALID_ANIMATIONS is
+    // the concat of GENERAL/IN/OUT, so toEqual(expectedAnimations) above compares
+    // the curated lists against themselves and cannot detect a correlated shrink
+    // of all three at once. Deriving 98 from any of them would make this
+    // assertion tautological for the same reason.
     expect(normalizeAnimations('all')).toHaveLength(98)
   })
 
@@ -84,7 +89,11 @@ describe('animations drift guard', () => {
   })
 
   it('pins the animation CSS file set and orphan names', async () => {
-    const packageJson = await loadUpstreamModule<{ default: { name: string } }>('@quasar/extras/package.json', '@quasar/extras')
+    const packageJson = await loadUpstreamModule<{ default: { name: string } }>(
+      '@quasar/extras/package.json',
+      '@quasar/extras',
+      { with: { type: 'json' } },
+    )
     expect(packageJson.default.name).toBe('@quasar/extras')
     const animateDir = dirname(fileURLToPath(new URL('../node_modules/@quasar/extras/exports/animate/animate-list.js', import.meta.url)))
     const files = await readShippedDir(animateDir)
