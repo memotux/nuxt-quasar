@@ -25,11 +25,12 @@ describe('nearestSuggestion', () => {
     expect(nearestSuggestion('Notify', ['Notify'])).toBe(` (did you mean 'Notify'?)`)
   })
 
-  it('throws when validList is empty (reduce has no initial value)', () => {
-    // The function does not guard against empty validList; callers guarantee a
-    // non-empty list. Pin the throw shape so a future refactor that introduces a
-    // guard is a deliberate choice rather than a silent regression.
-    expect(() => nearestSuggestion('Notify', [])).toThrow(TypeError)
+  it('returns the empty suffix when validList is empty', () => {
+    // Guard added 2026-09-22. Callers today guarantee a non-empty list, so this
+    // path is unreachable in production; the early return removes a TypeError
+    // foot-gun for future callers and any defensive use of the function. The
+    // empty suffix matches the distance > 3 contract.
+    expect(nearestSuggestion('Notify', [])).toBe('')
   })
 
   it('picks the first occurrence in validList when distances tie (reduce strict-less)', () => {
