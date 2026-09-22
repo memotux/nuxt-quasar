@@ -20,7 +20,6 @@ const baseOpts = makeBaseOpts({ plugins: ['Notify', 'Dialog'] })
 const MDI_ICON_SET_LINE = iconSetImport('mdi-v7')
 const SVG_MDI_ICON_SET_LINE = iconSetImport('svg-mdi-v7')
 const LANG_LINE = langImport('es')
-const ICON_LIBRARY_LINE = iconLibraryImport('material-icons')
 const MATERIAL_ICONS_LINE = iconLibraryImport('material-icons')
 const MDI_LINE = iconLibraryImport('mdi-v7')
 
@@ -102,6 +101,27 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     expect(contents).toContain('config: {\n        "dark": true\n      },')
   })
 
+  it('re-indents nested config depth by depth around the base indent', () => {
+    // The case above pins a FLAT config, where the CONFIG_FIELD_INDENT shift is
+    // the whole story. Nesting is where that shift has to compose with the
+    // relative indentation JSON.stringify already emitted, so the outer brace
+    // keeps base+0, each level adds its own two spaces on top of base, and the
+    // nested closing brace lands back at base+2.
+    const contents = buildPluginContents({
+      ...baseOpts,
+      config: { dark: true, notify: { position: 'top' } },
+    })
+
+    expect(contents).toContain([
+      '      config: {',
+      '        "dark": true,',
+      '        "notify": {',
+      '          "position": "top"',
+      '        }',
+      '      },',
+    ].join('\n'))
+  })
+
   it('handles undefined config gracefully', () => {
     const contents = buildPluginContents({ ...baseOpts, config: undefined })
     expect(contents).toContain('config: undefined')
@@ -133,7 +153,7 @@ describe('buildPluginContents (iconSet option)', () => {
     const directivesIdx = contents.indexOf(DIRECTIVES_LINE)
     const iconSetIdx = contents.indexOf(MDI_ICON_SET_LINE)
     const animationIdx = contents.indexOf(ANIMATION_LINE)
-    const iconLibraryIdx = contents.indexOf(ICON_LIBRARY_LINE)
+    const iconLibraryIdx = contents.indexOf(MATERIAL_ICONS_LINE)
     const cssIdx = contents.indexOf(CSS_LINE)
 
     expect(iconSetIdx).toBeGreaterThan(directivesIdx)
@@ -212,7 +232,7 @@ describe('buildPluginContents (lang option)', () => {
     const directivesIdx = contents.indexOf(DIRECTIVES_LINE)
     const langIdx = contents.indexOf(LANG_LINE)
     const animationIdx = contents.indexOf(ANIMATION_LINE)
-    const iconLibraryIdx = contents.indexOf(ICON_LIBRARY_LINE)
+    const iconLibraryIdx = contents.indexOf(MATERIAL_ICONS_LINE)
     const cssIdx = contents.indexOf(CSS_LINE)
 
     expect(langIdx).toBeGreaterThan(directivesIdx)
@@ -339,6 +359,34 @@ describe('buildPluginContents (iconLibraries option)', () => {
       .not.toContain('@quasar/extras/material-icons/')
     expect(buildPluginContents(baseOpts))
       .not.toContain('@quasar/extras/material-icons/')
+  })
+})
+
+describe('buildPluginContents (import line shape)', () => {
+  // `importLines()` (helpers/template-fixtures.ts) collects only lines that
+  // start at column 0 with `import `, so an indented import would be invisible
+  // to every ordering assertion built on it — silently weakening them without
+  // failing. The template emits no indented import today; these cases pin that
+  // shape so a future one fails here instead of disappearing there.
+  it('emits no indented import for the default base options', () => {
+    const lines = buildPluginContents(baseOpts).split('\n')
+
+    expect(lines.filter(line => /^\s+import\s/.test(line))).toEqual([])
+    expect(lines.some(line => line.startsWith('import '))).toBe(true)
+  })
+
+  it('emits no indented import when every import group is active', () => {
+    const contents = buildPluginContents({
+      ...baseOpts,
+      animations: ['fadeIn'],
+      iconLibraries: ['material-icons'],
+      iconSet: 'mdi-v7',
+      lang: 'es',
+    })
+    const lines = contents.split('\n')
+
+    expect(lines.filter(line => /^\s+import\s/.test(line))).toEqual([])
+    expect(lines.some(line => line.startsWith('import '))).toBe(true)
   })
 })
 

@@ -41,8 +41,13 @@ export function langImport(name: string): string {
 /**
  * Build a fresh base options object for `buildPluginContents`.
  *
- * The `config` object and both arrays are constructed per call so no mutable
- * reference is shared between tests.
+ * The DEFAULT `config` object and both arrays are constructed per call, so the
+ * defaults themselves share no mutable reference between tests. Overrides are
+ * different: the trailing `...overrides` spread copies the caller's references
+ * verbatim, so a `plugins`, `css` or `config` value passed in is still the very
+ * object the caller holds. A test that supplies an override and then mutates
+ * that array/object mutates it through the shared reference — pass a fresh
+ * literal when a test needs isolation.
  */
 export function makeBaseOpts(overrides?: Partial<PluginTemplateOptions>): PluginTemplateOptions {
   return {
@@ -59,6 +64,12 @@ export function makeBaseOpts(overrides?: Partial<PluginTemplateOptions>): Plugin
  *
  * The template emits every import group in one fixed total order, so asserting
  * this array once covers every pairwise ordering assertion.
+ *
+ * Contract: this only sees lines that START at column 0 with `import `, so an
+ * indented import would be invisible to every ordering assertion that consumes
+ * this helper. The template is pinned to that shape by the
+ * "buildPluginContents (import line shape)" cases in
+ * `test/plugin-template.test.ts`; update that guard if the emitter changes.
  */
 export function importLines(contents: string): string[] {
   return contents.split('\n').filter(line => line.startsWith('import '))
