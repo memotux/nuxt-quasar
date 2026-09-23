@@ -158,7 +158,7 @@ describe('wiring · ssr-off fixture (ssr: false)', () => {
     // The plugin template emits both branches regardless of `ssr: false` —
     // runtime environment decides at install time. Pin the shape.
     expect(plugin).toContain('if(import.meta.server)')
-    expect(plugin).toContain('nuxtApp.ssrContext.event.node')
+    expect(plugin).toContain('nuxtApp.ssrContext!.event.node')
     expect(plugin).toContain('if (import.meta.client)')
   })
 

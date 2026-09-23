@@ -45,7 +45,9 @@ export function buildPluginContents(opts: PluginTemplateOptions): string {
   // Empty groups drop out so no blank import lines are emitted.
   const importGroups = [iconSetImport, langImport, animations, iconLibraries, css].filter(Boolean).join('\n')
 
-  return `import installQ from 'quasar/src/install-quasar.js'
+  return `import type { Plugin } from 'vue'
+import { defineNuxtPlugin, onNuxtReady } from '#app'
+import installQ from 'quasar/src/install-quasar.js'
 import { ${plugins} } from 'quasar/src/plugins.js'
 import * as directives from 'quasar/src/directives.js'
 
@@ -60,23 +62,26 @@ export default defineNuxtPlugin({
       config: ${config},${iconSetEntry}${langEntry}
     }
 
-    nuxtApp.vueApp.use({
+    const quasarPlugin: Plugin & { version: string } = {
       version: ${opts.quasarVersion},
       install(app, opts) {
         if(import.meta.server) {
-          installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event.node)
+          installQ(app, {...opts, ...includes}, nuxtApp.ssrContext!.event.node)
         } else {
           installQ(app, {...opts, ...includes})
         }
       },
-    })
+    }
+
+    nuxtApp.vueApp.use(quasarPlugin)
 
     if (import.meta.client) {
       onNuxtReady(() => {
         // Quasar SSR hydration takeover: with __QUASAR_SSR_CLIENT__ enabled,
         // Screen/Platform/Meta/Body defer client init to $q.onSSRHydrated(),
         // which the SSR application must call once hydration completes.
-        nuxtApp.vueApp.config.globalProperties.$q?.onSSRHydrated?.()
+        const $q = nuxtApp.vueApp.config.globalProperties.$q as { onSSRHydrated?: () => void } | undefined
+        $q?.onSSRHydrated?.()
       })
     }
   }

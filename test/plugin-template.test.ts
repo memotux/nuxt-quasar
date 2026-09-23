@@ -26,7 +26,9 @@ const MDI_LINE = iconLibraryImport('mdi-v7')
 describe('buildPluginContents (F2: plugin template generator)', () => {
   it('emits the exact default plugin for the base options', () => {
     expect(buildPluginContents(baseOpts)).toMatchInlineSnapshot(`
-      "import installQ from 'quasar/src/install-quasar.js'
+      "import type { Plugin } from 'vue'
+      import { defineNuxtPlugin, onNuxtReady } from '#app'
+      import installQ from 'quasar/src/install-quasar.js'
       import { Notify,Dialog } from 'quasar/src/plugins.js'
       import * as directives from 'quasar/src/directives.js'
 
@@ -43,23 +45,26 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
             },
           }
 
-          nuxtApp.vueApp.use({
+          const quasarPlugin: Plugin & { version: string } = {
             version: '2.27.0',
             install(app, opts) {
               if(import.meta.server) {
-                installQ(app, {...opts, ...includes}, nuxtApp.ssrContext.event.node)
+                installQ(app, {...opts, ...includes}, nuxtApp.ssrContext!.event.node)
               } else {
                 installQ(app, {...opts, ...includes})
               }
             },
-          })
+          }
+
+          nuxtApp.vueApp.use(quasarPlugin)
 
           if (import.meta.client) {
             onNuxtReady(() => {
               // Quasar SSR hydration takeover: with __QUASAR_SSR_CLIENT__ enabled,
               // Screen/Platform/Meta/Body defer client init to $q.onSSRHydrated(),
               // which the SSR application must call once hydration completes.
-              nuxtApp.vueApp.config.globalProperties.$q?.onSSRHydrated?.()
+              const $q = nuxtApp.vueApp.config.globalProperties.$q as { onSSRHydrated?: () => void } | undefined
+              $q?.onSSRHydrated?.()
             })
           }
         }
@@ -174,7 +179,7 @@ describe('buildPluginContents (iconSet option)', () => {
     const includesIdx = contents.indexOf('const includes = {')
     const configIdx = contents.indexOf('config:')
     const iconSetIdx = contents.indexOf('iconSet,')
-    const useIdx = contents.indexOf('nuxtApp.vueApp.use({')
+    const useIdx = contents.indexOf('nuxtApp.vueApp.use(')
     expect(includesIdx).toBeGreaterThan(-1)
     expect(iconSetIdx).toBeGreaterThan(configIdx)
     expect(iconSetIdx).toBeGreaterThan(includesIdx)
@@ -273,7 +278,7 @@ describe('buildPluginContents (lang option)', () => {
     const includesIdx = contents.indexOf('const includes = {')
     const configIdx = contents.indexOf('config:')
     const langIdx = contents.indexOf('lang,')
-    const useIdx = contents.indexOf('nuxtApp.vueApp.use({')
+    const useIdx = contents.indexOf('nuxtApp.vueApp.use(')
     expect(includesIdx).toBeGreaterThan(-1)
     expect(langIdx).toBeGreaterThan(configIdx)
     expect(langIdx).toBeGreaterThan(includesIdx)
@@ -408,6 +413,8 @@ describe('buildPluginContents (import order)', () => {
       // they are written out here; every other line comes from the helper so the
       // expected order cannot drift from the shared constants.
       expect(importLines(contents)).toEqual([
+        'import type { Plugin } from \'vue\'',
+        'import { defineNuxtPlugin, onNuxtReady } from \'#app\'',
         'import installQ from \'quasar/src/install-quasar.js\'',
         'import { Notify,Dialog } from \'quasar/src/plugins.js\'',
         DIRECTIVES_LINE,
@@ -431,6 +438,8 @@ describe('buildPluginContents (import order)', () => {
       })
 
       expect(importLines(contents)).toEqual([
+        'import type { Plugin } from \'vue\'',
+        'import { defineNuxtPlugin, onNuxtReady } from \'#app\'',
         'import installQ from \'quasar/src/install-quasar.js\'',
         'import { Notify,Dialog } from \'quasar/src/plugins.js\'',
         DIRECTIVES_LINE,

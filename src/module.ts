@@ -1,6 +1,7 @@
 import {
   defineNuxtModule,
   addPluginTemplate,
+  addTypeTemplate,
   resolvePath,
   useLogger,
 } from '@nuxt/kit'
@@ -26,6 +27,7 @@ import {
   buildComponentDir,
   requiredExtrasOptions,
   extrasRequirementMessage,
+  QUASAR_INTERNALS_DTS,
 } from './internal'
 
 interface ModuleOptions {
@@ -154,6 +156,11 @@ export default defineNuxtModule<ModuleOptions>({
           userSassOpts,
         )
       }
+    })
+
+    addTypeTemplate({
+      filename: 'types/quasar-internals.d.ts',
+      getContents: () => QUASAR_INTERNALS_DTS,
     })
 
     addPluginTemplate({

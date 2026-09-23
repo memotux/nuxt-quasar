@@ -129,6 +129,8 @@ describe('animations \'all\' composed path', () => {
     // Asserting the whole sequence (not a count) proves the 98 lines are
     // contiguous and that no line was displaced out of the group.
     expect(importLines(contents)).toEqual([
+      'import type { Plugin } from \'vue\'',
+      'import { defineNuxtPlugin, onNuxtReady } from \'#app\'',
       'import installQ from \'quasar/src/install-quasar.js\'',
       'import { Notify } from \'quasar/src/plugins.js\'',
       DIRECTIVES_LINE,

@@ -55,6 +55,8 @@ const EXPECTED_RUNTIME_EXPORTS = [
   'VALID_PLUGINS',
   'validatePlugins',
   'normalizePlugins',
+  // quasar-internals.ts
+  'QUASAR_INTERNALS_DTS',
   // sass-imports.ts
   'buildSassImportCode',
   // validation.ts

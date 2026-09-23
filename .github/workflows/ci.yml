@@ -50,6 +50,12 @@ jobs:
       - name: Playground prepare
         run: npm run dev:prepare
 
+      # Type-check both programs: the module repo (root .nuxt) and the
+      # playground. The playground stage is what proves the `quasar` config key
+      # is typed — see playground/types/quasar-config-key.ts.
+      - name: Type-check
+        run: npm run test:types
+
       # No browser is installed in this job on purpose: a browser-dependent
       # test that lands here fails loudly instead of passing unverified.
       # Browser tests belong to the test-browser job below.
