@@ -70,3 +70,9 @@ Build the library with `pnpm prepack` (uses `nuxt-module-build build`).
   `src/internal/` and their tests together.
 - `console.log` inside a vitest test is swallowed by consola in this setup; use
   `warn`/`error` for in-test observation output.
+- The playground consumes the module through `../src/module`, but Nuxt emits the
+  `configKey` specifier as the package name (`nuxt-quasar-vite`) into
+  `.nuxt/types/modules.d.ts`. `playground/types/nuxt-quasar-vite.d.ts` bridges that
+  name to `src/module`; without it the `quasar` key silently falls back to
+  `Record<string, any>`. `playground/types/quasar-config-key.ts` guards the typing,
+  and `pnpm test:types` now runs the playground stage (and runs in CI).
