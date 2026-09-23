@@ -68,3 +68,5 @@ Build the library with `pnpm prepack` (uses `nuxt-module-build build`).
 - `iconSet`, `iconLibraries`, `lang`, and `plugins` options are validated at
   setup time against typed, curated name lists — extend the lists in
   `src/internal/` and their tests together.
+- `console.log` inside a vitest test is swallowed by consola in this setup; use
+  `warn`/`error` for in-test observation output.

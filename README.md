@@ -335,7 +335,10 @@ and the fast layer is everything else. Name browser tests `browser-*.test.ts` in
 The fast layer's exclusion is deliberately narrower than the browser layer's filter, so no test can
 fall outside both layers — a test that is excluded but not included runs in no CI job at all. The fast
 layer installs no browser on purpose, so a browser test that lands there fails loudly instead of
-passing unverified. `vitest --exclude` adds to the default excludes; it does not replace them.
+passing unverified. `vitest --exclude` adds to the default excludes rather than replacing them — vitest's
+CLI reference describes the value as "additional file globs to be excluded" (v4.1.11) — and that is what
+keeps `node_modules` out of this layer. Confirm it by measurement, not by reading the resolved config: the
+config shape does not show the defaults.
 
 - Lint: `pnpm lint`
 - Type-check: `pnpm test:types`
