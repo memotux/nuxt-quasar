@@ -5,11 +5,8 @@ import { levenshteinDistance } from './levenshtein'
  * `(did you mean 'X'?)` hint when the distance is ≤ 3.
  */
 export function nearestSuggestion(name: string, validList: readonly string[]): string {
-  // Empty input has no candidate, so the distance check has no basis.
-  // Returning the empty suffix matches the distance > 3 contract and avoids
-  // a TypeError from `reduce` running with no initial value. Callers today
-  // guarantee a non-empty list; this guard is a foot-gun fix for future
-  // callers and any defensive use of the function outside the validators.
+  // Guards `reduce` below, which has no initial value: an empty list would throw.
+  // Callers are expected to pass a curated non-empty list; the type does not require it.
   if (validList.length === 0) return ''
   const nearest = validList.reduce((best, candidate) =>
     levenshteinDistance(name, candidate) < levenshteinDistance(name, best) ? candidate : best,
