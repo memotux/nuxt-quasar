@@ -74,12 +74,28 @@ jobs:
       - name: Playground prepare
         run: npm run dev:prepare
 
+      # The key must change exactly when the browser BUILD changes, because this
+      # key gates a *skip* of `playwright install` below. Hashing the committed
+      # lockfile cannot express that: the install step is not frozen, so the
+      # resolved Playwright version may differ from the version whose binaries
+      # populated the cache, and a stale hit then launches a mismatched build in a
+      # way that looks like a Playwright bug rather than a cache defect. Hashing a
+      # lockfile that is ever absent also collapses the key to one permanent
+      # entry. Reading the version out of the installed package keys the cache on
+      # the thing that actually selects the download, and fails the job loudly if
+      # the package is not there.
+      - name: Resolve installed Playwright version
+        id: playwright-version
+        run: |
+          version=$(node -p "require('playwright/package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
 
       - name: Install Playwright browser
         if: steps.playwright-cache.outputs.cache-hit != 'true'
