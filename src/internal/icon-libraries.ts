@@ -1,3 +1,4 @@
+import { GENERATED_ICON_LIBRARIES_SHIPPED } from './generated-quasar-lists'
 import { validateArrayValues } from './validation'
 
 /**
@@ -9,29 +10,23 @@ export interface WarnLogger {
   warn: (message: string) => void
 }
 
+/** Upstream extras dirs reported by the generator that are not CSS icon fonts. */
+const EXCLUDED_ICON_LIBRARY_NAMES: ReadonlySet<string> = new Set([
+  'roboto-font',
+  'roboto-font-latin-ext',
+])
+
 /**
- * The CSS icon font libraries shipped by `@quasar/extras` (pinned to v2.0.4).
- *
- * Deliberately excludes SVG-only icon sets (e.g. `ionicons-v8`, every `svg-*`
- * set) and text fonts (`roboto-font*`): this option selects CSS icon fonts
- * only. Use the free-form `css` option as the escape hatch for anything else.
+ * Policy exclusions applied on top of the generated upstream inventory:
+ * the `css` option selects CSS icon fonts only, so the text fonts
+ * (`roboto-font`, `roboto-font-latin-ext`) stay out even though the
+ * generator reports them as shipped. (SVG-only extras sets have no
+ * same-named css bundle, so the generator never reports them in the first
+ * place.) Use the free-form `css` option as the escape hatch for anything
+ * else.
  */
-export const VALID_ICON_LIBRARIES = [
-  'bootstrap-icons',
-  'eva-icons',
-  'fontawesome-v7',
-  'ionicons-v4',
-  'line-awesome',
-  'material-icons',
-  'material-icons-outlined',
-  'material-icons-round',
-  'material-icons-sharp',
-  'material-symbols-outlined',
-  'material-symbols-rounded',
-  'material-symbols-sharp',
-  'mdi-v7',
-  'themify',
-] as const
+export const VALID_ICON_LIBRARIES = GENERATED_ICON_LIBRARIES_SHIPPED
+  .filter(name => !EXCLUDED_ICON_LIBRARY_NAMES.has(name))
 
 export type QuasarIconLibrary = typeof VALID_ICON_LIBRARIES[number]
 

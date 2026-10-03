@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { normalizePlugins, validatePlugins, VALID_PLUGINS } from '../src/internal'
+import { GENERATED_QUASAR_PLUGINS, normalizePlugins, validatePlugins, VALID_PLUGINS } from '../src/internal'
 
 describe('validatePlugins', () => {
   it('accepts valid plugin names', () => {
@@ -49,5 +49,24 @@ describe('normalizePlugins', () => {
     // module default 'Notify': user list first, default-only entries appended.
     expect(normalizePlugins(['Notify', 'Dialog', 'LocalStorage', 'Notify']))
       .toEqual(['Notify', 'Dialog', 'LocalStorage'])
+  })
+})
+
+describe('plugins curation reconciliation', () => {
+  it('keeps the curated set a strict subset of the generated upstream inventory', () => {
+    // Generation must not expand the public auto-install set: every curated
+    // name must still be shipped upstream, without the curated list growing
+    // to cover every upstream plugin.
+    for (const name of VALID_PLUGINS) {
+      expect(GENERATED_QUASAR_PLUGINS).toContain(name)
+    }
+    expect(GENERATED_QUASAR_PLUGINS.length).toBeGreaterThan(VALID_PLUGINS.length)
+  })
+
+  it('fails loudly on a curated name the installed Quasar no longer ships', () => {
+    const removed = [...VALID_PLUGINS].filter(
+      name => !(GENERATED_QUASAR_PLUGINS as readonly string[]).includes(name),
+    )
+    expect(removed).toEqual([])
   })
 })

@@ -39,16 +39,16 @@
     }
   },
   "scripts": {
-    "prepack": "nuxt-module-build build",
+    "prepack": "node scripts/generate-quasar-lists.mjs && nuxt-module-build build",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:generate": "nuxi generate playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "release": "pnpm run prepack && changelogen --release && pnpm publish && git push --follow-tags",
     "lint": "eslint .",
-    "test": "vitest run",
-    "test:no-browser": "vitest run --exclude '**/e2e/browser-*'",
-    "test:browser": "vitest run e2e/browser",
+    "test": "node scripts/generate-quasar-lists.mjs && vitest run",
+    "test:no-browser": "node scripts/generate-quasar-lists.mjs && vitest run --exclude '**/e2e/browser-*'",
+    "test:browser": "node scripts/generate-quasar-lists.mjs && vitest run e2e/browser",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },

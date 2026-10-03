@@ -1,6 +1,6 @@
-import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import {
+  GENERATED_ICON_SETS_SHIPPED,
   VALID_ICON_SETS,
   buildPluginContents,
   isSvgIconSet,
@@ -8,70 +8,30 @@ import {
   iconSetImportLine,
 } from '../src/internal'
 import { iconSetImport, makeBaseOpts, parseQuasarNamedImports } from './helpers/template-fixtures'
-import { readShippedDir } from './helpers/drift'
-
-const WEBFONT_ICON_SETS = [
-  'bootstrap-icons',
-  'eva-icons',
-  'fontawesome-v5',
-  'fontawesome-v6',
-  'fontawesome-v7',
-  'ionicons-v4',
-  'line-awesome',
-  'material-icons',
-  'material-icons-outlined',
-  'material-icons-round',
-  'material-icons-sharp',
-  'material-symbols-outlined',
-  'material-symbols-rounded',
-  'material-symbols-sharp',
-  'mdi-v3',
-  'mdi-v4',
-  'mdi-v5',
-  'mdi-v6',
-  'mdi-v7',
-  'themify',
-]
-
-const SVG_ICON_SETS = [
-  'svg-bootstrap-icons',
-  'svg-eva-icons',
-  'svg-fontawesome-v5',
-  'svg-fontawesome-v6',
-  'svg-fontawesome-v7',
-  'svg-ionicons-v4',
-  'svg-ionicons-v5',
-  'svg-ionicons-v6',
-  'svg-ionicons-v7',
-  'svg-ionicons-v8',
-  'svg-line-awesome',
-  'svg-material-icons',
-  'svg-material-icons-outlined',
-  'svg-material-icons-round',
-  'svg-material-icons-sharp',
-  'svg-material-symbols-outlined',
-  'svg-material-symbols-rounded',
-  'svg-material-symbols-sharp',
-  'svg-mdi-v6',
-  'svg-mdi-v7',
-  'svg-themify',
-]
-
-const EXPECTED_ICON_SETS = [...WEBFONT_ICON_SETS, ...SVG_ICON_SETS].sort()
 
 const PRO_ICON_SETS = ['fontawesome-v5-pro', 'fontawesome-v6-pro', 'fontawesome-v7-pro']
 
+// Policy reconciliation against the generated upstream inventory: the typed
+// list is the shipped files minus the paid Pro variants, with no other
+// additions or removals. Pins the policy, not volatile upstream names.
+const EXPECTED_ICON_SETS = [...GENERATED_ICON_SETS_SHIPPED]
+  .filter(name => !PRO_ICON_SETS.includes(name))
+
 describe('VALID_ICON_SETS', () => {
-  it('pins the 41 publicly licensed mappings shipped by quasar/icon-set/', () => {
-    expect([...VALID_ICON_SETS]).toEqual(EXPECTED_ICON_SETS)
-    expect(VALID_ICON_SETS).toHaveLength(41)
+  it('is the generated shipped inventory minus the Pro policy exclusions', () => {
+    expect([...VALID_ICON_SETS].sort()).toEqual([...EXPECTED_ICON_SETS].sort())
+    // Every curated name is still shipped upstream: an upstream removal must
+    // fail here rather than silently validating a name Quasar dropped.
+    for (const name of VALID_ICON_SETS) {
+      expect(GENERATED_ICON_SETS_SHIPPED).toContain(name)
+    }
   })
 
-  it('contains 20 webfont and 21 svg mappings', () => {
-    expect(WEBFONT_ICON_SETS).toHaveLength(20)
-    expect(SVG_ICON_SETS).toHaveLength(21)
-    expect([...VALID_ICON_SETS].filter(name => name.startsWith('svg-'))).toHaveLength(21)
-    expect([...VALID_ICON_SETS].filter(name => !name.startsWith('svg-'))).toHaveLength(20)
+  it('splits into svg-* and webfont names with no overlap', () => {
+    const svg = [...VALID_ICON_SETS].filter(name => name.startsWith('svg-'))
+    const webfont = [...VALID_ICON_SETS].filter(name => !name.startsWith('svg-'))
+    expect(svg.length + webfont.length).toBe(VALID_ICON_SETS.length)
+    expect(new Set(VALID_ICON_SETS).size).toBe(VALID_ICON_SETS.length)
   })
 
   it('is sorted lexicographically, so did-you-mean scans are deterministic', () => {
@@ -88,7 +48,7 @@ describe('VALID_ICON_SETS', () => {
 describe('isSvgIconSet', () => {
   it('returns true for every svg-* mapping', () => {
     const svgNames = [...VALID_ICON_SETS].filter(name => name.startsWith('svg-'))
-    expect(svgNames).toHaveLength(21)
+    expect(svgNames.length).toBeGreaterThan(0)
     for (const name of svgNames) {
       expect(isSvgIconSet(name)).toBe(true)
     }
@@ -96,7 +56,7 @@ describe('isSvgIconSet', () => {
 
   it('returns false for every webfont mapping', () => {
     const webfontNames = [...VALID_ICON_SETS].filter(name => !name.startsWith('svg-'))
-    expect(webfontNames).toHaveLength(20)
+    expect(webfontNames.length).toBeGreaterThan(0)
     for (const name of webfontNames) {
       expect(isSvgIconSet(name)).toBe(false)
     }
@@ -118,7 +78,7 @@ describe('validateIconSet', () => {
     expect(() => validateIconSet('svg-mdi-v7')).not.toThrow()
   })
 
-  it('accepts all 41 valid names', () => {
+  it('accepts every curated name', () => {
     for (const name of VALID_ICON_SETS) {
       expect(() => validateIconSet(name)).not.toThrow()
     }
@@ -217,16 +177,15 @@ describe('iconSet wiring into the generated plugin', () => {
 })
 
 describe('icon set drift guard', () => {
-  it('matches the publicly licensed mappings shipped by quasar/icon-set/ exactly', async () => {
-    const iconSetDir = fileURLToPath(new URL('../node_modules/quasar/icon-set', import.meta.url))
-    const entries = await readShippedDir(iconSetDir)
-
-    const shipped = entries
-      .filter(name => name.endsWith('.js'))
-      .map(name => name.slice(0, -'.js'.length))
-      .filter(name => !PRO_ICON_SETS.includes(name))
-      .sort()
-
-    expect([...VALID_ICON_SETS].sort()).toEqual(shipped)
+  it('reconciles the curated list with the generated upstream snapshot', () => {
+    // The generated module is pinned against quasar/icon-set/ by
+    // test/generate-quasar-lists.test.ts; this guard only reconciles the
+    // handwritten policy (Pro exclusion) with that shared source.
+    const shipped = [...GENERATED_ICON_SETS_SHIPPED].sort()
+    const curated = [...VALID_ICON_SETS].sort()
+    expect(curated).toEqual(shipped.filter(name => !PRO_ICON_SETS.includes(name)))
+    // The policy pins exactly which upstream names are excluded: no silent
+    // widening of the exclusion set on upstream additions.
+    expect(shipped.filter(name => !curated.includes(name)).sort()).toEqual([...PRO_ICON_SETS].sort())
   })
 })

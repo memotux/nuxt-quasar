@@ -1,7 +1,6 @@
-import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import {
+  GENERATED_ICON_LIBRARIES_SHIPPED,
   VALID_ICON_LIBRARIES,
   buildIconLibraryImports,
   buildPluginContents,
@@ -14,29 +13,22 @@ import {
   makeBaseOpts,
   parseSideEffectImports,
 } from './helpers/template-fixtures'
-import { readShippedDir } from './helpers/drift'
 
-const EXPECTED_ICON_LIBRARIES = [
-  'bootstrap-icons',
-  'eva-icons',
-  'fontawesome-v7',
-  'ionicons-v4',
-  'line-awesome',
-  'material-icons',
-  'material-icons-outlined',
-  'material-icons-round',
-  'material-icons-sharp',
-  'material-symbols-outlined',
-  'material-symbols-rounded',
-  'material-symbols-sharp',
-  'mdi-v7',
-  'themify',
-]
+// Policy reconciliation against the generated upstream inventory: the typed list
+// is the shipped css dirs minus the text fonts, with no other additions or
+// removals. Pins the policy, not volatile upstream names.
+const EXCLUDED_ICON_LIBRARIES = ['roboto-font', 'roboto-font-latin-ext']
+const EXPECTED_ICON_LIBRARIES = [...GENERATED_ICON_LIBRARIES_SHIPPED]
+  .filter(name => !EXCLUDED_ICON_LIBRARIES.includes(name))
 
 describe('VALID_ICON_LIBRARIES', () => {
-  it('pins the 14 CSS icon font libraries shipped by @quasar/extras', () => {
-    expect([...VALID_ICON_LIBRARIES]).toEqual(EXPECTED_ICON_LIBRARIES)
-    expect(VALID_ICON_LIBRARIES).toHaveLength(14)
+  it('is the generated shipped inventory minus the non-font policy exclusions', () => {
+    expect([...VALID_ICON_LIBRARIES].sort()).toEqual([...EXPECTED_ICON_LIBRARIES].sort())
+    // Every curated name is still shipped upstream: an upstream removal must
+    // fail here rather than silently validating a name extras dropped.
+    for (const name of VALID_ICON_LIBRARIES) {
+      expect(GENERATED_ICON_LIBRARIES_SHIPPED).toContain(name)
+    }
   })
 
   it('is sorted, so did-you-mean scans are deterministic', () => {
@@ -44,7 +36,7 @@ describe('VALID_ICON_LIBRARIES', () => {
   })
 
   it('derives the legacy CSS path for every accepted library', () => {
-    expect(ICON_LIBRARY_CSS_PATHS.size).toBe(14)
+    expect(ICON_LIBRARY_CSS_PATHS.size).toBe(VALID_ICON_LIBRARIES.length)
     expect(ICON_LIBRARY_CSS_PATHS.has('@quasar/extras/material-icons/material-icons.css')).toBe(true)
     expect(ICON_LIBRARY_CSS_PATHS.has('@quasar/extras/mdi-v7/mdi-v7.css')).toBe(true)
     expect(ICON_LIBRARY_CSS_PATHS.has('@quasar/extras/animate/fadeIn.css')).toBe(false)
@@ -80,7 +72,7 @@ describe('validateIconLibraries', () => {
     expect(() => validateIconLibraries(['material-icons', 'mdi-v7'])).not.toThrow()
   })
 
-  it('accepts all 14 valid library names', () => {
+  it('accepts every curated library name', () => {
     expect(() => validateIconLibraries([...VALID_ICON_LIBRARIES])).not.toThrow()
   })
 
@@ -121,9 +113,9 @@ describe('buildIconLibraryImports', () => {
     ])
   })
 
-  it('builds one specifier for each of the 14 accepted libraries', () => {
+  it('builds one specifier for each accepted library', () => {
     const imports = buildIconLibraryImports([...VALID_ICON_LIBRARIES])
-    expect(imports).toHaveLength(14)
+    expect(imports).toHaveLength(VALID_ICON_LIBRARIES.length)
     expect(imports).toContain('import \'@quasar/extras/themify/themify.css\'')
     expect(imports).toContain('import \'@quasar/extras/bootstrap-icons/bootstrap-icons.css\'')
   })
@@ -150,27 +142,15 @@ describe('iconLibraries wiring into the generated plugin', () => {
 })
 
 describe('icon libraries drift guard', () => {
-  it('matches the CSS icon font libraries shipped by @quasar/extras exactly', async () => {
-    const extrasDir = dirname(dirname(fileURLToPath(new URL('../node_modules/@quasar/extras/exports/animate/animate-list.js', import.meta.url))))
-    const entries = await readShippedDir(extrasDir, { withFileTypes: true })
-
-    // Find directories that contain <name>/<name>.css — these are the CSS icon font libraries.
-    const cssIconLibraries: string[] = []
-    for (const entry of entries) {
-      if (!entry.isDirectory()) continue
-      const name = entry.name
-      const dirContents = await readShippedDir(join(extrasDir, name))
-      if (dirContents.includes(`${name}.css`)) {
-        cssIconLibraries.push(name)
-      }
-    }
-
-    // Exclude known non-icon entries (fonts, SVG-only, etc.)
-    const nonIconEntries = ['roboto-font', 'roboto-font-latin-ext', 'ionicons-v8']
-    const expectedCssIconLibraries = cssIconLibraries
-      .filter(name => !nonIconEntries.includes(name))
-      .sort()
-
-    expect([...VALID_ICON_LIBRARIES].sort()).toEqual(expectedCssIconLibraries)
+  it('reconciles the curated list with the generated upstream snapshot', () => {
+    // The generated module is pinned against the @quasar/extras export dirs
+    // by test/generate-quasar-lists.test.ts; this guard only reconciles the
+    // handwritten policy (font/svg exclusions) with that shared source.
+    const shipped = [...GENERATED_ICON_LIBRARIES_SHIPPED].sort()
+    const curated = [...VALID_ICON_LIBRARIES].sort()
+    expect(curated).toEqual(shipped.filter(name => !EXCLUDED_ICON_LIBRARIES.includes(name)))
+    // The policy pins exactly which upstream names are excluded: no silent
+    // widening of the exclusion set on upstream additions.
+    expect(shipped.filter(name => !curated.includes(name)).sort()).toEqual([...EXCLUDED_ICON_LIBRARIES].sort())
   })
 })

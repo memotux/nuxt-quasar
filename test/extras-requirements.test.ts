@@ -70,15 +70,16 @@ describe('requiredExtrasOptions', () => {
       .toBe(name.startsWith('svg-') ? 1 : 0)
   })
 
-  // The exhaustive property above makes the split total; this pins the counts
-  // themselves using the same independent prefix criterion (not the predicate):
-  // 21 svg / 20 webfont / 41 total.
-  it('pins the svg/webfont split of VALID_ICON_SETS (21 svg / 20 webfont / 41 total)', () => {
+  // The exhaustive property above makes the split total; this pins the split
+  // itself using the same independent prefix criterion (not the predicate):
+  // the svg/webfont partition covers the curated list with no overlap and no
+  // volatile upstream counts.
+  it('partitions VALID_ICON_SETS into svg-* and webfont names with no overlap', () => {
     const svgCount = VALID_ICON_SETS.filter(name => name.startsWith('svg-')).length
     const webfontCount = VALID_ICON_SETS.filter(name => !name.startsWith('svg-')).length
-    expect(svgCount, `expected 21 svg-* names in VALID_ICON_SETS but found ${svgCount}`).toBe(21)
-    expect(webfontCount, `expected 20 non-svg (webfont) names in VALID_ICON_SETS but found ${webfontCount}`).toBe(20)
-    expect(VALID_ICON_SETS.length, `expected 41 total icon sets but found ${VALID_ICON_SETS.length}`).toBe(41)
+    expect(svgCount).toBeGreaterThan(0)
+    expect(webfontCount).toBeGreaterThan(0)
+    expect(svgCount + webfontCount).toBe(VALID_ICON_SETS.length)
   })
 
   // Row 11 — the production path: `normalizeAnimations` always returns an

@@ -133,8 +133,8 @@ export default defineNuxtConfig({
 | `css` | `string[]` | `['quasar/src/css/index.sass']` | CSS imported by the generated Quasar plugin. Use as an escape hatch for custom fonts or non-typed CSS. |
 | `animations` | `'all' \| string[]` | `[]` | Quasar CSS animations imported from `@quasar/extras`. |
 | `iconLibraries` | `string[]` | `[]` | Quasar CSS icon font libraries imported from `@quasar/extras`. Validated at setup. |
-| `iconSet` | `string` | — (Quasar's bundled `material-icons`) | Selects the Quasar Icon Set mapping passed to `installQuasar`. One of 41 typed names, validated at setup. `svg-*` names require `@quasar/extras`. |
-| `lang` | `string` | — (Quasar's bundled `en-US`) | Selects the Quasar Language Pack passed to `installQuasar`. One of 71 typed modern names, validated at setup. |
+| `iconSet` | `string` | — (Quasar's bundled `material-icons`) | Selects the Quasar Icon Set mapping passed to `installQuasar`. One of the typed names derived from the installed Quasar package, validated at setup. `svg-*` names require `@quasar/extras`. |
+| `lang` | `string` | — (Quasar's bundled `en-US`) | Selects the Quasar Language Pack passed to `installQuasar`. One of the typed modern names derived from the installed Quasar package, validated at setup. |
 | `plugins` | `string[]` | `['Notify']` | Opt-in Quasar plugins, validated at setup. |
 | `config` | `QuasarUIConfiguration` | `{ dark: true }` | Quasar UI config passed to `installQuasar`. Fully typed using Quasar's `QuasarUIConfiguration` interface. |
 
@@ -148,7 +148,7 @@ Enable named animations from `@quasar/extras` and use them with the `animated` b
 
 The `.animated` base class and the `--animate-duration`, `--animate-delay`, and `--animate-repeat` CSS variables come from Quasar's own CSS. Keep `quasar/src/css/index.sass` in the `css` option so those definitions remain available. The `prefers-reduced-motion` guard is included there as well.
 
-Use `animations: 'all'` to include all 98 animations. This adds approximately 30 KB of raw CSS (about 5 KB gzipped), so prefer individual names when possible. The option requires the optional `@quasar/extras` package.
+Use `animations: 'all'` to include every typed animation. This adds approximately 30 KB of raw CSS (about 5 KB gzipped), so prefer individual names when possible. The option requires the optional `@quasar/extras` package.
 
 Two CSS files, `lightSpeedIn` and `lightSpeedOut`, are intentionally not in the typed animation list or the `'all'` bundle. Use the `css` option as an escape hatch:
 
@@ -192,7 +192,7 @@ quasar: {
 }
 ```
 
-The option accepts a single name — Quasar supports exactly one active Icon Set, so arrays and the `'all'` shorthand are rejected. Unknown names fail at setup time with a did-you-mean suggestion. Valid names are the 41 publicly licensed mappings shipped by Quasar: 20 webfont sets (`bootstrap-icons`, `eva-icons`, `fontawesome-v5`, `fontawesome-v6`, `fontawesome-v7`, `ionicons-v4`, `line-awesome`, `material-icons` plus its `-outlined`/`-round`/`-sharp` variants, `material-symbols-outlined`/`-rounded`/`-sharp`, `mdi-v3` through `mdi-v7`, `themify`) and their 21 `svg-*` counterparts.
+The option accepts a single name — Quasar supports exactly one active Icon Set, so arrays and the `'all'` shorthand are rejected. Unknown names fail at setup time with a did-you-mean suggestion. Valid names are the publicly licensed mappings shipped by the installed Quasar package: webfont sets (e.g. `bootstrap-icons`, `material-icons` and its `-outlined`/`-round`/`-sharp` variants, `mdi-v3` through `mdi-v7`, `themify`) and their `svg-*` counterparts (see `src/internal/generated-quasar-lists.ts` for the exact snapshot).
 
 Webfont mappings are pure JS lookups; bring the matching font CSS yourself, typically via `iconLibraries`:
 
@@ -225,11 +225,11 @@ quasar: {
 }
 ```
 
-The option accepts a single name — Quasar supports exactly one active Language Pack, so arrays, objects, non-strings, the empty string and the `'all'` shorthand are rejected. Unknown names fail at setup time with a did-you-mean suggestion. Valid names are the 71 modern language packs shipped by Quasar (`ar`, `ar-TN`, `az-Latn`, `bg`, `bn`, `bs-BA`, `ca`, `ckb`, `cs`, `da`, `de`, `de-CH`, `de-DE`, `el`, `en-GB`, `en-US`, `eo`, `es`, `et`, `eu`, `fa`, `fa-IR`, `fi`, `fr`, `gn`, `he`, `hi`, `hr`, `hu`, `id`, `is`, `it`, `ja`, `kk`, `km`, `ko-KR`, `lb`, `lt`, `lu`, `lv`, `mk`, `ml`, `ms`, `ms-MY`, `my`, `nb-NO`, `nl`, `pl`, `pt`, `pt-BR`, `ro`, `ru`, `sk`, `sl`, `sm`, `sq`, `sr`, `sr-Cyrl`, `sv`, `ta`, `th`, `tl`, `tr`, `ug`, `uk`, `ur-PK`, `uz-Cyrl`, `uz-Latn`, `vi`, `zh-CN`, `zh-TW`). Language packs are pure JS lookup tables and never require `@quasar/extras`.
+The option accepts a single name — Quasar supports exactly one active Language Pack, so arrays, objects, non-strings, the empty string and the `'all'` shorthand are rejected. Unknown names fail at setup time with a did-you-mean suggestion. Valid names are the modern language packs shipped by the installed Quasar package (see `src/internal/generated-quasar-lists.ts` for the exact snapshot). Language packs are pure JS lookup tables and never require `@quasar/extras`.
 
 When the option is omitted, Quasar's bundled `en-US` pack is used automatically and no extra import is emitted.
 
-Quasar also ships 3 deprecated aliases (`kur-CKB`, `mm`, `sr-CYR`) that re-export the modern names — use the modern names (`ckb`, `my`, `sr-Cyrl`) instead, or set an alias manually via a `Lang.set(...)` boot file.
+Quasar also ships deprecated aliases (`kur-CKB`, `mm`, `sr-CYR`) that re-export the modern names — use the modern names (`ckb`, `my`, `sr-Cyrl`) instead, or set an alias manually via a `Lang.set(...)` boot file.
 
 ### Quasar plugins
 
@@ -315,6 +315,23 @@ With that in place, Quasar variables are available in any style:
 ```
 
 For more information, read the [Quasar Vite Plugin docs](https://quasar.dev/start/vite-plugin) and the `quasar.config.ts` [framework](https://quasar.dev/quasar-cli-vite/quasar-config-js#framework) docs.
+
+## Generated Quasar name lists
+
+The option types, validators, and generated plugin/import code share one
+internal source: `src/internal/generated-quasar-lists.ts`, a deterministic
+snapshot of the names shipped by the `quasar` and `@quasar/extras` packages
+installed in this repository. Project policy stays handwritten on top of it:
+Pro icon-set exclusions (`src/internal/icon-set.ts`), the `animations: 'all'`
+shorthand semantics (`src/internal/animations.ts`), deprecated language
+aliases (`src/internal/lang.ts`), the curated plugin subset
+(`src/internal/plugins.ts`), and the curated composable/util import selection
+(`src/internal/import-presets.ts`) are never edited by the generator.
+
+- Regenerate: `node scripts/generate-quasar-lists.mjs` (runs automatically
+  before `prepack` and the `test*` scripts).
+- Check freshness without writing: `node scripts/generate-quasar-lists.mjs --check`
+  (CI fails on a stale snapshot instead of rewriting it).
 
 ## Development
 

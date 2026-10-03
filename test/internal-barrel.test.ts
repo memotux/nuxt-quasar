@@ -24,6 +24,18 @@ const EXPECTED_RUNTIME_EXPORTS = [
   // extras-requirements.ts
   'requiredExtrasOptions',
   'extrasRequirementMessage',
+  // generated-quasar-lists.ts (derived snapshot of the installed packages)
+  'GENERATED_GENERAL_ANIMATIONS',
+  'GENERATED_IN_ANIMATIONS',
+  'GENERATED_OUT_ANIMATIONS',
+  'GENERATED_ORPHAN_ANIMATIONS',
+  'GENERATED_ICON_SETS_SHIPPED',
+  'GENERATED_ICON_LIBRARIES_SHIPPED',
+  'GENERATED_LANG_MODERN',
+  'GENERATED_LANG_ALIAS_FILES',
+  'GENERATED_QUASAR_PLUGINS',
+  'GENERATED_QUASAR_VERSION',
+  'GENERATED_QUASAR_EXTRAS_VERSION',
   // icon-libraries.ts
   'VALID_ICON_LIBRARIES',
   'ICON_LIBRARY_CSS_PATHS',

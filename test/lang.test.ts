@@ -1,27 +1,16 @@
-import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import {
+  GENERATED_LANG_ALIAS_FILES,
+  GENERATED_LANG_MODERN,
   VALID_LANG,
   validateLang,
   langImportLine,
 } from '../src/internal'
 import { DEPRECATED_LANG_ALIASES } from '../src/internal/lang'
-import { readShippedDir } from './helpers/drift'
 
-// The 71 modern language packs shipped by quasar@2.27.0 under quasar/lang/,
-// in lexicographic order. Deliberately excludes the 3 deprecated aliases
-// (kur-CKB, mm, sr-CYR) that re-export the modern names.
-const EXPECTED_LANG = [
-  'ar', 'ar-TN', 'az-Latn', 'bg', 'bn', 'bs-BA', 'ca', 'ckb', 'cs', 'da',
-  'de', 'de-CH', 'de-DE', 'el', 'en-GB', 'en-US', 'eo', 'es', 'et', 'eu',
-  'fa', 'fa-IR', 'fi', 'fr', 'gn', 'he', 'hi', 'hr', 'hu', 'id',
-  'is', 'it', 'ja', 'kk', 'km', 'ko-KR', 'lb', 'lt', 'lu', 'lv',
-  'mk', 'ml', 'ms', 'ms-MY', 'my', 'nb-NO', 'nl', 'pl', 'pt', 'pt-BR',
-  'ro', 'ru', 'sk', 'sl', 'sm', 'sq', 'sr', 'sr-Cyrl', 'sv', 'ta',
-  'th', 'tl', 'tr', 'ug', 'uk', 'ur-PK', 'uz-Cyrl', 'uz-Latn', 'vi', 'zh-CN',
-  'zh-TW',
-]
-
+// Policy reconciliation against the generated upstream inventory: the typed list
+// is exactly the modern index names; the deprecated aliases stay excluded.
+// Pins the policy, not volatile upstream names.
 const DEPRECATED_ALIASES: Record<string, string> = {
   'kur-CKB': 'ckb',
   'mm': 'my',
@@ -29,9 +18,16 @@ const DEPRECATED_ALIASES: Record<string, string> = {
 }
 
 describe('VALID_LANG', () => {
-  it('pins the 71 modern language packs shipped by quasar/lang/', () => {
-    expect([...VALID_LANG]).toEqual(EXPECTED_LANG)
-    expect(VALID_LANG).toHaveLength(71)
+  it('is exactly the generated modern language inventory', () => {
+    expect([...VALID_LANG].sort()).toEqual([...GENERATED_LANG_MODERN].sort())
+  })
+
+  it('keeps the deprecated alias map in sync with the generated alias inventory', () => {
+    expect([...GENERATED_LANG_ALIAS_FILES].sort()).toEqual(Object.keys(DEPRECATED_ALIASES).sort())
+    for (const [alias, modern] of Object.entries(DEPRECATED_ALIASES)) {
+      expect(DEPRECATED_LANG_ALIASES.get(alias)).toBe(modern)
+      expect((VALID_LANG as readonly string[])).not.toContain(alias)
+    }
   })
 
   it('is sorted lexicographically, so did-you-mean scans are deterministic', () => {
@@ -50,7 +46,7 @@ describe('validateLang', () => {
     expect(() => validateLang('es')).not.toThrow()
   })
 
-  it('accepts all 71 valid names', () => {
+  it('accepts every curated name', () => {
     for (const name of VALID_LANG) {
       expect(() => validateLang(name)).not.toThrow()
     }
@@ -136,16 +132,12 @@ describe('langImportLine', () => {
 })
 
 describe('lang drift guard', () => {
-  it('matches the modern language packs shipped by quasar/lang/ exactly, excluding deprecated aliases and index.json', async () => {
-    const langDir = fileURLToPath(new URL('../node_modules/quasar/lang', import.meta.url))
-    const entries = await readShippedDir(langDir)
-
-    const shipped = entries
-      .filter(name => name.endsWith('.js'))
-      .map(name => name.slice(0, -'.js'.length))
-      .filter(name => !DEPRECATED_LANG_ALIASES.has(name))
-      .sort()
-
-    expect([...VALID_LANG].sort()).toEqual(shipped)
+  it('reconciles the curated list with the generated upstream snapshot', () => {
+    // The generated module is pinned against quasar/lang/index.json and the
+    // lang dir by test/generate-quasar-lists.test.ts; this guard only
+    // reconciles the handwritten policy (alias exclusion) with that source.
+    expect([...VALID_LANG].sort()).toEqual([...GENERATED_LANG_MODERN].sort())
+    expect([...DEPRECATED_LANG_ALIASES.keys()].sort())
+      .toEqual([...GENERATED_LANG_ALIAS_FILES].sort())
   })
 })

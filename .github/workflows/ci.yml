@@ -50,6 +50,13 @@ jobs:
       - name: Playground prepare
         run: npm run dev:prepare
 
+      # The generated name snapshot (src/internal/generated-quasar-lists.ts)
+      # describes the installed packages, so CI must FAIL on a stale snapshot
+      # rather than rewriting it: regeneration happens in prepack/test
+      # scripts, never here.
+      - name: Check generated Quasar lists are fresh
+        run: node scripts/generate-quasar-lists.mjs --check
+
       # Type-check both programs: the module repo (root .nuxt) and the
       # playground. The playground stage is what proves the `quasar` config key
       # is typed — see playground/types/quasar-config-key.ts.

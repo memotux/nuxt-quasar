@@ -1,5 +1,10 @@
+import { readFile } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { buildImportPresets } from '../src/internal'
+
+const QUASAR_SRC_DIR = dirname(fileURLToPath(new URL('../node_modules/quasar/package.json', import.meta.url)))
 
 const QUASAR_SRC = '/node_modules/quasar/src/'
 
@@ -84,5 +89,50 @@ describe('buildImportPresets (F4: imports:sources hook)', () => {
     const [composables, utils] = buildImportPresets('/custom/path/to/quasar/src/')
     expect(composables!.from).toBe('/custom/path/to/quasar/src/composables')
     expect(utils!.from).toBe('/custom/path/to/quasar/src/utils')
+  })
+})
+
+describe('buildImportPresets curation reconciliation', () => {
+  async function upstreamExportNames(entry: string): Promise<string[]> {
+    const text = await readFile(join(dirname(QUASAR_SRC_DIR), 'quasar', 'src', `${entry}.js`), 'utf8')
+    // Matches both `export { default as X }` and `export { noop, default as Y }`
+    // list forms; the alternation must consume the whole `{...}` list so the
+    // bare `noop` member is captured too, not just the `as` aliases.
+    const names: string[] = []
+    for (const [, list] of text.matchAll(/export\s*\{([^}]*)\}/g)) {
+      for (const member of (list as string).split(',')) {
+        const alias = member.match(/\bas\s+([A-Za-z_$][\w$]*)/)
+        if (alias?.[1]) names.push(alias[1])
+        else {
+          const bare = member.trim().match(/^([A-Z_$][\w$]*)$/i)
+          if (bare?.[1] && bare[1] !== 'default') names.push(bare[1])
+        }
+      }
+    }
+    return names
+  }
+
+  it('keeps the composable selection a strict subset of the upstream exports', async () => {
+    const upstream = await upstreamExportNames('composables')
+    const [composables] = buildImportPresets(QUASAR_SRC)
+    const curated = composables!.imports as string[]
+    // Every curated composable must still exist upstream: an upstream removal
+    // fails here rather than emitting a broken auto-import.
+    for (const name of curated) {
+      expect(upstream, `curated composable '${name}' is no longer exported by quasar/src/composables.js`).toContain(name)
+    }
+    // The selection stays curated, not exhaustive: upstream ships more than
+    // the three auto-imported composables.
+    expect(upstream.length).toBeGreaterThan(curated.length)
+  })
+
+  it('keeps the util selection a strict subset of the upstream exports', async () => {
+    const upstream = await upstreamExportNames('utils')
+    const [, utilsPreset] = buildImportPresets(QUASAR_SRC)
+    const curated = (utilsPreset!.imports as [string, string][]).map(([original]) => original)
+    for (const name of curated) {
+      expect(upstream, `curated util '${name}' is no longer exported by quasar/src/utils.js`).toContain(name)
+    }
+    expect(upstream.length).toBeGreaterThan(curated.length)
   })
 })

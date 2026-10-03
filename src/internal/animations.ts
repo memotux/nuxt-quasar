@@ -1,30 +1,16 @@
+import { GENERATED_GENERAL_ANIMATIONS, GENERATED_IN_ANIMATIONS, GENERATED_ORPHAN_ANIMATIONS, GENERATED_OUT_ANIMATIONS } from './generated-quasar-lists'
 import { validateArrayValues } from './validation'
 
 export const GENERAL_ANIMATIONS = [
-  'bounce', 'flash', 'flip', 'headShake', 'heartBeat', 'hinge', 'jello', 'pulse', 'rubberBand',
-  'shake', 'shakeX', 'shakeY', 'swing', 'tada', 'wobble',
+  ...GENERATED_GENERAL_ANIMATIONS,
 ] as const
 
 export const IN_ANIMATIONS = [
-  'backInDown', 'backInLeft', 'backInRight', 'backInUp', 'bounceIn', 'bounceInDown',
-  'bounceInLeft', 'bounceInRight', 'bounceInUp', 'fadeIn', 'fadeInBottomLeft', 'fadeInBottomRight',
-  'fadeInDown', 'fadeInDownBig', 'fadeInLeft', 'fadeInLeftBig', 'fadeInRight', 'fadeInRightBig',
-  'fadeInTopLeft', 'fadeInTopRight', 'fadeInUp', 'fadeInUpBig', 'flipInX', 'flipInY',
-  'jackInTheBox', 'lightSpeedInLeft', 'lightSpeedInRight', 'rollIn', 'rotateIn',
-  'rotateInDownLeft', 'rotateInDownRight', 'rotateInUpLeft', 'rotateInUpRight', 'slideInDown',
-  'slideInLeft', 'slideInRight', 'slideInUp', 'zoomIn', 'zoomInDown', 'zoomInLeft', 'zoomInRight',
-  'zoomInUp',
+  ...GENERATED_IN_ANIMATIONS,
 ] as const
 
 export const OUT_ANIMATIONS = [
-  'backOutDown', 'backOutLeft', 'backOutRight', 'backOutUp', 'bounceOut', 'bounceOutDown',
-  'bounceOutLeft', 'bounceOutRight', 'bounceOutUp', 'fadeOut', 'fadeOutBottomLeft',
-  'fadeOutBottomRight', 'fadeOutDown', 'fadeOutDownBig', 'fadeOutLeft', 'fadeOutLeftBig',
-  'fadeOutRight', 'fadeOutRightBig', 'fadeOutTopLeft', 'fadeOutTopRight', 'fadeOutUp',
-  'fadeOutUpBig', 'flipOutX', 'flipOutY', 'lightSpeedOutLeft', 'lightSpeedOutRight', 'rollOut',
-  'rotateOut', 'rotateOutDownLeft', 'rotateOutDownRight', 'rotateOutUpLeft', 'rotateOutUpRight',
-  'slideOutDown', 'slideOutLeft', 'slideOutRight', 'slideOutUp', 'zoomOut', 'zoomOutDown',
-  'zoomOutLeft', 'zoomOutRight', 'zoomOutUp',
+  ...GENERATED_OUT_ANIMATIONS,
 ] as const
 
 export const VALID_ANIMATIONS = [
@@ -33,7 +19,9 @@ export const VALID_ANIMATIONS = [
 
 export type QuasarAnimation = typeof VALID_ANIMATIONS[number]
 
-export const KNOWN_ORPHAN_ANIMATIONS = ['lightSpeedIn', 'lightSpeedOut'] as const
+export const KNOWN_ORPHAN_ANIMATIONS = [
+  ...GENERATED_ORPHAN_ANIMATIONS,
+] as const
 
 export function normalizeAnimations(animations?: 'all' | string[]): string[] {
   if (animations === undefined) return []

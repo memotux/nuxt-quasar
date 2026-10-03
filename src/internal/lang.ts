@@ -1,96 +1,33 @@
+import { GENERATED_LANG_ALIAS_FILES, GENERATED_LANG_MODERN } from './generated-quasar-lists'
 import { validateSingleValue } from './validation'
 
 /**
- * The modern language packs shipped by `quasar@2.27.0` under `quasar/lang/`.
- *
- * Deliberately excludes the 3 deprecated aliases (`kur-CKB`, `mm`, `sr-CYR`)
- * that re-export the modern names: Quasar's own docs recommend the modern
- * names, so shipping the deprecated paths in the typed list would validate
- * configuration Quasar flags as legacy. Use a manual `Lang.set(...)` boot
- * file if you really need an alias.
+ * Policy exclusions applied on top of the generated upstream inventory:
+ * the deprecated aliases re-export the modern names, and Quasar's own docs
+ * recommend the modern names, so shipping them in the typed list would
+ * validate configuration Quasar flags as legacy. Use a manual `Lang.set(...)`
+ * boot file if you really need an alias.
  */
-export const VALID_LANG = [
-  'ar',
-  'ar-TN',
-  'az-Latn',
-  'bg',
-  'bn',
-  'bs-BA',
-  'ca',
-  'ckb',
-  'cs',
-  'da',
-  'de',
-  'de-CH',
-  'de-DE',
-  'el',
-  'en-GB',
-  'en-US',
-  'eo',
-  'es',
-  'et',
-  'eu',
-  'fa',
-  'fa-IR',
-  'fi',
-  'fr',
-  'gn',
-  'he',
-  'hi',
-  'hr',
-  'hu',
-  'id',
-  'is',
-  'it',
-  'ja',
-  'kk',
-  'km',
-  'ko-KR',
-  'lb',
-  'lt',
-  'lu',
-  'lv',
-  'mk',
-  'ml',
-  'ms',
-  'ms-MY',
-  'my',
-  'nb-NO',
-  'nl',
-  'pl',
-  'pt',
-  'pt-BR',
-  'ro',
-  'ru',
-  'sk',
-  'sl',
-  'sm',
-  'sq',
-  'sr',
-  'sr-Cyrl',
-  'sv',
-  'ta',
-  'th',
-  'tl',
-  'tr',
-  'ug',
-  'uk',
-  'ur-PK',
-  'uz-Cyrl',
-  'uz-Latn',
-  'vi',
-  'zh-CN',
-  'zh-TW',
-] as const
+export const VALID_LANG = [...GENERATED_LANG_MODERN] as const
 
 export type QuasarLang = typeof VALID_LANG[number]
 
-/** Deprecated aliases shipped by Quasar for backwards compat; mapped to the modern names, filtered from drift. */
+/** Deprecated aliases shipped by Quasar for backwards compat; mapped to the modern names, filtered from drift. Asserted against the generator's alias inventory. */
 export const DEPRECATED_LANG_ALIASES: ReadonlyMap<string, string> = new Map([
   ['kur-CKB', 'ckb'],
   ['mm', 'my'],
   ['sr-CYR', 'sr-Cyrl'],
 ])
+
+const generatedAliasSet = new Set<string>(GENERATED_LANG_ALIAS_FILES as readonly string[])
+for (const alias of DEPRECATED_LANG_ALIASES.keys()) {
+  if (!generatedAliasSet.has(alias)) {
+    throw new Error(
+      `nuxt-quasar-vite: deprecated language alias '${alias}' is missing from the generated snapshot; `
+      + `regenerate the snapshot and update the curated map`,
+    )
+  }
+}
 
 /**
  * Build the full rejection message for a deprecated language alias.
