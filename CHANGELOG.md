@@ -1,5 +1,83 @@
 # Changelog
 
+## v1.3.0
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.2.1...v1.3.0)
+
+### 🚀 Enhancements
+
+- Validate quasar plugin names at setup time ([245a685](https://github.com/memotux/nuxt-quasar/commit/245a685))
+- Add animations option to the quasar config key ([0fcc2e0](https://github.com/memotux/nuxt-quasar/commit/0fcc2e0))
+- Add iconLibraries option for typed icon font imports ([a8559ba](https://github.com/memotux/nuxt-quasar/commit/a8559ba))
+- Add iconSet option for typed Quasar icon set selection ([6543e87](https://github.com/memotux/nuxt-quasar/commit/6543e87))
+- Add lang option for typed Quasar Language Pack selection ([2dcb2f0](https://github.com/memotux/nuxt-quasar/commit/2dcb2f0))
+- Generate Quasar name snapshots from installed packages ([b463319](https://github.com/memotux/nuxt-quasar/commit/b463319))
+
+### 🩹 Fixes
+
+- Correct SSR define matrix and add Quasar hydration takeover ([e80e11b](https://github.com/memotux/nuxt-quasar/commit/e80e11b))
+- Derive __QUASAR_VERSION__ from installed quasar package ([6462423](https://github.com/memotux/nuxt-quasar/commit/6462423))
+- **vite:** Merge user preprocessorOptions instead of clobbering ([f121a87](https://github.com/memotux/nuxt-quasar/commit/f121a87))
+- Resolve quasar config-key typing ([a0581a3](https://github.com/memotux/nuxt-quasar/commit/a0581a3))
+- Propagate QuasarUIConfiguration type through plugin template ([9b7da64](https://github.com/memotux/nuxt-quasar/commit/9b7da64))
+- Align generated config JSON and clear lint/roadmap debt ([a3c37f2](https://github.com/memotux/nuxt-quasar/commit/a3c37f2))
+- Dedupe defu-merged plugins option to prevent duplicate import specifier ([b76766c](https://github.com/memotux/nuxt-quasar/commit/b76766c))
+- **validation:** Guard nearestSuggestion against empty validList ([e8e4138](https://github.com/memotux/nuxt-quasar/commit/e8e4138))
+- **plugin:** Make the generated Quasar plugin type-clean ([25ea175](https://github.com/memotux/nuxt-quasar/commit/25ea175))
+- **types:** Type the quasar config key in the playground ([11e8698](https://github.com/memotux/nuxt-quasar/commit/11e8698))
+
+### 💅 Refactors
+
+- Optimize barrel exports, remove dead re-validation, use buildAnimationImports ([9c882a2](https://github.com/memotux/nuxt-quasar/commit/9c882a2))
+- Extract shared validation helpers (DRY) ([83b0587](https://github.com/memotux/nuxt-quasar/commit/83b0587))
+- Extract shared test fixtures and constants (DRY) ([882ff1a](https://github.com/memotux/nuxt-quasar/commit/882ff1a))
+- **module:** Extract @quasar/extras guard into tested helpers ([25cd347](https://github.com/memotux/nuxt-quasar/commit/25cd347))
+
+### 📖 Documentation
+
+- Rewrite README with verified facts ([7bea4d9](https://github.com/memotux/nuxt-quasar/commit/7bea4d9))
+- Add AGENTS.md with agent guidance for repo layout, commands, and lint fix order ([d19f8e1](https://github.com/memotux/nuxt-quasar/commit/d19f8e1))
+- Attribute the vitest --exclude claim and record the consola gotcha ([f5ba699](https://github.com/memotux/nuxt-quasar/commit/f5ba699))
+- **validation:** Tighten the empty-list guard comment ([f3ee3d3](https://github.com/memotux/nuxt-quasar/commit/f3ee3d3))
+
+### 🏡 Chore
+
+- Ignore local harness directories (.pi/, openspec/) ([2519e42](https://github.com/memotux/nuxt-quasar/commit/2519e42))
+- Remove dead .eslintrc, widen eslint project scope, ignore local codegraph index ([989d128](https://github.com/memotux/nuxt-quasar/commit/989d128))
+- Add antfu/skills locally, update .gitignore ([a2f1cdc](https://github.com/memotux/nuxt-quasar/commit/a2f1cdc))
+- Ignore local odd/ planning directory ([87ee8bc](https://github.com/memotux/nuxt-quasar/commit/87ee8bc))
+
+### ✅ Tests
+
+- Add unit coverage for module hooks and defines (JD F7) ([928c373](https://github.com/memotux/nuxt-quasar/commit/928c373))
+- Remove duplicated plugin-template assertions and add total-order test ([7b2f0c6](https://github.com/memotux/nuxt-quasar/commit/7b2f0c6))
+- Remove subsumed assertions and pin exact config serialization ([c953516](https://github.com/memotux/nuxt-quasar/commit/c953516))
+- Pin the exact generated plugin with an inline snapshot ([57b0851](https://github.com/memotux/nuxt-quasar/commit/57b0851))
+- Restore coverage for the empty animations array boundary ([c4645a0](https://github.com/memotux/nuxt-quasar/commit/c4645a0))
+- Cover module derive and validation helpers directly ([d2e6969](https://github.com/memotux/nuxt-quasar/commit/d2e6969))
+- **e2e:** Add minimal Nuxt fixtures for wiring assertions ([ad1b36e](https://github.com/memotux/nuxt-quasar/commit/ad1b36e))
+- **e2e:** Render real Quasar components in fixture SSR output ([015ab06](https://github.com/memotux/nuxt-quasar/commit/015ab06))
+- Replace path-fragment counts with parsed import assertions ([9812e8b](https://github.com/memotux/nuxt-quasar/commit/9812e8b))
+- Replace extras fragment counts with parsed side-effect imports ([07c44d5](https://github.com/memotux/nuxt-quasar/commit/07c44d5))
+- **e2e:** Cover hydration takeover and client interactivity with chromium ([6919989](https://github.com/memotux/nuxt-quasar/commit/6919989))
+- **e2e:** Fix type errors in browser-hydration collector and screen probe ([2c671b5](https://github.com/memotux/nuxt-quasar/commit/2c671b5))
+- Cover lang/iconSet runtime effect and animations 'all' composition ([c407e3c](https://github.com/memotux/nuxt-quasar/commit/c407e3c))
+- Fail drift guards loudly instead of skipping ([056b39a](https://github.com/memotux/nuxt-quasar/commit/056b39a))
+- Guard the CI test-layer partition ([ae522ea](https://github.com/memotux/nuxt-quasar/commit/ae522ea))
+- **drift:** Classify guard failures and restore JSON import attributes ([5d1ea4d](https://github.com/memotux/nuxt-quasar/commit/5d1ea4d))
+- **fixtures:** Correct the isolation claim and pin import line shape ([04b5bdd](https://github.com/memotux/nuxt-quasar/commit/04b5bdd))
+- Assert the CI browser layer is non-empty ([670474a](https://github.com/memotux/nuxt-quasar/commit/670474a))
+
+### 🤖 CI
+
+- Split the test layer so the browser job installs chromium ([bb4d149](https://github.com/memotux/nuxt-quasar/commit/bb4d149))
+- Cancel superseded runs for pull requests ([6923241](https://github.com/memotux/nuxt-quasar/commit/6923241))
+- Key the playwright cache on the installed version ([e6c43bf](https://github.com/memotux/nuxt-quasar/commit/e6c43bf))
+
+### ❤️ Contributors
+
+- MemoTux <romeo@mendezfuentes.net>
+
 ## v1.2.1
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.2.0...v1.2.1)
