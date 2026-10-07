@@ -249,7 +249,9 @@ All Quasar components (`Q*`) are auto-imported by Nuxt, tree-shaken per usage â€
 
 ### Composables
 
-`useQuasar`, `useDialogPluginComponent` and `useFormChild` are auto-imported.
+Baseline (Quasar 2.27+, all supported versions): `useQuasar`, `useDialogPluginComponent` and `useFormChild` are auto-imported.
+
+Conditional first wave (Quasar 2.34+): `useFilePicker`, `useSoftFullscreen` and `useKeyboardShortcut` are auto-imported only when the consumer's installed Quasar source exports them. Quasar 2.27 consumers keep exactly the baseline imports and never receive references to missing composables; when only a subset is exported, only that subset is registered. If the resolved `quasar/src/composables.js` cannot be read or yields no export names, setup fails with a `nuxt-quasar-vite`-prefixed error instead of silently claiming (or denying) support.
 
 ```vue
 <script setup lang="ts">

@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises'
 import {
   defineNuxtModule,
   addPluginTemplate,
@@ -68,8 +69,23 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   hooks: {
-    'imports:sources': (presets) => {
-      presets.push(...buildImportPresets(quasarSrc))
+    'imports:sources': async (presets) => {
+      // QAS-1: gate the Quasar 2.34+ first wave on the consumer's resolved
+      // Quasar source exports, not on the module's dev snapshot or a
+      // hardcoded version. An unreadable surface fails loudly instead of
+      // silently claiming (or denying) first-wave support.
+      let composablesSource: string
+      try {
+        composablesSource = await readFile(quasarSrc + 'composables.js', 'utf8')
+      }
+      catch {
+        throw new Error(
+          'nuxt-quasar-vite: could not read the resolved quasar/src/composables.js '
+          + `(${quasarSrc}composables.js}); version-aware composable auto-imports cannot be determined. `
+          + 'Check that the installed Quasar package is intact.',
+        )
+      }
+      presets.push(...buildImportPresets(quasarSrc, composablesSource))
     },
     'components:dirs': async (dirs) => {
       dirs.push(buildComponentDir(quasarSrc))
