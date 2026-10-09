@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.4.0
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.3.0...v1.4.0)
+
+### 🚀 Enhancements
+
+- **quasar:** Support 2.34+ plugins and composables ([69fde54](https://github.com/memotux/nuxt-quasar/commit/69fde54))
+
+### 📖 Documentation
+
+- **issues:** Publish YAML issue forms ([da0855b](https://github.com/memotux/nuxt-quasar/commit/da0855b))
+
+### ❤️ Contributors
+
+- Romeo Méndez Fuentes ([@memotux](https://github.com/memotux))
+
 ## v1.3.0
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.2.1...v1.3.0)
