@@ -27,6 +27,77 @@ describe('validatePlugins', () => {
   })
 })
 
+describe('validatePlugins Quasar 2.34+ gating (QAS-3)', () => {
+  const FULL_SURFACE = [...GENERATED_QUASAR_PLUGINS]
+  // Quasar 2.27-shaped surface: the installed upstream inventory minus the
+  // 2.34+ additions.
+  const QUASAR_227_SURFACE = FULL_SURFACE.filter(
+    name => name !== 'AppNetwork' && name !== 'AppWakeLock',
+  )
+
+  it('lists AppNetwork and AppWakeLock as selectable opt-in plugins', () => {
+    expect(VALID_PLUGINS).toContain('AppNetwork')
+    expect(VALID_PLUGINS).toContain('AppWakeLock')
+  })
+
+  it('accepts the new plugins against a full export surface', () => {
+    expect(() =>
+      validatePlugins(['AppNetwork', 'AppWakeLock', 'Notify'], {
+        exportedPlugins: FULL_SURFACE,
+        quasarVersion: '2.35.0',
+        sourceLabel: 'quasar/src/plugins.js',
+      }),
+    ).not.toThrow()
+  })
+
+  it('rejects AppNetwork on a Quasar-2.27-shaped surface with an actionable error', () => {
+    expect(() =>
+      validatePlugins(['AppNetwork'], {
+        exportedPlugins: QUASAR_227_SURFACE,
+        quasarVersion: '2.27.0',
+        sourceLabel: 'quasar/src/plugins.js',
+      }),
+    ).toThrow(/AppNetwork/)
+    expect(() =>
+      validatePlugins(['AppNetwork'], {
+        exportedPlugins: QUASAR_227_SURFACE,
+        quasarVersion: '2.27.0',
+        sourceLabel: 'quasar/src/plugins.js',
+      }),
+    ).toThrow(/2\.34/)
+    expect(() =>
+      validatePlugins(['AppNetwork'], {
+        exportedPlugins: QUASAR_227_SURFACE,
+        quasarVersion: '2.27.0',
+        sourceLabel: 'quasar/src/plugins.js',
+      }),
+    ).toThrow(/2\.27\.0/)
+  })
+
+  it('rejects AppWakeLock on a Quasar-2.27-shaped surface while baseline plugins stay valid', () => {
+    expect(() =>
+      validatePlugins(['AppWakeLock'], {
+        exportedPlugins: QUASAR_227_SURFACE,
+        quasarVersion: '2.27.0',
+        sourceLabel: 'quasar/src/plugins.js',
+      }),
+    ).toThrow(/AppWakeLock.*2\.34|2\.34.*AppWakeLock/)
+    expect(() =>
+      validatePlugins(['Notify', 'Dialog'], {
+        exportedPlugins: QUASAR_227_SURFACE,
+        quasarVersion: '2.27.0',
+        sourceLabel: 'quasar/src/plugins.js',
+      }),
+    ).not.toThrow()
+  })
+
+  it('keeps today\'s behavior when the export surface is omitted', () => {
+    expect(() => validatePlugins(['AppNetwork', 'AppWakeLock'])).not.toThrow()
+    expect(() => validatePlugins(['Notify'])).not.toThrow()
+    expect(() => validatePlugins(['Notifi'])).toThrow(/unknown Quasar plugin/)
+  })
+})
+
 describe('normalizePlugins', () => {
   it('deduplicates entries preserving first-occurrence order', () => {
     expect(normalizePlugins(['Notify', 'Dialog', 'Notify'])).toEqual(['Notify', 'Dialog'])

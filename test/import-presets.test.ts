@@ -92,6 +92,88 @@ describe('buildImportPresets (F4: imports:sources hook)', () => {
   })
 })
 
+describe('buildImportPresets version-aware first wave (QAS-1)', () => {
+  const FIRST_WAVE = ['useFilePicker', 'useSoftFullscreen', 'useKeyboardShortcut']
+
+  async function installedComposableSource(): Promise<string> {
+    return readFile(join(dirname(QUASAR_SRC_DIR), 'quasar', 'src', 'composables.js'), 'utf8')
+  }
+
+  function syntheticSource(names: string[]): string {
+    return names.map(name => `export { default as ${name} } from './composables/${name}.js'`).join('\n')
+  }
+
+  it('installed Quasar source exports the first wave and registers it in curated order', async () => {
+    const source = await installedComposableSource()
+    // Proves the three QAS-1 candidates exist in the refreshed actual
+    // upstream exports (Quasar 2.35 dev baseline), not just in synthetic text.
+    for (const name of FIRST_WAVE) {
+      expect(source, `first-wave composable '${name}' is missing from the installed quasar/src/composables.js`).toContain(name)
+    }
+    const [composables] = buildImportPresets(QUASAR_SRC, source)
+    expect(composables!.imports).toEqual([
+      'useQuasar',
+      'useDialogPluginComponent',
+      'useFormChild',
+      ...FIRST_WAVE,
+    ])
+  })
+
+  it('a newer source exporting the first wave registers exactly those 3 additions', () => {
+    const source = syntheticSource([
+      'useQuasar',
+      'useDialogPluginComponent',
+      'useFormChild',
+      ...FIRST_WAVE,
+    ])
+    const [composables] = buildImportPresets(QUASAR_SRC, source)
+    expect(composables!.imports).toEqual([
+      'useQuasar',
+      'useDialogPluginComponent',
+      'useFormChild',
+      ...FIRST_WAVE,
+    ])
+  })
+
+  it('a partial newer source registers only the exported subset', () => {
+    const source = syntheticSource([
+      'useQuasar',
+      'useDialogPluginComponent',
+      'useFormChild',
+      'useFilePicker',
+    ])
+    const [composables] = buildImportPresets(QUASAR_SRC, source)
+    expect(composables!.imports).toEqual([
+      'useQuasar',
+      'useDialogPluginComponent',
+      'useFormChild',
+      'useFilePicker',
+    ])
+  })
+
+  it('omitted export surface preserves the exact 2.27 baseline', () => {
+    const [composables] = buildImportPresets(QUASAR_SRC)
+    expect(composables!.imports).toEqual([
+      'useQuasar',
+      'useDialogPluginComponent',
+      'useFormChild',
+    ])
+  })
+
+  it('fails clearly on an empty/malformed export surface instead of silently claiming support', () => {
+    expect(() => buildImportPresets(QUASAR_SRC, '')).toThrow(/nuxt-quasar-vite/)
+    expect(() => buildImportPresets(QUASAR_SRC, '// no exports here\nconst x = 1\n')).toThrow(/nuxt-quasar-vite/)
+  })
+
+  it('never emits a first-wave name missing from the export surface', () => {
+    const source = syntheticSource(['useQuasar', 'useSoftFullscreen'])
+    const [composables] = buildImportPresets(QUASAR_SRC, source)
+    expect(composables!.imports).toContain('useSoftFullscreen')
+    expect(composables!.imports).not.toContain('useFilePicker')
+    expect(composables!.imports).not.toContain('useKeyboardShortcut')
+  })
+})
+
 describe('buildImportPresets curation reconciliation', () => {
   async function upstreamExportNames(entry: string): Promise<string[]> {
     const text = await readFile(join(dirname(QUASAR_SRC_DIR), 'quasar', 'src', `${entry}.js`), 'utf8')

@@ -237,7 +237,11 @@ These Quasar core plugins are always auto-installed by `installQuasar`:
 `Platform`, `Body`, `Dark`, `Screen`, `History`, `Lang`, `IconSet`.
 
 The following opt-in plugins can be added via the `plugins` option:
-`AddressbarColor`, `AppFullscreen`, `AppVisibility`, `BottomSheet`, `Dialog`, `LoadingBar`, `Loading`, `Notify`, `LocalStorage`, `SessionStorage`.
+`AddressbarColor`, `AppFullscreen`, `AppNetwork`, `AppVisibility`, `AppWakeLock`, `BottomSheet`, `Dialog`, `LoadingBar`, `Loading`, `Notify`, `LocalStorage`, `SessionStorage`.
+
+`AppNetwork` and `AppWakeLock` are opt-in and never enabled by default: request them explicitly via `plugins: ['Notify', 'AppNetwork']` (or `'AppWakeLock'`). Both require a Quasar version that exports them (2.34+). Setup validates the request against the consumer's installed `quasar/src/plugins.js`; on an older Quasar (e.g. 2.27) the setup fails with an actionable error naming the plugin, the installed version, and the 2.34+ requirement â€” baseline plugins keep working.
+
+Browser caveats: `AppNetwork` needs a browser environment and its connection-detail fields are optional (not every browser reports them); `AppWakeLock` needs a secure context, its request can fail, and the lock can auto-release (e.g. when the tab loses visibility). Neither plugin adds Quasar Electron/Capacitor/BEX mode support.
 
 Unknown plugin names throw at setup time with the list of valid plugins.
 
@@ -249,7 +253,9 @@ All Quasar components (`Q*`) are auto-imported by Nuxt, tree-shaken per usage â€
 
 ### Composables
 
-`useQuasar`, `useDialogPluginComponent` and `useFormChild` are auto-imported.
+Baseline (Quasar 2.27+, all supported versions): `useQuasar`, `useDialogPluginComponent` and `useFormChild` are auto-imported.
+
+Conditional first wave (Quasar 2.34+): `useFilePicker`, `useSoftFullscreen` and `useKeyboardShortcut` are auto-imported only when the consumer's installed Quasar source exports them. Quasar 2.27 consumers keep exactly the baseline imports and never receive references to missing composables; when only a subset is exported, only that subset is registered. If the resolved `quasar/src/composables.js` cannot be read or yields no export names, setup fails with a `nuxt-quasar-vite`-prefixed error instead of silently claiming (or denying) support.
 
 ```vue
 <script setup lang="ts">
