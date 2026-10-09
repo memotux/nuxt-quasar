@@ -1,8 +1,8 @@
 /**
  * GENERATED FILE — DO NOT EDIT.
  *
- * Snapshot of the names shipped by the quasar@2.27.0 and
- * @quasar/extras@2.0.4 packages installed in this repository.
+ * Snapshot of the names shipped by the quasar@2.35.0 and
+ * @quasar/extras@2.1.0 packages installed in this repository.
  * Regenerate with: `node scripts/generate-quasar-lists.mjs`.
  *
  * Derived data only. Project policy (Pro exclusions, deprecated language
@@ -280,7 +280,9 @@ export const GENERATED_LANG_ALIAS_FILES = [
 export const GENERATED_QUASAR_PLUGINS = [
   'AddressbarColor',
   'AppFullscreen',
+  'AppNetwork',
   'AppVisibility',
+  'AppWakeLock',
   'BottomSheet',
   'Brand',
   'Cookies',
@@ -298,6 +300,6 @@ export const GENERATED_QUASAR_PLUGINS = [
   'SessionStorage',
 ] as const
 
-export const GENERATED_QUASAR_VERSION = '2.27.0' as const
+export const GENERATED_QUASAR_VERSION = '2.35.0' as const
 
-export const GENERATED_QUASAR_EXTRAS_VERSION = '2.0.4' as const
+export const GENERATED_QUASAR_EXTRAS_VERSION = '2.1.0' as const

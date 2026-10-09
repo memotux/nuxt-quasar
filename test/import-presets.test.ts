@@ -103,17 +103,20 @@ describe('buildImportPresets version-aware first wave (QAS-1)', () => {
     return names.map(name => `export { default as ${name} } from './composables/${name}.js'`).join('\n')
   }
 
-  it('installed Quasar 2.27 source registers exactly the prior 3 composables', async () => {
+  it('installed Quasar source exports the first wave and registers it in curated order', async () => {
     const source = await installedComposableSource()
+    // Proves the three QAS-1 candidates exist in the refreshed actual
+    // upstream exports (Quasar 2.35 dev baseline), not just in synthetic text.
+    for (const name of FIRST_WAVE) {
+      expect(source, `first-wave composable '${name}' is missing from the installed quasar/src/composables.js`).toContain(name)
+    }
     const [composables] = buildImportPresets(QUASAR_SRC, source)
     expect(composables!.imports).toEqual([
       'useQuasar',
       'useDialogPluginComponent',
       'useFormChild',
+      ...FIRST_WAVE,
     ])
-    for (const name of FIRST_WAVE) {
-      expect(composables!.imports).not.toContain(name)
-    }
   })
 
   it('a newer source exporting the first wave registers exactly those 3 additions', () => {
