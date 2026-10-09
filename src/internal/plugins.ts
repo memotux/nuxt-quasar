@@ -10,8 +10,8 @@ import { validateArrayValues } from './validation'
  * so the reconciliation check below fails loudly on upstream removals.
  */
 export const VALID_PLUGINS = [
-  'AddressbarColor', 'AppFullscreen', 'AppVisibility',
-  'BottomSheet', 'Dialog', 'LoadingBar', 'Loading',
+  'AddressbarColor', 'AppFullscreen', 'AppNetwork', 'AppVisibility',
+  'AppWakeLock', 'BottomSheet', 'Dialog', 'LoadingBar', 'Loading',
   'Notify', 'LocalStorage', 'SessionStorage',
 ] as const
 
@@ -24,12 +24,42 @@ for (const name of VALID_PLUGINS) {
   }
 }
 
-export function validatePlugins(plugins: string[]): void {
+/**
+ * Quasar 2.34+ opt-in plugins (QAS-3). Curated into `VALID_PLUGINS` above so
+ * the public option type accepts them, but only usable when the consumer's
+ * installed Quasar actually exports them — see `validatePlugins`.
+ */
+const QUASAR_234_PLUGINS = ['AppNetwork', 'AppWakeLock'] as const
+
+export interface PluginSupport {
+  /** Plugin names the consumer's resolved `quasar/src/plugins.js` exports. */
+  exportedPlugins: readonly string[]
+  /** Installed consumer Quasar version (e.g. `'2.27.0'`), for error context. */
+  quasarVersion: string
+  /** Human-readable origin of the export surface, for error context. */
+  sourceLabel: string
+}
+
+export function validatePlugins(plugins: string[], support?: PluginSupport): void {
   validateArrayValues(plugins, {
     validList: VALID_PLUGINS,
     domain: 'plugin',
     quoteNames: false,
   })
+  if (support === undefined) return
+  const exported = new Set(support.exportedPlugins)
+  const unsupported = plugins.filter(
+    name => (QUASAR_234_PLUGINS as readonly string[]).includes(name) && !exported.has(name),
+  )
+  if (unsupported.length === 0) return
+  const details = unsupported.map(
+    name =>
+      `'${name}' is not exported by the installed Quasar `
+      + `(${support.quasarVersion}, ${support.sourceLabel}); `
+      + 'it requires Quasar 2.34 or newer. Upgrade the installed Quasar '
+      + `or remove '${name}' from the 'plugins' option`,
+  )
+  throw new Error(`nuxt-quasar-vite: unsupported Quasar plugin(s): ${details.join('; ')}`)
 }
 
 /**

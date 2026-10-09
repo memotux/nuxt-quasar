@@ -1,3 +1,5 @@
+import { parseQuasarExportNames } from './quasar-exports'
+
 /**
  * Curated QAS-1 first wave (Quasar 2.34+). Kept as a literal tuple so the
  * curation stays explicit and auditable — never derived from upstream.
@@ -11,51 +13,17 @@ const FIRST_WAVE_COMPOSABLES = [
 ] as const
 
 /**
- * Parse the exported names of a `quasar/src/composables.js`-shaped source
- * text. Matches both single-line re-exports
- * (`export { default as X } from '...'`) and multi-line `export { ... }`
- * list forms; the line-start `export` anchor means `import { ... }`
- * statements never match. Throws a
- * `nuxt-quasar-vite`-prefixed error when no export names are found, so a
- * malformed or unreadable consumer surface fails loudly instead of silently
- * claiming (or denying) first-wave support.
- */
-function parseComposableExportNames(source: string): string[] {
-  const names: string[] = []
-  for (const [, list] of source.matchAll(/(?:^|\n)\s*export\s*\{([^}]*)\}/g)) {
-    const code = (list as string)
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/'[^']*'/g, '')
-      .replace(/"[^"]*"/g, '')
-    for (const member of code.split(',')) {
-      const stripped = member.split('//')[0] ?? ''
-      const alias = stripped.match(/\bas\s+([A-Za-z_$][\w$]*)/)
-      if (alias?.[1] && alias[1] !== 'default') {
-        names.push(alias[1])
-        continue
-      }
-      const bare = stripped.trim().match(/^([A-Za-z_$][\w$]*)$/)
-      if (bare?.[1] && bare[1] !== 'default') names.push(bare[1])
-    }
-  }
-  if (names.length === 0) {
-    throw new Error(
-      'nuxt-quasar-vite: could not parse any export names from the resolved '
-      + 'quasar/src/composables.js; version-aware composable auto-imports cannot be determined. '
-      + 'Check that the installed Quasar package is intact.',
-    )
-  }
-  return names
-}
-
-/**
  * Resolve which first-wave composables the consumer's Quasar source
  * exports, in curated order. Fails loudly on an empty/malformed surface
- * (via `parseComposableExportNames`) so older Quasar versions get the
+ * (via `parseQuasarExportNames`) so older Quasar versions get the
  * exact 2.27 baseline and newer ones get exactly the exported subset.
  */
 function resolveFirstWaveComposables(source: string): string[] {
-  const exported = new Set(parseComposableExportNames(source))
+  const exported = new Set(parseQuasarExportNames(
+    source,
+    'the resolved quasar/src/composables.js; '
+    + 'version-aware composable auto-imports cannot be determined',
+  ))
   return FIRST_WAVE_COMPOSABLES.filter(name => exported.has(name))
 }
 

@@ -237,7 +237,11 @@ These Quasar core plugins are always auto-installed by `installQuasar`:
 `Platform`, `Body`, `Dark`, `Screen`, `History`, `Lang`, `IconSet`.
 
 The following opt-in plugins can be added via the `plugins` option:
-`AddressbarColor`, `AppFullscreen`, `AppVisibility`, `BottomSheet`, `Dialog`, `LoadingBar`, `Loading`, `Notify`, `LocalStorage`, `SessionStorage`.
+`AddressbarColor`, `AppFullscreen`, `AppNetwork`, `AppVisibility`, `AppWakeLock`, `BottomSheet`, `Dialog`, `LoadingBar`, `Loading`, `Notify`, `LocalStorage`, `SessionStorage`.
+
+`AppNetwork` and `AppWakeLock` are opt-in and never enabled by default: request them explicitly via `plugins: ['Notify', 'AppNetwork']` (or `'AppWakeLock'`). Both require a Quasar version that exports them (2.34+). Setup validates the request against the consumer's installed `quasar/src/plugins.js`; on an older Quasar (e.g. 2.27) the setup fails with an actionable error naming the plugin, the installed version, and the 2.34+ requirement — baseline plugins keep working.
+
+Browser caveats: `AppNetwork` needs a browser environment and its connection-detail fields are optional (not every browser reports them); `AppWakeLock` needs a secure context, its request can fail, and the lock can auto-release (e.g. when the tab loses visibility). Neither plugin adds Quasar Electron/Capacitor/BEX mode support.
 
 Unknown plugin names throw at setup time with the list of valid plugins.
 

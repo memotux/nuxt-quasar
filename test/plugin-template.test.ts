@@ -137,6 +137,12 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     expect(contents).toContain('import { Notify } from \'quasar/src/plugins.js\'')
     expect(contents).toContain('plugins: { Notify }')
   })
+
+  it('emits opt-in AppNetwork and AppWakeLock imports when requested', () => {
+    const contents = buildPluginContents({ ...baseOpts, plugins: ['Notify', 'AppNetwork', 'AppWakeLock'] })
+    expect(contents).toContain('import { Notify,AppNetwork,AppWakeLock } from \'quasar/src/plugins.js\'')
+    expect(contents).toContain('plugins: { Notify,AppNetwork,AppWakeLock }')
+  })
 })
 
 describe('buildPluginContents (iconSet option)', () => {

@@ -25,6 +25,7 @@ import {
   buildPluginContents,
   buildSassImportCode,
   buildImportPresets,
+  parseQuasarExportNames,
   buildComponentDir,
   requiredExtrasOptions,
   extrasRequirementMessage,
@@ -95,7 +96,32 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   setup: async (opts, nuxt) => {
-    validatePlugins(opts.plugins)
+    // QAS-3: gate the Quasar 2.34+ opt-in plugins (AppNetwork, AppWakeLock)
+    // on the consumer's resolved Quasar source exports, not on the module's
+    // dev snapshot or a hardcoded version. An unreadable or unparseable
+    // surface fails loudly instead of silently installing (or denying) them.
+    let pluginSupport: Parameters<typeof validatePlugins>[1]
+    try {
+      const pluginsSource = await readFile(quasarSrc + 'plugins.js', 'utf8')
+      pluginSupport = {
+        exportedPlugins: parseQuasarExportNames(
+          pluginsSource,
+          `the resolved quasar/src/plugins.js (${quasarSrc}plugins.js)`,
+        ),
+        quasarVersion: quasarPkgInfo.version,
+        sourceLabel: `the resolved quasar/src/plugins.js (${quasarSrc}plugins.js)`,
+      }
+    }
+    catch (error) {
+      if (error instanceof Error && error.message.startsWith('nuxt-quasar-vite:')) throw error
+      throw new Error(
+        'nuxt-quasar-vite: could not read the resolved quasar/src/plugins.js '
+        + `(${quasarSrc}plugins.js); opt-in plugin support cannot be determined. `
+        + 'Check that the installed Quasar package is intact.',
+        { cause: error },
+      )
+    }
+    validatePlugins(opts.plugins, pluginSupport)
     // defu merges the `plugins` default with the user list by concatenation:
     // dedupe so an explicitly re-declared default (e.g. 'Notify') cannot
     // emit a duplicate import specifier and break the generated plugin.
