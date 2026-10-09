@@ -1,0 +1,44 @@
+name: Feature request
+description: Suggest an idea for this Nuxt module
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for suggesting a feature. Please describe the problem and how it applies to Nuxt apps using this module.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and motivation
+      description: What problem does this solve, and who does it help?
+      placeholder: I want to ... because ...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: A clear description of what you would like to happen.
+      placeholder: The module should ...
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case and impact
+      description: How would this be used in a Nuxt app, and what benefit does it bring?
+      placeholder: In a Nuxt app I would ... so that ...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any alternative solutions or workarounds you have considered.
+    validations:
+      required: false
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility constraints
+      description: Anything the proposal must remain compatible with, such as SSR, Nuxt versions, Quasar versions, or Vite plugins.
+    validations:
+      required: false
