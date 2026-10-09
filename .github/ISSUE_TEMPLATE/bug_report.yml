@@ -1,0 +1,106 @@
+name: Bug report
+description: Report a reproducible problem in this Nuxt module
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting a bug. Please complete all required fields so we can reproduce the issue.
+  - type: input
+    id: module-version
+    attributes:
+      label: Module version
+      description: Version of nuxt-quasar-vite where the bug occurs.
+      placeholder: e.g. 1.3.0
+    validations:
+      required: true
+  - type: input
+    id: nuxt-version
+    attributes:
+      label: Nuxt version
+      description: Output of `npx nuxt --version` or the version in package.json.
+      placeholder: e.g. 3.17.0
+    validations:
+      required: true
+  - type: input
+    id: quasar-version
+    attributes:
+      label: Quasar version
+      description: Installed `quasar` version.
+      placeholder: e.g. 2.18.2
+    validations:
+      required: true
+  - type: dropdown
+    id: rendering-mode
+    attributes:
+      label: Rendering mode
+      description: Nuxt rendering mode used when the bug occurs.
+      options:
+        - SSR (universal)
+        - SPA
+        - SSG (static)
+        - Hybrid (route rules)
+    validations:
+      required: true
+  - type: dropdown
+    id: package-manager
+    attributes:
+      label: Package manager
+      description: Package manager used to install dependencies.
+      options:
+        - pnpm
+        - npm
+        - yarn
+        - bun
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected to happen instead.
+      placeholder: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Steps to reproduce, ideally with a minimal repository or playground snippet.
+      placeholder: |
+        1. Configure the module with ...
+        2. Run ...
+        3. See error ...
+        Link to a minimal reproduction if available.
+    validations:
+      required: true
+  - type: textarea
+    id: minimal-config
+    attributes:
+      label: Minimal config
+      description: Minimal `nuxt.config` module options that reproduce the issue.
+      placeholder: |
+        ```ts
+        export default defineNuxtConfig({
+          modules: ['nuxt-quasar-vite'],
+          quasar: {
+          }
+        })
+        ```
+      render: typescript
+    validations:
+      required: false
+  - type: input
+    id: browser-os
+    attributes:
+      label: Browser and OS
+      description: Browser and operating system used for client-side verification.
+      placeholder: e.g. Firefox 131 on Fedora 41; Chrome 131 on macOS 15
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Paste relevant terminal, build, or browser console output.
+      render: text
+    validations:
+      required: false
