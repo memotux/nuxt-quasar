@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.4.1
+
+[compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.4.0...v1.4.1)
+
+### 🩹 Fixes
+
+- **ssr:** Bridge Quasar SSR _meta to Nuxt useHead for hydration ([#11](https://github.com/memotux/nuxt-quasar/pull/11))
+
+### ❤️ Contributors
+
+- Romeo Méndez Fuentes
+
 ## Unreleased
 
 ### Fixed
