@@ -11,6 +11,8 @@ import {
   makeBaseOpts,
   parseQuasarNamedImports,
   parseSideEffectImports,
+  SSR_BRIDGE_CODE,
+  USE_HEAD_LINE,
 } from './helpers/template-fixtures'
 
 const baseOpts = makeBaseOpts({ plugins: ['Notify', 'Dialog'] })
@@ -28,11 +30,111 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
     expect(buildPluginContents(baseOpts)).toMatchInlineSnapshot(`
       "import type { Plugin } from 'vue'
       import { defineNuxtPlugin, onNuxtReady } from '#app'
+      import { useHead } from '#imports'
       import installQ from 'quasar/src/install-quasar.js'
       import { Notify,Dialog } from 'quasar/src/plugins.js'
       import * as directives from 'quasar/src/directives.js'
 
       import 'quasar/src/css/index.sass'
+
+      // Quasar SSR _meta -> Nuxt head bridge. Inlined so the virtual plugin
+      // needs no extra import; mirrors src/internal/ssr-bridge.ts (keep in sync).
+      interface QuasarSsrMetaTag {
+        tag: 'meta' | 'link' | 'script' | 'style' | 'noscript' | 'title'
+        attrs: Record<string, string>
+        innerHTML?: string
+      }
+
+      function parseAttrString(attrs: string): Record<string, string> {
+        const result: Record<string, string> = {}
+        if (!attrs?.trim()) return result
+        const re = /([\\w:-]+)(?:=(?:"([^"]*)"|'([^']*)'|(\\S+)))?/g
+        let m: RegExpExecArray | null
+        while ((m = re.exec(attrs)) !== null) {
+          const key = m[1]
+          const val = m[2] ?? m[3] ?? m[4] ?? ''
+          result[key] = val
+        }
+        return result
+      }
+
+      function parseHtmlTags(html: string): QuasarSsrMetaTag[] {
+        const tags: QuasarSsrMetaTag[] = []
+        if (!html?.trim()) return tags
+        const re = /<(\\w+)((?:\\s+[\\w:-]+(?:=(?:"[^"]*"|'[^']*'|\\S+))?)*)\\s*(?:\\/>|>([\\s\\S]*?)<\\/\\1>|>)/g
+        let m: RegExpExecArray | null
+        while ((m = re.exec(html)) !== null) {
+          const tagName = m[1].toLowerCase()
+          const attrsStr = m[2] || ''
+          const inner = m[3]
+          if (!['meta', 'link', 'script', 'style', 'noscript', 'title'].includes(tagName)) continue
+          tags.push({
+            tag: tagName as QuasarSsrMetaTag['tag'],
+            attrs: parseAttrString(attrsStr),
+            innerHTML: inner !== undefined ? inner : undefined,
+          })
+        }
+        return tags
+      }
+
+      function buildHeadInput(meta: Record<string, string>): Record<string, unknown> {
+        const bodyAttrs = parseAttrString(meta.bodyAttrs ?? '')
+        const htmlAttrs = parseAttrString(meta.htmlAttrs ?? '')
+
+        const bodyClasses = meta.bodyClasses?.trim()
+        if (bodyClasses) {
+          bodyAttrs.class = [bodyAttrs.class, bodyClasses].filter(Boolean).join(' ')
+        }
+
+        const allHeadTags = [...parseHtmlTags(meta.headTags ?? ''), ...parseHtmlTags(meta.endingHeadTags ?? '')]
+        const bodyTagList = parseHtmlTags(meta.bodyTags ?? '')
+
+        const input: Record<string, unknown> = {}
+        if (Object.keys(bodyAttrs).length > 0) input.bodyAttrs = bodyAttrs
+        if (Object.keys(htmlAttrs).length > 0) input.htmlAttrs = htmlAttrs
+
+        const metaList: Record<string, string>[] = []
+        const linkList: Record<string, string>[] = []
+        const scriptList: Record<string, unknown>[] = []
+        const styleList: Record<string, unknown>[] = []
+        const noscriptList: Record<string, unknown>[] = []
+        let title: string | undefined
+
+        for (const t of [...allHeadTags, ...bodyTagList]) {
+          if (t.tag === 'title') {
+            title = t.innerHTML
+            continue
+          }
+          const entry: Record<string, unknown> = { ...t.attrs }
+          if (t.innerHTML !== undefined) entry.innerHTML = t.innerHTML
+          switch (t.tag) {
+            case 'meta':
+              metaList.push(t.attrs)
+              break
+            case 'link':
+              linkList.push(t.attrs)
+              break
+            case 'script':
+              scriptList.push(entry)
+              break
+            case 'style':
+              styleList.push(entry)
+              break
+            case 'noscript':
+              noscriptList.push(entry)
+              break
+          }
+        }
+
+        if (title !== undefined) input.title = title
+        if (metaList.length > 0) input.meta = metaList
+        if (linkList.length > 0) input.link = linkList
+        if (scriptList.length > 0) input.script = scriptList
+        if (styleList.length > 0) input.style = styleList
+        if (noscriptList.length > 0) input.noscript = noscriptList
+
+        return input
+      }
 
       export default defineNuxtPlugin({
         name: 'nuxt:quasar-install',
@@ -50,6 +152,13 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
             install(app, opts) {
               if(import.meta.server) {
                 installQ(app, {...opts, ...includes}, nuxtApp.ssrContext!.event.node)
+                // Bridge Quasar SSR meta to Nuxt head so the SSR HTML carries
+                // body classes (dark mode, platform) and head/body tags. The thunk
+                // captures _meta fields Quasar fills in onRendered (Meta plugin).
+                const ssrMeta = (nuxtApp.ssrContext!.event.node as { _meta?: Record<string, string> })._meta
+                if (ssrMeta) {
+                  useHead(() => buildHeadInput(ssrMeta))
+                }
               } else {
                 installQ(app, {...opts, ...includes})
               }
@@ -360,8 +469,11 @@ describe('buildPluginContents (iconLibraries option)', () => {
       css: [],
       iconLibraries: ['themify'],
     })
+    // The last import group is still followed by exactly one blank line; what
+    // comes after it is now the inlined SSR bridge, not the default export.
+    const bridgeHeader = SSR_BRIDGE_CODE.split('\n')[0]
     expect(contents).toContain(
-      'import \'@quasar/extras/themify/themify.css\'\n\nexport default defineNuxtPlugin',
+      `import '@quasar/extras/themify/themify.css'\n\n${bridgeHeader}`,
     )
   })
 
@@ -421,6 +533,7 @@ describe('buildPluginContents (import order)', () => {
       expect(importLines(contents)).toEqual([
         'import type { Plugin } from \'vue\'',
         'import { defineNuxtPlugin, onNuxtReady } from \'#app\'',
+        USE_HEAD_LINE,
         'import installQ from \'quasar/src/install-quasar.js\'',
         'import { Notify,Dialog } from \'quasar/src/plugins.js\'',
         DIRECTIVES_LINE,
@@ -446,6 +559,7 @@ describe('buildPluginContents (import order)', () => {
       expect(importLines(contents)).toEqual([
         'import type { Plugin } from \'vue\'',
         'import { defineNuxtPlugin, onNuxtReady } from \'#app\'',
+        USE_HEAD_LINE,
         'import installQ from \'quasar/src/install-quasar.js\'',
         'import { Notify,Dialog } from \'quasar/src/plugins.js\'',
         DIRECTIVES_LINE,

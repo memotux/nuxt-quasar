@@ -15,7 +15,7 @@ import {
   IN_ANIMATIONS,
   OUT_ANIMATIONS,
 } from '../src/internal/animations'
-import { CSS_LINE, DIRECTIVES_LINE, importLines, makeBaseOpts } from './helpers/template-fixtures'
+import { CSS_LINE, DIRECTIVES_LINE, importLines, makeBaseOpts, USE_HEAD_LINE } from './helpers/template-fixtures'
 
 const expectedAnimations = [...GENERAL_ANIMATIONS, ...IN_ANIMATIONS, ...OUT_ANIMATIONS]
 
@@ -144,6 +144,7 @@ describe('animations \'all\' composed path', () => {
     expect(importLines(contents)).toEqual([
       'import type { Plugin } from \'vue\'',
       'import { defineNuxtPlugin, onNuxtReady } from \'#app\'',
+      USE_HEAD_LINE,
       'import installQ from \'quasar/src/install-quasar.js\'',
       'import { Notify } from \'quasar/src/plugins.js\'',
       DIRECTIVES_LINE,
