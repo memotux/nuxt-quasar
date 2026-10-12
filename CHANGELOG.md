@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Bridge Quasar SSR `_meta` (body classes, html/body attrs, head/body tags) to Nuxt `useHead`, fixing hydration dark-mode class mismatch ([#10](https://github.com/memotux/nuxt-quasar/issues/10))
+
 ## v1.4.0
 
 [compare changes](https://github.com/memotux/nuxt-quasar/compare/v1.3.0...v1.4.0)

@@ -73,6 +73,10 @@ const EXPECTED_RUNTIME_EXPORTS = [
   'QUASAR_INTERNALS_DTS',
   // sass-imports.ts
   'buildSassImportCode',
+  // ssr-bridge.ts
+  'parseAttrString',
+  'parseHtmlTags',
+  'buildHeadInput',
   // validation.ts
   'nearestSuggestion',
   'validateSingleValue',
