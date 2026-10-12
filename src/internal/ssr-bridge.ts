@@ -40,9 +40,11 @@ export function parseAttrString(attrs: string): Record<string, string> {
  * emits `<meta ...>` / `<link ...>` with no closing tag, so requiring
  * `</meta>`/`</link>` would silently drop every meta and link tag.
  */
+const MAX_HTML_INPUT = 10_000
+
 export function parseHtmlTags(html: string): ParsedTag[] {
   const tags: ParsedTag[] = []
-  if (!html?.trim()) return tags
+  if (!html?.trim() || html.length > MAX_HTML_INPUT) return tags
   // eslint-disable-next-line regexp/no-super-linear-backtracking, regexp/no-dupe-disjunctions -- the regex runs on small trusted Quasar-generated tag strings; the flagged unquoted-value overlap cannot occur in that input
   const re = /<(\w+)((?:\s+[\w:-]+(?:=(?:"[^"]*"|'[^']*'|\S+))?)*)\s*(?:\/>|>([\s\S]*?)<\/\1>|>)/g
   let m: RegExpExecArray | null

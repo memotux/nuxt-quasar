@@ -77,9 +77,15 @@ describe('browser · dark-hydration (issue #10: dark-mode hydration mismatch)', 
     await page.close()
   })
 
-  it('no Vue hydration class mismatch warnings in dev', async () => {
+  it('no Vue hydration class mismatch warnings', async () => {
     const page = await createPage('/')
+    // Navigate away so we can re-hydrate with the collector active.
+    // createPage resolves after hydration, so warnings from the first
+    // load are already emitted before we can attach a listener.
+    const baseUrl = page.url()
+    await page.goto('about:blank')
     const consoleEntries = attachConsoleCollector(page)
+    await page.goto(baseUrl, { waitUntil: 'networkidle' })
     await page.waitForSelector('.q-layout', { timeout: 10_000 })
     // Allow late hydration warnings to flush before reading.
     await page.waitForTimeout(500)

@@ -59,9 +59,11 @@ describe('buildPluginContents (F2: plugin template generator)', () => {
         return result
       }
 
+      const MAX_HTML_INPUT = 10_000
+
       function parseHtmlTags(html: string): QuasarSsrMetaTag[] {
         const tags: QuasarSsrMetaTag[] = []
-        if (!html?.trim()) return tags
+        if (!html?.trim() || html.length > MAX_HTML_INPUT) return tags
         const re = /<(\\w+)((?:\\s+[\\w:-]+(?:=(?:"[^"]*"|'[^']*'|\\S+))?)*)\\s*(?:\\/>|>([\\s\\S]*?)<\\/\\1>|>)/g
         let m: RegExpExecArray | null
         while ((m = re.exec(html)) !== null) {
