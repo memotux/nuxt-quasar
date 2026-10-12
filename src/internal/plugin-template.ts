@@ -28,6 +28,7 @@ function parseAttrString(attrs: string): Record<string, string> {
   let m: RegExpExecArray | null
   while ((m = re.exec(attrs)) !== null) {
     const key = m[1]
+    if (key === undefined) continue
     const val = m[2] ?? m[3] ?? m[4] ?? ''
     result[key] = val
   }
@@ -40,7 +41,8 @@ function parseHtmlTags(html: string): QuasarSsrMetaTag[] {
   const re = /<(\\w+)((?:\\s+[\\w:-]+(?:=(?:"[^"]*"|'[^']*'|\\S+))?)*)\\s*(?:\\/>|>([\\s\\S]*?)<\\/\\1>|>)/g
   let m: RegExpExecArray | null
   while ((m = re.exec(html)) !== null) {
-    const tagName = m[1].toLowerCase()
+    const tagName = m[1]?.toLowerCase()
+    if (!tagName) continue
     const attrsStr = m[2] || ''
     const inner = m[3]
     if (!['meta', 'link', 'script', 'style', 'noscript', 'title'].includes(tagName)) continue
